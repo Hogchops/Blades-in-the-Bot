@@ -4,35 +4,61 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from difflib import get_close_matches
 
-def generate_embed(ctx, dice):
-    num = len(dice)
+def generate_embed(ctx, dice, num, zero):
     
-    embed = discord.Embed(title = f'{ctx.author.display_name} makes a roll!', url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', description = f'Number of rolls: {num}!', color = 0xFF5733)
+	embed = discord.Embed(title = '', description = '', color = ctx.author.color)
+	embed.set_author(name = ctx.author.display_name, icon_url = str(ctx.author.display_avatar.url))	
+	
+	rolls = ""
+	for i in range(num - 1):
+		rolls += dice[i] + ", "
+	rolls += dice[-1]
+	
+	num_dice = num
+	if zero:
+		num_dice = 0    
+	embed.add_field(name = f'{num_dice}d6', value = rolls, inline = True)
 
-    for i in range(num):
-        
-        embed.add_field(name = f'Die {i+1}', value = f'**{dice[i]}**', inline = True)
+	footer_string = ''
+		
+	dice.sort()
 
-        footer_string = ''
-        
-        maximum = int(sorted(dice)[-1])
-        if maximum == 6:
-            footer_string = "You got a success!"
-        elif maximum == 4 or maximum == 5:
-            footer_string = "You got a partial success!"
-        else:
-            footer_string = "You failed the roll!"
-        embed.set_footer(text = footer_string)
-    return embed
+	if not zero:
+		result = int(dice[-1])
+	else:
+		result = int(dice[0])
 
+	value = f'**{result}** '
+	if result == 6:
+		if num >= 2:
+			if int(dice[-2]) == 6:
+				value += ":white_check_mark:"
+		value += ":white_check_mark:"
+	elif result == 4 or result == 5:
+		value += ":warning:"
+	else:
+		value += ":x:"
+	embed.add_field(name = "Result", value = value, inline = False)
+	return embed
 
 class Roll(commands.Cog):
-    """Category documentation"""
-    def __init__(self, bot):
-        self.bot = bot
+	def __init__(self, bot):
+		self.bot = bot
 
-    @commands.command(name = 'r', help = 'Roll some d6s.\nUsage: =r [number of d6s]')
-    async def roll(self, ctx, num = 2, dc = 0,  dif = -1):
-        dice = [str(random.choice(range(1,7))) for _ in range(num)]
-        embed = generate_embed(ctx, dice, dc, dif)
-        await ctx.send(embed = embed)
+	@commands.command(aliases = ["r"], description = "Roll some dice.", usage = "`=r [num]` or `=r [num]d6")
+	async def roll(self, ctx, num):
+		if num.isnumeric():
+			num = int(num)
+		else:
+			num.split('d')
+			num = int(num[0])
+		zero = False
+		if num == 0:
+			num = 2
+			zero = True
+		dice = [str(random.choice(range(1,7))) for _ in range(num)]
+		embed = generate_embed(ctx, dice, num, zero)
+		await ctx.send(embed = embed)
+
+async def setup(bot):
+	await bot.add_cog(Roll(bot)) 

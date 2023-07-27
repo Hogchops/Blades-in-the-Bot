@@ -2,22 +2,27 @@ import os
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
-from roll import Roll
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 
+intents = discord.Intents.default()
+intents.message_content = True
+
+client = discord.Client(intents=intents)
 blades_bot_filepath = r"C:\Users\admin\Desktop\blades-bot"
 
-client = discord.Client()
-bot = commands.Bot(command_prefix = '=')
+bot = commands.Bot(command_prefix = '=', intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f'{bot.user} has connected to Discord!')
+	await load_cogs()
+	print(f'{bot.user} has connected to Discord!')
 
-
-bot.add_cog(Roll(bot))
+async def load_cogs():
+	await bot.load_extension("roll")
+	await bot.load_extension("factions")
+	# await bot.load_extension("greetings")
 
 bot.run(TOKEN)
