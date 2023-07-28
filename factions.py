@@ -5,9 +5,8 @@ from discord.ext import commands
 from difflib import get_close_matches
 import json
 from asyncio import wait_for
-
-def generate_embed():
-	pass
+import os
+from types import SimpleNamespace
 
 class Clock:
 	def __init__(self, description, progress, total):
@@ -35,7 +34,7 @@ class Clock:
 		self.progress += num
 		return self.progress >= self.total
 
-	def to_json(self):
+	def toJson(self):
 		return json.dumps(self, default=lambda o: o.__dict__, sort_keys = True, indent = 4)
 
 class Faction:
@@ -50,7 +49,7 @@ class Faction:
 		self.secret_notes = secret_notes
 		self.clocks = []
 
-	def to_json(self):
+	def toJson(self):
 		return json.dumps(self, default=lambda o: o.__dict__, sort_keys = True, indent = 4)
 
 	def add_clock(self, description, progress, total):
@@ -103,6 +102,45 @@ class Factions(commands.Cog):
 		self.faction_list.append(Faction(name, tier, hold, rep, description, contacts, notes, secret_notes))
 		self.faction_list[0].add_clock("tier up", 3, 8)
 		self.faction_list[0].add_clock("butt stuff", 0, 12)
+		self.init_info()
+		
+
+	def add_faction_from_json(self, dict_obj: dict):
+		name = dict_obj["name"]
+		tier = dict_obj["tier"]
+		hold = dict_obj["hold"]
+		rep = dict_obj["rep"]
+		description = dict_obj["description"]
+		notes = dict_obj["notes"]
+		contacts = dict_obj["contacts"]
+		secret_notes = dict_obj["secret_notes"]
+		faction_obj = Faction(name, tier, hold, rep, description, contacts, notes, secret_notes)
+		for i in range(len(dict_obj["clocks"])):
+			clock_description = dict_obj["clocks"][i]["description"]
+			clock_progress = dict_obj["clocks"][i]["progress"]
+			clock_total = dict_obj["clocks"][i]["total"]
+			faction_obj.add_clock(clock_description, clock_progress, clock_total)
+		self.faction_list.append(faction_obj)
+
+		
+	def init_info(self):
+		for file in os.listdir("factions/"):
+			if file.endswith(".json"):
+				with open(f"factions/{file}", 'r') as infile:
+					json_string = json.load(infile)
+					json_obj = json.loads(json_string)
+					print(str(self.faction_list))
+					self.add_faction_from_json(json_obj)
+					print(str(self.faction_list))
+	
+
+	def save_info(self):
+		for faction in self.faction_list:
+			file_name = faction.name.replace(" ", "")
+			with open(f'factions/{file_name}.json', 'w') as outfile:
+				json_string = faction.toJson()
+				outfile.write(json.dumps(json_string))
+
 
 	def find(self, name):
 		for i in range(len(self.faction_list)):
