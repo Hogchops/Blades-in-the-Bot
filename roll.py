@@ -3,6 +3,7 @@ import random
 from dotenv import load_dotenv
 from discord.ext import commands
 from difflib import get_close_matches
+from discord import app_commands
 
 def generate_embed(ctx, dice, num, zero):
     
@@ -45,13 +46,9 @@ class Roll(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
-	@commands.command(aliases = ["r"], description = "Roll some dice.", usage = "`=r [num]` or `=r [num]d6")
-	async def roll(self, ctx, num):
-		if num.isnumeric():
-			num = int(num)
-		else:
-			num.split('d')
-			num = int(num[0])
+	@commands.hybrid_command(name = "r", aliases = ["roll"], description = "Roll some dice.", usage = "`/r [num]` or `=r [num]")
+	@app_commands.guilds(discord.Object(id = 807855936106135562))
+	async def roll(self, ctx, num: int = 1):
 		zero = False
 		if num == 0:
 			num = 2

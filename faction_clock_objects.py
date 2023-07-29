@@ -1,8 +1,9 @@
 import random
 import json
 import discord
+import typing
 
-class Clock:
+class Clock():
 
     def __init__(self, description, progress, total):
         self.description = description
@@ -32,6 +33,7 @@ class Clock:
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys = True, indent = 4)
     
+
 class Faction:
 
     def __init__(self, name, tier, hold, rep, description, contacts, notes, secret_notes):
@@ -44,6 +46,42 @@ class Faction:
         self.notes = notes
         self.secret_notes = secret_notes
         self.clocks = []
+    
+    def set(self, field: str, value):
+        field = field.lower()
+        if field == "title":
+            self.name = value
+        elif field == "tier":
+            self.tier = value
+        elif field == "hold":
+            self.hold = value
+        elif field == "status":
+            self.rep = value
+        elif field == "description":
+            self.description = value
+        elif field == "contacts":
+            self.contacts = value
+        elif field == "notes":
+            self.notes = value
+        elif field == "secret notes":
+            self.secret_notes = value
+        elif field == "clocks":
+            self.clocks = value
+
+    def get(self, field: str):
+        dict_obj = {
+            "name": self.name,
+            "tier": self.tier,
+            "hold": self.hold,
+            "rep": self.rep,
+            "description": self.description,
+            "contacts": self.contacts,
+            "notes": self.notes,
+            "secret notes": self.secret_notes,
+            "clocks": self.clocks
+        }
+        field = field.lower()
+        return dict_obj.get(field)
 
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)

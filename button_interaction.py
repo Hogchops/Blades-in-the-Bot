@@ -1,13 +1,73 @@
 import discord
+import discord.ext
 import asyncio
+from faction_clock_objects import Faction
+from faction_clock_objects import Clock
 
-class MyView(discord.ui.View):
 
-    def __init__(self, bot, ctx, faction_obj):
+class GetResponse(discord.ui.Modal):
+
+    def __init__(self, title: str, faction: Faction, msg: discord.Message, ctx):
+        self.field_name = title.lower()
+        self.faction = faction
+        super().__init__(title = self.field_name)
+        self.answer = ""
+        self.clock_fields = ""
+        self.add_clock = ""
+        self.msg = msg
+        self.ctx = ctx
+
+        if self.field_name != "clocks" and self.field_name != "contacts":
+            self.answer = discord.ui.TextInput(label = f'Enter a new {self.field_name.title()}.', style = discord.TextStyle.paragraph, placeholder = self.faction.get(self.field_name))
+            self.add_item(self.answer)
+        elif self.field_name == "contacts":
+            self.answer = discord.ui.TextInput(label = "Enter contacts for this faction, 1 per line.", style = discord.TextStyle.paragraph, placeholder="Contact1\nContact2")
+            self.add_item(self.answer)
+        elif self.field_name == "clocks":
+            self.add_clock = discord.ui.TextInput(label = "Enter a new clock if you wish to add.", required=False, style=discord.TextStyle.paragraph)
+            self.add_item(self.add_clock)
+            self.clock_fields = []
+            num = 1
+            for clock in self.faction.clocks:
+                place_holder = f"{clock.description}\n{clock.progress}\n{clock.total}"
+                clock_field = discord.ui.TextInput(label = f"Modify Clock {num}.", placeholder=place_holder, style=discord.TextStyle.paragraph)
+                self.clock_fields.append(clock_field)
+                self.add_item(clock_field)
+                num += 1
+
+    async def on_submit(self, interaction: discord.Interaction):
+        if self.field_name != "clocks" and self.field_name != "contacts":
+            self.faction.set(self.field_name, self.answer.value)
+        elif self.field_name == "contacts":
+            contacts_list = self.answer.value.splitlines()
+            self.faction.set("contacts", contacts_list)
+        elif self.field_name == "clocks":
+            index = 0
+            clocks_list = []
+            for clock_obj in self.clock_fields:
+                user_input = clock_obj.value.splitlines()
+                description = user_input[0]
+                progress = int(user_input[1])
+                total = int(user_input[2])
+                clock_obj = Clock(description, progress, total)
+                clocks_list.append(clock_obj)
+            self.faction.set("clocks", clocks_list)
+
+            if self.add_clock.value != "":
+                user_input = self.add_clock.value.splitlines()
+                self.faction.add_clock(user_input[0], int(user_input[1]), int(user_input[2]))
+        await self.msg.edit(embed = self.faction.gm_display(ctx=self.ctx))
+        await interaction.response.send_message(f'Thanks for your response. {self.faction.name} has been updated. Please see the edited embed.', ephemeral=True)
+    
+
+class ModifyFactionButtons(discord.ui.View):
+
+    def __init__(self, bot, ctx, faction_obj : Faction, original_embed : discord.Message):
         super().__init__()
         self.bot = bot
         self.ctx = ctx
         self.faction_obj = faction_obj
+        self.original_embed = original_embed
 	
     def check(self, m):
         return m.author == self.ctx.message.author
@@ -20,111 +80,56 @@ class MyView(discord.ui.View):
             return -1
         else:
             return msg
+    
 
     @discord.ui.button(label = "Title", style = discord.ButtonStyle.primary)
-    async def first_button_callback(self, interaction, button):
-        await interaction.response.send_message("Type a new title for this faction.")
-        msg = await self.try_function()
-        if msg != -1:
-            self.faction_obj.name = msg.content.title()
-            await self.ctx.send(embed = self.faction_obj.gm_display(self.ctx))
-
+    async def first_button_callback(self, interaction: discord.Interaction, button):
+        response = GetResponse(title = "Title", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
+        await interaction.response.send_modal(response)
+            
     @discord.ui.button(label = "Description", style = discord.ButtonStyle.primary)
     async def second_button_callback(self, interaction, button):
-        await interaction.response.send_message("Type a new description for this faction.")
-        msg = await self.try_function()
-        if msg != -1:
-            self.faction_obj.description = msg.content
-            await self.ctx.send(embed = self.faction_obj.gm_display(self.ctx))
+        response = GetResponse(title = "Description", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
+        await interaction.response.send_modal(response)
 
     @discord.ui.button(label = "Tier", style = discord.ButtonStyle.primary)
     async def third_button_callback(self, interaction, button):
-        await interaction.response.send_message("Type a new tier for this faction.")
-        msg = await self.try_function()
-        if msg != -1:
-            self.faction_obj.tier = int(msg.content)
-            await self.ctx.send(embed = self.faction_obj.gm_display(self.ctx))
+        response = GetResponse(title = "Tier", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
+        await interaction.response.send_modal(response)
 
     @discord.ui.button(label = "Hold", style = discord.ButtonStyle.primary)
     async def fourth_button_callback(self, interaction, button):
-        await interaction.response.send_message("Type a new hold for this faction.")
-        msg = await self.try_function()
-        if msg != -1:
-            self.faction_obj.hold = msg.content
-            await self.ctx.send(embed = self.faction_obj.gm_display(self.ctx))
+        response = GetResponse(title = "Hold", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
+        await interaction.response.send_modal(response)
 
     @discord.ui.button(label = "Contacts", style = discord.ButtonStyle.primary)
     async def fifth_button_callback(self, interaction, button):
-        output = "**Contacts:**\n"
-        for i in range(len(self.faction_obj.contacts)):
-            output += f'**{i}:** {self.faction_obj.contacts[i]}\n'
-        await interaction.response.send_message("Enter a number for the contact you wish to change, or `a` for a new contact.\n\n" + output)
-        msg = await self.try_function()
-        if msg != -1:
-            if msg.content.lower() == 'a':
-                await self.ctx.send("You have chosen to add a new contact. Please type a contact to add it to the faction.")
-                new_contact_msg = await self.try_function()
-                if new_contact_msg != -1:
-                    self.faction_obj.contacts.append(new_contact_msg.content)
-            else:
-                index = int(msg.content)
-                await self.ctx.send(f'The contact {self.faction_obj.contacts[index]} has been chosen. Please type a new contact.')
-                contact_msg = await self.try_function()
-                if contact_msg != -1:
-                    self.faction_obj.contacts[index] = contact_msg.content
-                    await self.ctx.send(embed = self.faction_obj.gm_display(self.ctx))
+        response = GetResponse(title = "Contacts", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
+        await interaction.response.send_modal(response)
 
     @discord.ui.button(label = "Status", style = discord.ButtonStyle.primary)
     async def sixth_button_callback(self, interaction, button):
-        await interaction.response.send_message("Type a new hold for this faction.")
-        msg = await self.try_function()
-        if msg != -1:
-            self.faction_obj.status = msg.content
-            await self.ctx.send(embed = self.faction_obj.gm_display(self.ctx))
+        response = GetResponse(title = "Status", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
+        await interaction.response.send_modal(response)
 
     @discord.ui.button(label = "Notes", style = discord.ButtonStyle.primary)
     async def seventh_button_callback(self, interaction, button):
-        await interaction.response.send_message("Type a new note for this faction.")
-        msg = await self.try_function()
-        if msg != -1:
-            self.faction_obj.notes = msg.content
-            await self.ctx.send(embed = self.faction_obj.gm_display(self.ctx))
+        response = GetResponse(title = "Notes", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
+        await interaction.response.send_modal(response)
 
     @discord.ui.button(label = "Secret Notes", style = discord.ButtonStyle.primary)
     async def eigth_button_callback(self, interaction, button):
-        await interaction.response.send_message("Type a new secret note for this faction.")
-        msg = await self.try_function()
-        if msg != -1:
-            self.faction_obj.secret_notes = msg.content
-            await self.ctx.send(embed = self.faction_obj.gm_display(self.ctx))
+        response = GetResponse(title = "Secret Notes", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
+        await interaction.response.send_modal(response)
 
     @discord.ui.button(label = "Clocks", style = discord.ButtonStyle.primary)
     async def ninth_button_callback(self, interaction, button):
-        output = "**Clocks:**\n"
-        for i in range(len(self.faction_obj.clocks)):
-            output += f'**{i}:** {self.faction_obj.clocks[i].description} {self.faction_obj.clocks[i].progress}/{self.faction_obj.clocks[i].total}\n'
-        await interaction.response.send_message("Enter a number for the clock you wish to change, or type 'a' to add a new clock.")
-        msg = await self.try_function()
-        if msg != -1:
-            if msg.content.lower() == 'a':
-                await self.ctx.send("Please enter a description for your clock.")
-                clock_description = await self.try_function()
-                if clock_description != -1:
-                    await self.ctx.send("Please enter the starting progress and the total number on the clock. I.e.: 3 12")
-                    progress_total = await self.try_function()
-                    if progress_total != -1:
-                        progress_total = progress_total.content.split(" ")
-                        progress = int(progress_total[0])
-                        total = int(progress_total[1])
-                        self.faction_obj.add_clock(clock_description.content, progress, total)
-                        await self.ctx.send(embed = self.faction_obj.gm_display(self.ctx))
-            else:
-                index = int(msg.content)
-                await self.ctx.send("Select the corresponding buttons to edit the clock.", view = MyViewClocks(self.bot, self.ctx, self.faction_obj.clocks[index]))
+        response = GetResponse(title = "Clocks", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
+        await interaction.response.send_modal(response)
 
-class MyViewClocks(discord.ui.View):
+class MyViewCreatingClocks(discord.ui.View):
 
-    def __init__(self, bot, ctx, clock):
+    def __init__(self, bot, ctx, clock: Clock):
         super().__init__()
         self.bot = bot
         self.ctx = ctx
@@ -162,3 +167,11 @@ class MyViewClocks(discord.ui.View):
         msg = await self.try_function()
         if msg != -1:
             self.clock.total = int(msg.content)
+
+class MyViewClocks(discord.ui.View):
+
+    def __init__(self, bot, ctx, clocks: Clock):
+        super().__init__()
+        self.bot = bot
+        self.ctx = ctx
+        self.clocks = clocks

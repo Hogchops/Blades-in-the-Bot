@@ -2,6 +2,7 @@ import os
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
+from discord import app_commands
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -11,14 +12,19 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
-blades_bot_filepath = r"C:\Users\admin\Desktop\blades-bot"
+tree = app_commands.CommandTree(client)
 
 bot = commands.Bot(command_prefix = '=', intents=intents)
 
 @bot.event
 async def on_ready():
 	await load_cogs()
+	await setup_hook()
 	print(f'{bot.user} has connected to Discord!')
+
+async def setup_hook():
+	await bot.tree.sync(guild = discord.Object(id = 807855936106135562))
+	print(f'Synced slash commands for the guild.')
 
 #@bot.event
 #async def on_command_error(ctx, error):
@@ -27,6 +33,13 @@ async def on_ready():
 async def load_cogs():
 	await bot.load_extension("roll")
 	await bot.load_extension("factions")
+	await bot.load_extension("game_clocks")
 	# await bot.load_extension("greetings")
+
+@bot.hybrid_command(name = "test", with_app_command = True, description = "Testing")
+@app_commands.guilds(discord.Object(id = 807855936106135562))
+async def test(ctx):
+	await ctx.defer(ephemeral = True)
+	await ctx.reply("Hi!")
 
 bot.run(TOKEN)
