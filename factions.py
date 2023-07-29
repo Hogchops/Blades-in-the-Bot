@@ -1,13 +1,13 @@
 import discord
-import random
 from dotenv import load_dotenv
 from discord.ext import commands
 from difflib import get_close_matches
 import json
 from asyncio import wait_for
+import asyncio
 import os
-from faction_clock_objects import Clock
 from faction_clock_objects import Faction
+from button_interaction import MyView
 
 
 class Factions(commands.Cog):
@@ -39,7 +39,6 @@ class Factions(commands.Cog):
 			faction_obj.add_clock(clock_description, clock_progress, clock_total)
 		self.faction_list.append(faction_obj)
 
-		
 	def init_info(self):
 		for file in os.listdir("factions/"):
 			if file.endswith(".json"):
@@ -78,10 +77,10 @@ class Factions(commands.Cog):
 			embed = self.faction_list[index].player_display(ctx)
 		return embed
 
-	async def search_func(self, ctx, name, gm):
+	async def search_func(self, ctx, name):
 		index = self.find(name)
 		if index != -1:
-			await ctx.send(embed = self.player_gm_display(ctx, gm, index))
+			return index
 		else:
 			title_list = []
 			for f in self.faction_list:
@@ -89,9 +88,10 @@ class Factions(commands.Cog):
 			close_matches = get_close_matches(name.lower(), title_list, 5, 0.3)
 			if len(close_matches) == 1:
 				chosen = self.find(close_matches[0])
-				await ctx.send(embed = self.player_gm_display(ctx, gm, chosen))
+				return chosen
 			elif len(close_matches) == 0:
 				await ctx.send(f"I could not find a faction matching {name}.")
+				return -1
 			else:
 				output = f"Enter the number corresponding to what you are searching for:"
 				for i in range(len(close_matches)):
@@ -105,14 +105,17 @@ class Factions(commands.Cog):
 					msg = await self.bot.wait_for('message', timeout = 8.0, check = check)
 				except self.asyncio.TimeoutError:
 					await ctx.send("Query timed out.")
+					return -1
 				else:
 					chosen = self.find(close_matches[int(msg.content)-1])
-					await ctx.send(embed = self.player_gm_display(ctx, gm, chosen)) 
+					return chosen
 				
 
 	@commands.command(name="faction", aliases = ['f'])
 	async def display_faction(self, ctx, *, name):
-		await self.search_func(ctx, name, False)
+		index = await self.search_func(ctx, name)
+		if index != -1:
+			await ctx.send(embed = self.faction_list[index].player_display(ctx))
 
 	@commands.group(name="gm", aliases=["dm"])
 	async def gm(self, ctx):
@@ -121,11 +124,20 @@ class Factions(commands.Cog):
 
 	@gm.command(name="faction", aliases = ['f'])
 	async def display_faction_gm(self, ctx, *, name):
-		await self.search_func(ctx, name, True)
+		index = await self.search_func(ctx, name)
+		if index != -1:
+			await ctx.send(embed = self.faction_list[index].gm_display(ctx))
 
 	@gm.command(name="add", aliases=["a"])
 	async def add_faction(self, ctx):
 		await ctx.author.send("Still implementing!")
+
+	@gm.command(name="modify", aliases=["m"])
+	async def modify_faction(self, ctx, *, name):
+		index = await self.search_func(ctx, name)
+		if index != -1:
+			await ctx.send(embed = self.faction_list[index].gm_display(ctx))
+			await ctx.send("Select the corresponding button to edit the faction.", view = MyView(self.bot, ctx, self.faction_list[index]))
 
 
 async def setup(bot):

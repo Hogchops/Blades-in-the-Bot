@@ -3,6 +3,7 @@ import json
 import discord
 
 class Clock:
+
     def __init__(self, description, progress, total):
         self.description = description
         self.progress = progress
@@ -32,6 +33,7 @@ class Clock:
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys = True, indent = 4)
     
 class Faction:
+
     def __init__(self, name, tier, hold, rep, description, contacts, notes, secret_notes):
         self.name = name
         self.tier = tier
@@ -49,6 +51,9 @@ class Faction:
     def add_clock(self, description, progress, total):
         clock_to_add = Clock(description, progress, total)
         self.clocks.append(clock_to_add)
+    
+    def remove_clock(self, index):
+        del self.clocks[index]
 
     def player_display(self, ctx):
         embed = discord.Embed(title = self.name, description = self.description, color = ctx.author.color)
@@ -80,4 +85,3 @@ class Faction:
             for clock in self.clocks:
                 embed.add_field(name = f'Clock {clock.progress}/{clock.total}', value = clock.description)
         return embed
-        
