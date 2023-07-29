@@ -55,14 +55,15 @@ class Factions(commands.Cog):
 				json_string = faction.toJson()
 				outfile.write(json.dumps(json_string))
 
-	def save_faction(self, faction_name):
-		index = self.find(faction_name)
+	async def save_faction(self, ctx, faction_name):
+		index = await self.search_func(ctx, faction_name)
 		if index == -1:
 			return -1
 		file_name = self.faction_list[index].name.lower().replace(" ", "")
 		with open(f"factions/{file_name}.json", 'w') as outfile:
 			json_string = self.faction_list[index].toJson()
 			outfile.write(json.dumps(json_string))
+		return 1
 
 	def find(self, name):
 		for i in range(len(self.faction_list)):
@@ -103,7 +104,7 @@ class Factions(commands.Cog):
 
 				try:
 					msg = await self.bot.wait_for('message', timeout = 8.0, check = check)
-				except self.asyncio.TimeoutError:
+				except asyncio.TimeoutError:
 					await ctx.send("Query timed out.")
 					return -1
 				else:
@@ -117,6 +118,13 @@ class Factions(commands.Cog):
 		if index != -1:
 			await ctx.send(embed = self.faction_list[index].player_display(ctx))
 
+	@commands.command(name="list", aliases = ['l'])
+	async def list_factions(self, ctx):
+		output = "**Factions:**\n"
+		for faction in self.faction_list:
+			output += f"{faction.name}\n"
+		await ctx.send(output)
+
 	@commands.group(name="gm", aliases=["dm"])
 	async def gm(self, ctx):
 		if ctx.invoked_subcommand is None:
@@ -129,16 +137,34 @@ class Factions(commands.Cog):
 			await ctx.send(embed = self.faction_list[index].gm_display(ctx))
 
 	@gm.command(name="add", aliases=["a"])
-	async def add_faction(self, ctx):
-		await ctx.author.send("Still implementing!")
+	async def add_faction(self, ctx, *, name):
+		default_faction = Faction(f"{name.title()}", 0, "hold", "0", "description", [], "notes", "secret notes")
+		self.faction_list.append(default_faction)
+		await self.save_faction(ctx, name)
+		await ctx.send(f"I have created a default faction with the name {name.title()}.\nPlease modify its values using `=gm m {name.title()}`")
 
 	@gm.command(name="modify", aliases=["m"])
 	async def modify_faction(self, ctx, *, name):
 		index = await self.search_func(ctx, name)
 		if index != -1:
 			await ctx.send(embed = self.faction_list[index].gm_display(ctx))
+			await ctx.send(f"When you are done modifying, please save the faction via `=gm s {name.title()}`")
 			await ctx.send("Select the corresponding button to edit the faction.", view = MyView(self.bot, ctx, self.faction_list[index]))
-
-
+	
+	@gm.command(name="save", aliases = ['s'])
+	async def save_faction_input(self, ctx, *, name):
+		result = await self.save_faction(ctx, name)
+		if result == 1:
+			await ctx.send(f"You have successfully saved {name}")
+	
+	@gm.command(name = "delete", aliases = ['d'])
+	async def delete_faction(self, ctx, *, name):
+		index = await self.search_func(ctx, name)
+		if index != -1:
+			file_name = self.faction_list[index].name.lower().replace(' ','')
+			os.remove(f"factions/{file_name}.json")
+			del self.faction_list[index]
+			await ctx.send("Faction deleted successfully.")
+	
 async def setup(bot):
 	await bot.add_cog(Factions(bot))
