@@ -20,6 +20,10 @@ async def on_ready():
 	await load_cogs()
 	print(f'{bot.user} has connected to Discord!')
 
+@bot.event
+async def on_command_error(ctx, error):
+	await ctx.send(f"An error has occurred: {str(error)}")
+
 async def load_cogs():
 	await bot.load_extension("roll")
 	await bot.load_extension("factions")

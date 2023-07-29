@@ -6,104 +6,21 @@ from difflib import get_close_matches
 import json
 from asyncio import wait_for
 import os
-from types import SimpleNamespace
+from faction_clock_objects import Clock
+from faction_clock_objects import Faction
 
-class Clock:
-	def __init__(self, description, progress, total):
-		self.description = description
-		self.progress = progress
-		self.total = total
-	
-	def advance(self, tier):
-		dice = [random.choice(range(1,7)) for _ in range(tier)]
-		dice.sort()
-		result = 0
-		if dice[-1] == 6:
-			result = 3
-			if tier >= 2:
-				if dice[-1] == 6:
-					result += 2
-		elif dice[-1] == 4 or dice[-1] == 5:
-			result = 2
-		else:
-			result = 1
-		self.progress += result
-		return self.progress >= self.total
-
-	def advance_manually(self, num):
-		self.progress += num
-		return self.progress >= self.total
-
-	def toJson(self):
-		return json.dumps(self, default=lambda o: o.__dict__, sort_keys = True, indent = 4)
-
-class Faction:
-	def __init__(self, name, tier, hold, rep, description, contacts, notes, secret_notes):
-		self.name = name
-		self.tier = tier
-		self.hold = hold
-		self.rep = rep
-		self.description = description
-		self.contacts = contacts
-		self.notes = notes
-		self.secret_notes = secret_notes
-		self.clocks = []
-
-	def toJson(self):
-		return json.dumps(self, default=lambda o: o.__dict__, sort_keys = True, indent = 4)
-
-	def add_clock(self, description, progress, total):
-		clock_to_add = Clock(description, progress, total)
-		self.clocks.append(clock_to_add)
-
-	def player_display(self, ctx):
-		embed = discord.Embed(title = self.name, description = self.description, color = ctx.author.color)
-		embed.add_field(name = f'Tier {self.tier}', value = '')
-		embed.add_field(name = f'Hold {self.hold}', value = '')
-		names = ""
-		for contact in self.contacts:
-			names += contact + "\n"
-		embed.add_field(name = 'Contacts', value = names)
-		embed.add_field(name = 'Status', value = f'{self.rep}')
-		if self.notes != "":
-			embed.add_field(name = "Notes", value = self.notes)
-		return embed
-	
-	def gm_display(self, ctx):
-		embed = discord.Embed(title = self.name, description = self.description, color = ctx.author.color)
-		embed.add_field(name = f'Tier {self.tier}', value = '')
-		embed.add_field(name = f'Hold {self.hold}', value = '')
-		names = ""
-		for contact in self.contacts:
-			names += contact + "\n"
-		embed.add_field(name = 'Contacts', value = names)
-		embed.add_field(name = 'Status', value = f'{self.rep}')
-		if self.notes != "":
-			embed.add_field(name = "Notes", value = self.notes)
-		if self.secret_notes != "":
-			embed.add_field(name = "Secret Notes", value = self.secret_notes)
-		if len(self.clocks) > 0:
-			for clock in self.clocks:
-				embed.add_field(name = f'Clock {clock.progress}/{clock.total}', value = clock.description)
-		return embed
 
 class Factions(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.faction_list = []
-		name = "Leviathan Hunters"
-		tier = 5
-		hold = 'S'
-		rep = "+2"
-		description = "These guys like leviathans, yo"
-		notes = "They like dead bodies too"
-		contacts = ["that one guy we know", "that other guy we also know"]
-		secret_notes = "they **really** like leviathans"
-		self.faction_list.append(Faction(name, tier, hold, rep, description, contacts, notes, secret_notes))
-		self.faction_list[0].add_clock("tier up", 3, 8)
-		self.faction_list[0].add_clock("butt stuff", 0, 12)
 		self.init_info()
 		
+	def list_factions(self):
+		output = "**Factions:**\n"
+		for faction in self.faction_list:
+			output += faction.name + "\n"
+		return output
 
 	def add_faction_from_json(self, dict_obj: dict):
 		name = dict_obj["name"]
@@ -129,18 +46,24 @@ class Factions(commands.Cog):
 				with open(f"factions/{file}", 'r') as infile:
 					json_string = json.load(infile)
 					json_obj = json.loads(json_string)
-					print(str(self.faction_list))
 					self.add_faction_from_json(json_obj)
-					print(str(self.faction_list))
 	
 
 	def save_info(self):
 		for faction in self.faction_list:
-			file_name = faction.name.replace(" ", "")
+			file_name = faction.name.lower().replace(" ", "")
 			with open(f'factions/{file_name}.json', 'w') as outfile:
 				json_string = faction.toJson()
 				outfile.write(json.dumps(json_string))
 
+	def save_faction(self, faction_name):
+		index = self.find(faction_name)
+		if index == -1:
+			return -1
+		file_name = self.faction_list[index].name.lower().replace(" ", "")
+		with open(f"factions/{file_name}.json", 'w') as outfile:
+			json_string = self.faction_list[index].toJson()
+			outfile.write(json.dumps(json_string))
 
 	def find(self, name):
 		for i in range(len(self.faction_list)):
@@ -187,13 +110,23 @@ class Factions(commands.Cog):
 					await ctx.send(embed = self.player_gm_display(ctx, gm, chosen)) 
 				
 
-	@commands.command(aliases = ['f'])
+	@commands.command(name="faction", aliases = ['f'])
 	async def display_faction(self, ctx, *, name):
 		await self.search_func(ctx, name, False)
 
-	@commands.command(aliases = ['fg'])
+	@commands.group(name="gm", aliases=["dm"])
+	async def gm(self, ctx):
+		if ctx.invoked_subcommand is None:
+			await ctx.author.send("Hi!")
+
+	@gm.command(name="faction", aliases = ['f'])
 	async def display_faction_gm(self, ctx, *, name):
-		await self.search_func(ctx, name, True)	
+		await self.search_func(ctx, name, True)
+
+	@gm.command(name="add", aliases=["a"])
+	async def add_faction(self, ctx):
+		await ctx.author.send("Still implementing!")
+
 
 async def setup(bot):
 	await bot.add_cog(Factions(bot))

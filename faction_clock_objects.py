@@ -1,0 +1,83 @@
+import random
+import json
+import discord
+
+class Clock:
+    def __init__(self, description, progress, total):
+        self.description = description
+        self.progress = progress
+        self.total = total
+
+    def advance(self, tier):
+        dice = [random.choice(range(1,7)) for _ in range(tier)]
+        dice.sort()
+        result = 0
+        if dice[-1] == 6:
+            result = 3
+            if tier >= 2:
+                if dice[-2] == 6:
+                    result += 2
+        elif dice[-1] == 4 or dice[-1] == 5:
+            result = 2
+        else:
+            result = 1
+        self.progress += result
+        return self.progress >= self.total
+    
+    def advance_manually(self, num):
+        self.progress += num
+        return self.progress >= self.total
+    
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys = True, indent = 4)
+    
+class Faction:
+    def __init__(self, name, tier, hold, rep, description, contacts, notes, secret_notes):
+        self.name = name
+        self.tier = tier
+        self.hold = hold
+        self.rep = rep
+        self.description = description
+        self.contacts = contacts
+        self.notes = notes
+        self.secret_notes = secret_notes
+        self.clocks = []
+
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+    
+    def add_clock(self, description, progress, total):
+        clock_to_add = Clock(description, progress, total)
+        self.clocks.append(clock_to_add)
+
+    def player_display(self, ctx):
+        embed = discord.Embed(title = self.name, description = self.description, color = ctx.author.color)
+        embed.add_field(name = f'Tier {self.tier}', value = '')
+        embed.add_field(name = f'Hold {self.hold}', value = '')
+        names = ""
+        for contact in self.contacts:
+            names += contact + "\n"
+        embed.add_field(name = 'Contacts', value = names)
+        embed.add_field(name = 'Status', value = f'{self.rep}')
+        if self.notes != "":
+            embed.add_field(name = "Notes", value = self.notes)
+        return embed
+    
+    def gm_display(self, ctx):
+        embed = discord.Embed(title = self.name, description = self.description, color = ctx.author.color)
+        embed.add_field(name = f'Tier {self.tier}', value = '')
+        embed.add_field(name = f'Hold {self.hold}', value = '')
+        names = ""
+        for contact in self.contacts:
+            names += contact + "\n"
+        embed.add_field(name = 'Contacts', value = names)
+        embed.add_field(name = 'Status', value = f'{self.rep}')
+        if self.notes != "":
+            embed.add_field(name = "Notes", value = self.notes)
+        if self.secret_notes != "":
+            embed.add_field(name = "Secret Notes", value = self.secret_notes)
+        if len(self.clocks) > 0:
+            for clock in self.clocks:
+                embed.add_field(name = f'Clock {clock.progress}/{clock.total}', value = clock.description)
+        return embed
+        
