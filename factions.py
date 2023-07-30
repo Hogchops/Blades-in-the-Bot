@@ -241,7 +241,6 @@ class Factions(commands.Cog):
 	
 
 	async def get_all_parts(self, inter: discord.interactions.Interaction, current):
-		await inter.response.defer()
 		choices = []
 		final_choices = []
 		faction_name = inter.namespace.part_type
@@ -258,14 +257,25 @@ class Factions(commands.Cog):
 
 	@gm.command(name = "tick", aliases = ['t'])
 	@app_commands.autocomplete(part_type = autocomplete_gm, part_name = get_all_parts)
-	@app_commands.guilds(discord.Object(id=807855936106135562))
 	@app_commands.describe(
-		part_type = "Enter the faction name that has the clock you want to tick.",
-		part_name = "Enter the description of the clock that you wish to tick.",
-		amount = "Enter the amount you wish to tick. Enter 0 to roll the tier and have it manually be ticked."
+		faction = "Enter the faction name that has the clock you want to tick.",
+		clock = "Enter the description of the clock that you wish to tick.",
+		amount = "Enter the amount you wish to tick. Enter 0 to roll the tier and have it manually be ticked. If you enter a positive or negative amount, the clock will tick by that amount."
 	)
-	async def tick_faction_clock(self, ctx, part_type: str, part_name: str, amount: int):
-		pass
+	async def tick_faction_clock(self, ctx, faction: str, clock: str, amount: int):
+		await ctx.defer(ephemeral = True)
+		index = self.find(faction)
+		faction_obj = self.faction_list[index]
+		clock_index = faction_obj.find_clock(clock)
+		if amount == 0:
+			faction_obj.clocks[clock_index].advance(faction_obj.tier)
+		else:
+			faction_obj.clocks[clock_index].progress += amount
+			if faction_obj.clocks[clock_index].progress > faction_obj.clocks[clock_index].total:
+				faction_obj.clocks[clock_index].progress = faction_obj.clocks[clock_index].total	
+			elif faction_obj.clocks[clock_index].progress < 0:
+				faction_obj.clocks[clock_index].progress = 0
+				await ctx.send(embed = faction_obj.gm_display(), ephemeral = True)
 	
 async def setup(bot):
 	await bot.add_cog(Factions(bot))

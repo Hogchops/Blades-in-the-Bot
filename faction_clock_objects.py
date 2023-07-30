@@ -23,11 +23,8 @@ class Clock():
         else:
             result = 1
         self.progress += result
-        return self.progress >= self.total
-    
-    def advance_manually(self, num):
-        self.progress += num
-        return self.progress >= self.total
+        if self.progress > self.total:
+            self.progress = self.total
     
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys = True, indent = 4)
@@ -98,6 +95,13 @@ class Faction:
     
     def remove_clock(self, index):
         del self.clocks[index]
+    
+    def find_clock(self, description):
+        description = description.lower()
+        for i in range(len(self.clocks)):
+            if self.clocks[i].description.lower() == description:
+                return i
+        return -1
 
     def player_display(self):
         embed = discord.Embed(title = self.name, description = self.description, color = discord.Color.magenta())
