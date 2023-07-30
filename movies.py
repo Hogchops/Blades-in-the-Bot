@@ -9,7 +9,10 @@ class Movie(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.movie_list = []
-        self.load_list()
+        self.finished_list = []
+        self.movie_list.append("Star Wars (OT)")
+        self.finished_list.append("The Other Guys")
+        self.save_list()
 
     def find(self, movie_name):
         for i in range(len(self.movie_list)):
@@ -21,12 +24,19 @@ class Movie(commands.Cog):
         file_path = "movies.json"
         with open(file_path, 'w') as f:
             json.dump(self.movie_list, f)
+        finished_path = "finished_movies.json"
+        with open(finished_path, 'w') as f:
+            json.dump(self.finished_list, f)
             
     def load_list(self):
         file_path = "movies.json"
         with open(file_path, 'r') as f:
             json_data = json.load(f)
             self.movie_list = json_data
+        finished_path = "finished_movies.json"
+        with open(finished_path, 'r') as f:
+            json_data = json.load(f)
+            self.finished_list= json_data
 
     @commands.hybrid_group(name = "movie", aliases = ['m'])
     @app_commands.guilds(discord.Object(id = 807855936106135562))
@@ -38,7 +48,7 @@ class Movie(commands.Cog):
     @app_commands.guilds(discord.Object(id = 807855936106135562))
     @commands.has_permissions(administrator = True)
     async def add_movie(self, ctx, movie_name: str):
-        await ctx.defer(ephemeral = True)
+        await ctx.defer()
         index = self.find(movie_name)
         if index == -1:
             self.movie_list.append(movie_name.title())
@@ -51,9 +61,12 @@ class Movie(commands.Cog):
     @commands.has_permissions(administrator = True)
     async def list_movies(self, ctx):
         await ctx.defer()
-        output = ""
+        output = "**Movies to Watch:**\n"
         for i in range(len(self.movie_list)):
             output += f"{i+1}. {self.movie_list[i].title()}.\n"
+        output += "\n**Finished Movies:**\n"
+        for i in range(len(self.finished_list)):
+            output += f"{i+1}. {self.finished_list[i].title()}.\n"
         await ctx.send(output)
 
     async def autocomplete(self, ctx, current: str) -> List[app_commands.Choice[str]]:
@@ -72,7 +85,9 @@ class Movie(commands.Cog):
         movie_name = movie_name.lower()
         index = self.find(movie_name)
         del self.movie_list[index]
-        await ctx.send(f"{movie_name.title()} has been removed from the list.")
+        self.finished_list.append(movie_name)
+        self.save_list()
+        await ctx.send(f"{movie_name.title()} has been removed from the list and added to the finished list.")
     
     @movie.command(name = "random")
     @app_commands.guilds(discord.Object(id = 807855936106135562))
