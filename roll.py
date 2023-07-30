@@ -65,7 +65,7 @@ class Roll(commands.Cog):
 		embed = generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides)
 		await ctx.send(embed = embed)
 
-
+	'''
 	@commands.hybrid_command(name = "info", guild=discord.Object(id=807855936106135562))
 	async def slash_help(inter: discord.Interaction):
 		await inter.response.defer(ephemeral = True)
@@ -76,6 +76,7 @@ class Roll(commands.Cog):
 		embed.add_field(name = "Factions", value = "Blades in the Bot allows the GM to create factions to store faction information through the bot. Players can view public information about these factions by using `/faction [name]` or `=faction [name]`.", inline = False)
 		embed.add_field(name = "Clocks", value = "Blades in the Bot can create clocks for use during play. Use `/clock` and fill in the required arguments to create a clock. Use `/tick [num]` to tick an existing clock. Use `/delete` to delete a clock.", inline = False)
 		await inter.response.send_message(embed = embed, ephemeral = True)
+	'''
 
 async def setup(bot):
 	await bot.add_cog(Roll(bot)) 
