@@ -34,7 +34,7 @@ async def load_cogs():
 	await bot.load_extension("roll")
 	await bot.load_extension("factions")
 	await bot.load_extension("game_clocks")
-	# await bot.load_extension("greetings")
+	await bot.load_extension("movies")	
 
 @bot.hybrid_command(name = "test", with_app_command = True, description = "Testing")
 @app_commands.guilds(discord.Object(id = 807855936106135562))

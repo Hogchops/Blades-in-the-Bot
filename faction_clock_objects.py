@@ -1,7 +1,6 @@
 import random
 import json
 import discord
-import typing
 
 class Clock():
 
