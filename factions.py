@@ -242,10 +242,10 @@ class Factions(commands.Cog):
 
 	async def get_all_parts(self, inter: discord.interactions.Interaction, current):
 		await inter.response.defer()
-		print("active")
 		choices = []
 		final_choices = []
 		partType = inter.namespace.part_type
+		print(partType)
 		for part in partType["options"]:
 			choices.append(part)
 		print(choices)
