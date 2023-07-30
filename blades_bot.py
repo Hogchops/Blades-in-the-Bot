@@ -36,7 +36,7 @@ async def load_cogs():
 	await bot.load_extension("game_clocks")
 	await bot.load_extension("movies")	
 
-@tree.command(name = "help", with_app_command = True, description = "Display a help page.")
+@tree.command(name = "help", description = "Display a help page.")
 @app_commands.guilds(discord.Object(id = 807855936106135562))
 async def test(interaction: discord.Interaction):
 	await interaction.response.defer(ephemeral = True)
