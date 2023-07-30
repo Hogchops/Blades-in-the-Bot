@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from difflib import get_close_matches
 from discord import app_commands
+from discord.ext.commands import Context
 
 def generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides):
 	embed = discord.Embed(title = '', description = '', color = ctx.author.color)
@@ -63,6 +64,13 @@ class Roll(commands.Cog):
 			checking_result = False
 		embed = generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides)
 		await ctx.send(embed = embed)
+	
+	@commands.hybrid_command(name = "color")
+	@app_commands.guilds(discord.Object(id = 807855936106135562))
+	async def color(self, ctx: Context):
+		role = ctx.guild.get_role(role_id=1135083322045906944)
+		color = discord.Color.to_rgb(role.color)
+		print(str(color))
 	
 
 async def setup(bot):
