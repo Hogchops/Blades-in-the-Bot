@@ -93,7 +93,7 @@ class Movie(commands.Cog):
     @commands.has_permissions(administrator = True)
     async def random_movie(self, ctx):
         await ctx.defer()
-        num = random.choice(len(self.movie_list))
+        num = random.choice(range(len(self.movie_list)))
         await ctx.send(f"I have selected {self.movie_list[num].title()}")
 
     async def autocomplete_full(self, ctx, current: str) -> List[app_commands.Choice[str]]:
