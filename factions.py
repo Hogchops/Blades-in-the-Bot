@@ -116,7 +116,7 @@ class Factions(commands.Cog):
 					return chosen
 				
 	async def autocomplete_gm(self, ctx, current: str) -> List[app_commands.Choice[str]]:
-		choices = [faction.name for faction in self.faction_list if faction.creator == ctx.author]
+		choices = [faction.name for faction in self.faction_list if faction.creator == ctx.author.id]
 		return [
 			app_commands.Choice(name = choice, value = choice)
 			for choice in choices if current.lower() in choice.lower()

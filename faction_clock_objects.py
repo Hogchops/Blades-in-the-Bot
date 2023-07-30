@@ -4,7 +4,7 @@ import discord
 
 class Clock():
 
-    def __init__(self, description, progress, total, creator: discord.User = None):
+    def __init__(self, description, progress, total, creator: int = None):
         self.description = description
         self.progress = progress
         self.total = total
@@ -36,7 +36,7 @@ class Clock():
 
 class Faction:
 
-    def __init__(self, name, tier, hold, rep, description, contacts, notes, secret_notes, creator: discord.User = None):
+    def __init__(self, name, tier, hold, rep, description, contacts, notes, secret_notes, creator: int = None):
         self.name = name
         self.tier = tier
         self.hold = hold
