@@ -119,11 +119,18 @@ class GameClocks(commands.Cog):
         else:
             await ctx.send("No clock found matching the description entered.")
     
-    @commands.hybrid_command(name = "wipe", description = "Delete all clocks in all channels.")
+    @commands.hybrid_command(name = "wipe", description = "Delete all clocks in the channel.")
     async def wipe_clocks(self, ctx):
+        for i in range(len(self.clocks)):
+            if self.clocks[i].channel == ctx.channel:
+                del self.clocks[i]
+        await ctx.send("All clocks in this channel have been deleted.", ephemeral = True)
+    
+    @commands.hybrid_command(name = "sudowipe", description = "Delete all clocks in all channels.")
+    async def sudo_wipe_clocks(self, ctx):
         if ctx.author.id == 280116409852362754:
             self.clocks = []
-            await ctx.send("The clocks have been wiped.", ephemeral = True)
+            await ctx.send("All clocks have been deleted.", ephemeral = True)
         else:
             await ctx.send("You lack sufficient permissions to use this command.", ephemeral = True)
     
