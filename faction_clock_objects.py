@@ -8,7 +8,6 @@ class Clock():
         self.description = description
         self.progress = progress
         self.total = total
-        self.channel = channel
 
     def advance(self, tier):
         dice = [random.choice(range(1,7)) for _ in range(tier)]
@@ -32,6 +31,12 @@ class Clock():
     
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys = True, indent = 4)
+
+class GameClock(Clock):
+
+    def __init__(self, description, progress, total, channel: discord.TextChannel = None):
+        super().__init__(description, progress, total)
+        self.channel = channel
     
 
 class Faction:
