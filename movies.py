@@ -51,6 +51,7 @@ class Movie(commands.Cog):
         if index == -1:
             self.movie_list.append(movie_name.title())
             await ctx.send(f"{movie_name.title()} has been added to the list.")
+            self.save_list()
         else:
             await ctx.send(f"{movie_name.title()} is already added to the list.")
 
@@ -94,6 +95,38 @@ class Movie(commands.Cog):
         await ctx.defer()
         num = random.choice(len(self.movie_list))
         await ctx.send(f"I have selected {self.movie_list[num].title()}")
+
+    async def autocomplete_full(self, ctx, current: str) -> List[app_commands.Choice[str]]:
+        choices = []
+        for i in range(len(self.movie_list)):
+            choices.append(self.movie_list[i])
+        for i in range(len(self.finished_list)):
+            choices.append(self.finished_list[i])
+            
+
+    
+    @movie.command(name = "delete", description = "Delete a movie from either list.")
+    @app_commands.guilds(discord.Object(id = 807855936106135562))
+    @commands.has_permissions(administrator = True)
+    @app_commands.autocomplete(movie_name = autocomplete_full)
+    async def delete(self, ctx, movie_name: str):
+        await ctx.defer()
+        movie_name = movie_name.lower()
+        index = self.find(movie_name)
+        if index != -1:
+            del self.movie_list[index]
+            await ctx.send(f"{movie_name.title()} has been removed from the list.")
+        else:
+            index = -1
+            for i in range(len(self.finished_list)):
+                if self.finished_list[i].lower() == movie_name:
+                    index = i
+            if index == -1:
+                await ctx.send(f"I could not find the movie {movie_name.title()}")
+            else:
+                del self.finished_list[i]
+                await ctx.send(f"{movie_name.title()} has been removed from the finished list.")
+        self.save_list()
 
 async def setup(bot):
     await bot.add_cog(Movie(bot))
