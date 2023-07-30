@@ -46,7 +46,7 @@ class GetResponse(discord.ui.Modal):
             for clock_obj in self.clock_fields:
                 user_input = clock_obj.value.splitlines()
                 print(user_input)
-                if user_input != "":
+                if user_input != []:
                     description = user_input[0]
                     progress = int(user_input[1])
                     total = int(user_input[2])
