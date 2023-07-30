@@ -1,6 +1,7 @@
 import random
 import json
 import discord
+from roll import generate_embed
 
 class Clock():
 
@@ -9,7 +10,7 @@ class Clock():
         self.progress = progress
         self.total = total
 
-    def advance(self, tier):
+    def advance(self, tier, ctx):
         dice = [random.choice(range(1,7)) for _ in range(tier)]
         dice.sort()
         result = 0
@@ -24,10 +25,13 @@ class Clock():
             result = 1
         self.progress += result
         if self.progress > self.total:
-            increase = self.total - self.progress + result
             self.progress = self.total
-            return increase
-        return result
+        zero = False
+        if tier == 0:
+            zero = True
+            tier = 2
+        embed = generate_embed(ctx, dice, tier, zero, True, 6)
+        return embed
     
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys = True, indent = 4)

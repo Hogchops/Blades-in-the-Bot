@@ -265,18 +265,26 @@ class Factions(commands.Cog):
 	async def tick_faction_clock(self, ctx, faction: str, clock: str, amount: int):
 		await ctx.defer(ephemeral = True)
 		index = self.find(faction)
-		faction_obj = self.faction_list[index]
-		clock_index = faction_obj.find_clock(clock)
-		if amount == 0:
-			num = faction_obj.clocks[clock_index].advance(int(faction_obj.tier))
-			await ctx.send(f"Your clock advanced by {num}.", embed = faction_obj.gm_display(), ephemeral = True)
-		else:
-			faction_obj.clocks[clock_index].progress += amount
-			if faction_obj.clocks[clock_index].progress > faction_obj.clocks[clock_index].total:
-				faction_obj.clocks[clock_index].progress = faction_obj.clocks[clock_index].total	
-			elif faction_obj.clocks[clock_index].progress < 0:
-				faction_obj.clocks[clock_index].progress = 0
+		if index == -1:
+			await ctx.send(f"There is no faction matching {faction.title()} that you have access to.")
+		elif self.faction_list[index].creator == ctx.author.id:
+			faction_obj = self.faction_list[index]
+			clock_index = faction_obj.find_clock(clock)
+			if amount == 0:
+				embed = faction_obj.clocks[clock_index].advance(int(faction_obj.tier), ctx)
+				await ctx.send(embed = embed, ephemeral = True)
 				await ctx.send(embed = faction_obj.gm_display(), ephemeral = True)
+			else:
+				faction_obj.clocks[clock_index].progress += amount
+				if faction_obj.clocks[clock_index].progress > faction_obj.clocks[clock_index].total:
+					faction_obj.clocks[clock_index].progress = faction_obj.clocks[clock_index].total	
+				elif faction_obj.clocks[clock_index].progress < 0:
+					faction_obj.clocks[clock_index].progress = 0
+					await ctx.send(embed = faction_obj.gm_display(), ephemeral = True)
+			await self.save_faction(faction_obj.name)
+		else:
+			await ctx.send(f"There is no faction matching {faction.title()} that you have access to.")
+		
 	
 async def setup(bot):
 	await bot.add_cog(Factions(bot))
