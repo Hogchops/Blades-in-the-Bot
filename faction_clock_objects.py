@@ -101,19 +101,6 @@ class Faction:
 
     def player_display(self, ctx):
         embed = discord.Embed(title = self.name, description = self.description, color = discord.Color.magenta())
-        embed.add_field(name = f'Tier {self.tier}', value = '', inline = True)
-        embed.add_field(name = f'Hold {self.hold}', value = '', inline = True)
-        embed.add_field(name = f'Status {self.rep}', value = '', inline = True)
-        names = ""
-        for contact in self.contacts:
-            names += contact + "\n"
-        embed.add_field(name = 'Contacts', value = names, inline = False)
-        if self.notes != "":
-            embed.add_field(name = "Notes", value = self.notes, inline = False)
-        return embed
-    
-    def gm_display(self, ctx):
-        embed = discord.Embed(title = self.name, description = self.description, color = discord.Color.magenta())
         embed.add_field(name = f'Tier: {self.tier}', value = '', inline = True)
         embed.add_field(name = f'Hold: {self.hold}', value = '', inline = True)
         embed.add_field(name = f'Status: {self.rep}', value = '', inline = True)
@@ -123,6 +110,10 @@ class Faction:
         embed.add_field(name = 'Contacts', value = names, inline = False)
         if self.notes != "":
             embed.add_field(name = "Notes", value = self.notes, inline = False)
+        return embed
+    
+    def gm_display(self, ctx):
+        embed = self.player_display(self, ctx)
         if self.secret_notes != "":
             embed.add_field(name = "Secret Notes", value = self.secret_notes, inline = False)
         if len(self.clocks) > 0:
