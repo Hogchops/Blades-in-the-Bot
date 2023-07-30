@@ -101,33 +101,33 @@ class Faction:
 
     def player_display(self, ctx):
         embed = discord.Embed(title = self.name, description = self.description, color = discord.Color.magenta())
-        embed.add_field(name = f'Tier {self.tier}', value = '')
-        embed.add_field(name = f'Hold {self.hold}', value = '')
+        embed.add_field(name = f'Tier {self.tier}', value = '', inline = True)
+        embed.add_field(name = f'Hold {self.hold}', value = '', inline = True)
+        embed.add_field(name = 'Status', value = f'{self.rep}', inline = True)
         names = ""
         for contact in self.contacts:
             names += contact + "\n"
-        embed.add_field(name = 'Contacts', value = names)
-        embed.add_field(name = 'Status', value = f'{self.rep}')
+        embed.add_field(name = 'Contacts', value = names, inline = False)
         if self.notes != "":
-            embed.add_field(name = "Notes", value = self.notes)
+            embed.add_field(name = "Notes", value = self.notes, inline = False)
         return embed
     
     def gm_display(self, ctx):
         embed = discord.Embed(title = self.name, description = self.description, color = discord.Color.magenta())
-        embed.add_field(name = f'Tier {self.tier}', value = '')
-        embed.add_field(name = f'Hold {self.hold}', value = '')
+        embed.add_field(name = f'Tier {self.tier}', value = '', inline = True)
+        embed.add_field(name = f'Hold {self.hold}', value = '', inline = True)
+        embed.add_field(name = f'Status {self.rep}', value = '', inline = True)
         names = ""
         for contact in self.contacts:
             names += contact + "\n"
-        embed.add_field(name = 'Contacts', value = names)
-        embed.add_field(name = 'Status', value = f'{self.rep}')
+        embed.add_field(name = 'Contacts', value = names, inline = False)
         if self.notes != "":
-            embed.add_field(name = "Notes", value = self.notes)
+            embed.add_field(name = "Notes", value = self.notes, inline = False)
         if self.secret_notes != "":
-            embed.add_field(name = "Secret Notes", value = self.secret_notes)
+            embed.add_field(name = "Secret Notes", value = self.secret_notes, inline = False)
         if len(self.clocks) > 0:
             output = ""
             for clock in self.clocks:
                 output += f"{clock.description} **{clock.progress}/{clock.total}**\n"
-            embed.add_field(name = "Clocks", value = output)
+            embed.add_field(name = "Clocks", value = output, inline = False)
         return embed
