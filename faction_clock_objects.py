@@ -93,7 +93,7 @@ class Faction:
         del self.clocks[index]
 
     def player_display(self, ctx):
-        embed = discord.Embed(title = self.name, description = self.description, color = ctx.author.color)
+        embed = discord.Embed(title = self.name, description = self.description, color = discord.Color.magenta())
         embed.add_field(name = f'Tier {self.tier}', value = '')
         embed.add_field(name = f'Hold {self.hold}', value = '')
         names = ""
@@ -106,7 +106,7 @@ class Faction:
         return embed
     
     def gm_display(self, ctx):
-        embed = discord.Embed(title = self.name, description = self.description, color = ctx.author.color)
+        embed = discord.Embed(title = self.name, description = self.description, color = discord.Color.magenta())
         embed.add_field(name = f'Tier {self.tier}', value = '')
         embed.add_field(name = f'Hold {self.hold}', value = '')
         names = ""

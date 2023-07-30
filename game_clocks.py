@@ -17,11 +17,11 @@ class Clocks(commands.Cog):
         if clock.total == 4 or clock.total == 6 or clock.total == 8 or clock.total == 12:
             image_path = f"ClockImages\\Blades_clock_{clock.total}_{clock.progress}.png"
             file = discord.File(image_path, filename = f"Blades_clock_{clock.total}_{clock.progress}.png")
-            embed = discord.Embed(title = "", description = clock.description)
+            embed = discord.Embed(title = "", description = clock.description, color = discord.Color.magenta())
             embed.set_image(url=f"attachment://Blades_clock_{clock.total}_{clock.progress}.png")
             await ctx.send(file = file, embed = embed)
         else:
-            embed = discord.Embed(title = "", description = clock.description)
+            embed = discord.Embed(title = "", description = clock.description, color = discord.Color.magenta())
             embed.add_field(name=f"{clock.progress}/{clock.total}", value="")
             await ctx.send(embed = embed)
     

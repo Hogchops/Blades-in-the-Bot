@@ -42,9 +42,12 @@ class Movie(commands.Cog):
     async def movie(self, ctx):
         pass
 
-    @movie.command(name = "add", aliases = ['a'])
+    @movie.command(name = "add", description = "Add a movie to the list.", aliases = ['a'])
     @app_commands.guilds(discord.Object(id = 807855936106135562))
     @commands.has_permissions(administrator = True)
+    @app_commands.describe(
+        movie_name = "Enter a movie name."
+    )
     async def add_movie(self, ctx, movie_name: str):
         await ctx.defer()
         index = self.find(movie_name)
@@ -55,7 +58,7 @@ class Movie(commands.Cog):
         else:
             await ctx.send(f"{movie_name.title()} is already added to the list.")
 
-    @movie.command(name = "list", aliases = ['l'])
+    @movie.command(name = "list", description = "Print the list of movies.", aliases = ['l'])
     @app_commands.guilds(discord.Object(id = 807855936106135562))
     @commands.has_permissions(administrator = True)
     async def list_movies(self, ctx):
@@ -75,10 +78,13 @@ class Movie(commands.Cog):
             for choice in choices if current.lower() in choice.lower()
         ]
 
-    @movie.command(name = "remove", aliases = ['r'])
+    @movie.command(name = "remove", description = "Remove a movie from the list and move it to the finished list.", aliases = ['r'])
     @app_commands.guilds(discord.Object(id = 807855936106135562))
     @commands.has_permissions(administrator = True)
     @app_commands.autocomplete(movie_name = autocomplete)
+    @app_commands.describe(
+        movie_name = "Enter a movie name."
+    )
     async def remove_movie(self, ctx, movie_name: str):
         await ctx.defer()
         movie_name = movie_name.lower()
@@ -88,7 +94,7 @@ class Movie(commands.Cog):
         self.save_list()
         await ctx.send(f"{movie_name.title()} has been removed from the list and added to the finished list.")
     
-    @movie.command(name = "random")
+    @movie.command(name = "random", description = "Select a random movie from the list.")
     @app_commands.guilds(discord.Object(id = 807855936106135562))
     @commands.has_permissions(administrator = True)
     async def random_movie(self, ctx):
@@ -109,6 +115,9 @@ class Movie(commands.Cog):
     @app_commands.guilds(discord.Object(id = 807855936106135562))
     @commands.has_permissions(administrator = True)
     @app_commands.autocomplete(movie_name = autocomplete_full)
+    @app_commands.describe(
+        movie_name = "Enter a movie name."
+    )
     async def delete(self, ctx, movie_name: str):
         await ctx.defer()
         movie_name = movie_name.lower()

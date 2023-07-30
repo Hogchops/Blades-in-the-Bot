@@ -23,13 +23,14 @@ class GetResponse(discord.ui.Modal):
             self.answer = discord.ui.TextInput(label = "Enter contacts for this faction, 1 per line.", style = discord.TextStyle.paragraph, placeholder="Contact1\nContact2")
             self.add_item(self.answer)
         elif self.field_name == "clocks":
-            self.add_clock = discord.ui.TextInput(label = "Enter a new clock if you wish to add.", required=False, style=discord.TextStyle.paragraph)
-            self.add_item(self.add_clock)
+            if len(self.faction.clocks) <= 4:
+                self.add_clock = discord.ui.TextInput(label = "Enter a new clock if you wish to add.", required=False, style=discord.TextStyle.paragraph)
+                self.add_item(self.add_clock)
             self.clock_fields = []
             num = 1
             for clock in self.faction.clocks:
                 place_holder = f"{clock.description}\n{clock.progress}\n{clock.total}"
-                clock_field = discord.ui.TextInput(label = f"Modify Clock {num}.", placeholder=place_holder, style=discord.TextStyle.paragraph)
+                clock_field = discord.ui.TextInput(label = f"Modify Clock {num}.", placeholder=place_holder, style=discord.TextStyle.paragraph, required=False)
                 self.clock_fields.append(clock_field)
                 self.add_item(clock_field)
                 num += 1
@@ -41,7 +42,6 @@ class GetResponse(discord.ui.Modal):
             contacts_list = self.answer.value.splitlines()
             self.faction.set("contacts", contacts_list)
         elif self.field_name == "clocks":
-            index = 0
             clocks_list = []
             for clock_obj in self.clock_fields:
                 user_input = clock_obj.value.splitlines()
