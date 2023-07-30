@@ -147,7 +147,7 @@ class Factions(commands.Cog):
 		factions = factions.lower()
 		index = await self.search_func(ctx, factions)
 		if index != -1:
-			await ctx.send(embed = self.faction_list[index].player_display(ctx))
+			await ctx.send(embed = self.faction_list[index].player_display())
 
 	@commands.hybrid_command(name="list", aliases = ['l'], description = "List the factions.")
 	async def list_factions(self, ctx: commands.Context):
@@ -176,7 +176,7 @@ class Factions(commands.Cog):
 			if self.faction_list[index].creator != ctx.author.id:
 				await ctx.send("You are not the GM for this faction.")
 			else:
-				await ctx.send(embed = self.faction_list[index].gm_display(ctx), ephemeral = True)
+				await ctx.send(embed = self.faction_list[index].gm_display(), ephemeral = True)
 
 	@gm.command(name="add", aliases=["a"])
 	@app_commands.describe(
@@ -205,7 +205,7 @@ class Factions(commands.Cog):
 			if self.faction_list[index].creator != ctx.author.id:
 				await ctx.send("You are not the GM of this faction.")
 			else:
-				msg = await ctx.send(embed = self.faction_list[index].gm_display(ctx))
+				msg = await ctx.send(embed = self.faction_list[index].gm_display())
 				await ctx.send(f"When you are done modifying, please save the faction via `/gm s {factions.title()}`", ephemeral = True)
 				await ctx.send("Select the corresponding button to edit the faction.", view = ModifyFactionButtons(self.bot, ctx, self.faction_list[index], msg), ephemeral = True)
 	
