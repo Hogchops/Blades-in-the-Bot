@@ -244,7 +244,7 @@ class Factions(commands.Cog):
 		await inter.response.defer()
 		choices = []
 		final_choices = []
-		faction_name = inter.namespace.faction
+		faction_name = inter.namespace.part_type
 
 		index = self.find(faction_name)
 		faction_obj = self.faction_list[index]
@@ -260,7 +260,7 @@ class Factions(commands.Cog):
 	@app_commands.autocomplete(faction = autocomplete_gm, clock = get_all_parts)
 	@app_commands.guilds(discord.Object(id=807855936106135562))
 	@app_commands.rename(part_type = "faction", part_name = "clock")
-	async def tick_faction_clock(self, ctx, faction: str, clock: str):
+	async def tick_faction_clock(self, ctx, part_type: str, part_name: str):
 		pass
 	
 async def setup(bot):
