@@ -115,8 +115,9 @@ class Factions(commands.Cog):
 					chosen = self.find(close_matches[int(msg.content)-1])
 					return chosen
 				
-	async def autocomplete_gm(self, current: str) -> List[app_commands.Choice[str]]:
+	async def autocomplete_gm(self, ctx, current: str) -> List[app_commands.Choice[str]]:
 		choices = []
+		print(type(ctx))
 		for faction in self.faction_list:
 			if faction.creator == 1:
 				choices.append(faction.name)
