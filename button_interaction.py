@@ -3,6 +3,7 @@ import discord.ext
 import asyncio
 from faction_clock_objects import Faction
 from faction_clock_objects import Clock
+from discord.ui import Select
 
 class GetResponse(discord.ui.Modal):
 
@@ -64,6 +65,24 @@ class GetResponse(discord.ui.Modal):
                 self.faction.add_clock(user_input[0], int(user_input[1]), int(user_input[2]))
         await self.msg.edit(embed = self.faction.gm_display(ctx=self.ctx))
         await interaction.response.send_message(f'Thanks for your response. {self.faction.name} has been updated. Please see the edited embed.', ephemeral=True)
+
+class SelectMenus(discord.ui.Select):
+    def __init__(self, field: str, msg: discord.Message):
+        super().__init__()
+        self.field = field
+        self.msg = msg
+        options = []
+
+        field = field.lower()
+        if field == "tier":
+            options = [0, 1, 2, 3, 4, 5, 6]
+        elif field == "hold":
+            options = ['S', 'W']
+        elif field == "status":
+            options == ["-3", "-2", "-1", "0", "+1", "+2", "+3"]
+        
+        self.options = options
+
     
 class ModifyFactionButtons(discord.ui.View):
 
@@ -99,7 +118,9 @@ class ModifyFactionButtons(discord.ui.View):
 
     @discord.ui.button(label = "Tier", style = discord.ButtonStyle.primary)
     async def third_button_callback(self, interaction, button):
-        response = GetResponse(title = "Tier", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
+        response = Select(options = [0, 1, 2, 3, 4, 5, 6])
+        self.faction_obj.tier = response
+        #response = GetResponse(title = "Tier", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
         await interaction.response.send_modal(response)
 
     @discord.ui.button(label = "Hold", style = discord.ButtonStyle.primary)
