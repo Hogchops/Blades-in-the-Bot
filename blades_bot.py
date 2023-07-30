@@ -26,9 +26,9 @@ async def setup_hook():
 	await bot.tree.sync(guild = discord.Object(id = 807855936106135562))
 	print(f'Synced slash commands for the guild.')
 
-#@bot.event
-#async def on_command_error(ctx, error):
-#	await ctx.send(f"An error has occurred: {str(error)}")
+@bot.event
+async def on_command_error(ctx, error):
+	await ctx.send(f"An error has occurred: {str(error)}")
 
 async def load_cogs():
 	await bot.load_extension("roll")
