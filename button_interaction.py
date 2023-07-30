@@ -3,7 +3,6 @@ import discord.ext
 import asyncio
 from faction_clock_objects import Faction
 from faction_clock_objects import Clock
-from discord.ui import Select
 
 class GetResponse(discord.ui.Modal):
 
@@ -18,6 +17,9 @@ class GetResponse(discord.ui.Modal):
         self.ctx = ctx
 
         if self.field_name != "clocks" and self.field_name != "contacts":
+            if self.field_name == "tier":
+                self.tier_response = discord.ui.Select([0, 1, 2, 3, 4, 5, 6])
+                self.add_item(self.tier_response)
             self.answer = discord.ui.TextInput(label = f'Enter a new {self.field_name.title()}.', style = discord.TextStyle.paragraph, placeholder = self.faction.get(self.field_name))
             self.add_item(self.answer)
         elif self.field_name == "contacts":
@@ -118,9 +120,7 @@ class ModifyFactionButtons(discord.ui.View):
 
     @discord.ui.button(label = "Tier", style = discord.ButtonStyle.primary)
     async def third_button_callback(self, interaction, button):
-        response = Select(options = [0, 1, 2, 3, 4, 5, 6])
-        self.faction_obj.tier = response
-        #response = GetResponse(title = "Tier", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
+        response = GetResponse(title = "Tier", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
         await interaction.response.send_modal(response)
 
     @discord.ui.button(label = "Hold", style = discord.ButtonStyle.primary)
