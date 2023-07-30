@@ -4,11 +4,11 @@ import discord
 
 class Clock():
 
-    def __init__(self, description, progress, total, creator: int = None):
+    def __init__(self, description, progress, total, channel: discord.TextChannel = None):
         self.description = description
         self.progress = progress
         self.total = total
-        self.creator = creator
+        self.channel = channel
 
     def advance(self, tier):
         dice = [random.choice(range(1,7)) for _ in range(tier)]

@@ -67,14 +67,17 @@ class Clocks(commands.Cog):
         total = "Enter the total number of ticks this clock should have. Entering 4, 6, 8, or 12 will yield pictures with the clock.",
         progress = "Enter the number of ticks that the clock should start with.",
     )
-    async def clock(self, ctx, description: str, total: int, progress: int = 0, hidden = False):
+    async def clock(self, ctx: commands.Context, description: str, total: int, progress: int = 0, hidden = False):
         await ctx.defer()
-        clock = Clock(description, progress, total)
+        clock = Clock(description, progress, total, ctx.channel)
         await self.generate_embed(ctx, clock)
         self.clocks.append(clock)
     
     async def autocomplete(self, ctx, current: str) -> List[app_commands.Choice[str]]:
-        choices = [clock.description for clock in self.clocks]
+        choices = []
+        for clock in self.clocks:
+            if ctx.channel == clock.channel:
+                choices.append(clock.description)
         return [
             app_commands.Choice(name = choice, value = choice)
             for choice in choices if current.lower() in choice.lower()
@@ -123,7 +126,20 @@ class Clocks(commands.Cog):
             del self.clocks[index]
             await ctx.send("The clock has been deleted.")
     
-    @commands.hybrid_command(name = "wipe", description = "Delete all clocks.")
+    @commands.hybrid_command(name = "reset", description = "Reset a clock.")
+    @app_commands.autocomplete(description = autocomplete)
+    @app_commands.describe(
+        description = "Enter the description of the clock you wish to reset."
+    )
+    async def reset_clock(self, ctx, description: str):
+        await ctx.defer()
+        description = description.lower()
+        index = self.find_clock(description)
+        if index != -1:
+            self.clocks[index].progress = 0
+            await self.generate_embed(ctx, self.clocks[index])
+    
+    @commands.hybrid_command(name = "wipe", description = "Delete all clocks in all channels.")
     async def wipe_clocks(self, ctx):
         await ctx.defer()
         self.clocks = []
