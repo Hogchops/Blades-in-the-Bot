@@ -19,7 +19,7 @@ class Clocks(commands.Cog):
             file = discord.File(image_path, filename = f"Blades_clock_{clock.total}_{clock.progress}.png")
             embed = discord.Embed(title = clock.description, description = "", color = discord.Color.magenta())
             embed.set_image(url=f"attachment://Blades_clock_{clock.total}_{clock.progress}.png")
-            embed.set_footer(text = f"{clock.progress}/{clock.total}", icon_url=f"attachment://Blades_clock_{clock.total}_{clock.progress}.png")
+            embed.set_footer(text = f"{clock.progress}/{clock.total}")
             await ctx.send(file = file, embed = embed)
         else:
             embed = discord.Embed(title = clock.description, description = "", color = discord.Color.magenta())
