@@ -83,7 +83,7 @@ class MyHelp(commands.HelpCommand):
         await channel.send(embed=embed)
 bot.help_command = MyHelp()
 
-@tree.command(name = "help", guilds = 807855936106135562)
+@tree.command(name = "help", guild=discord.Object(id=807855936106135562))
 async def slash_help(self, inter: discord.Interaction):
 	await inter.response.defer(ephemeral = True)
 	embed = discord.Embed(title = "Help", color = discord.Color.blurple(),description = "Play Blades in the Dark or other Forged in the Dark systems through Discord! Featuring die rolling, clock tracking, faction management, and more, you'll have all the tools you will need to run your games.")
