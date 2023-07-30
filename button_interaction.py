@@ -17,9 +17,6 @@ class GetResponse(discord.ui.Modal):
         self.ctx = ctx
 
         if self.field_name != "clocks" and self.field_name != "contacts":
-            if self.field_name == "tier":
-                self.tier_response = discord.ui.Select(options=[0, 1, 2, 3, 4, 5, 6])
-                self.add_item(self.tier_response)
             self.answer = discord.ui.TextInput(label = f'Enter a new {self.field_name.title()}.', style = discord.TextStyle.paragraph, placeholder = self.faction.get(self.field_name))
             self.add_item(self.answer)
         elif self.field_name == "contacts":
