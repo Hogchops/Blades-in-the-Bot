@@ -5,41 +5,40 @@ from discord.ext import commands
 from difflib import get_close_matches
 from discord import app_commands
 
-def generate_embed(ctx, dice, num, zero):
-    
+def generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides):
 	embed = discord.Embed(title = '', description = '', color = ctx.author.color)
 	embed.set_author(name = ctx.author.display_name, icon_url = str(ctx.author.display_avatar.url))	
-	
 	rolls = ""
 	for i in range(num - 1):
 		rolls += dice[i] + ", "
 	rolls += dice[-1]
-	
 	num_dice = num
 	if zero:
 		num_dice = 0    
-	embed.add_field(name = f'{num_dice}d6', value = rolls, inline = True)
-
-	footer_string = ''
-		
-	dice.sort()
-
-	if not zero:
-		result = int(dice[-1])
+	embed.add_field(name = f'{num_dice}d{num_dice_sides}', value = rolls, inline = True)
+	if checking_result:	
+		dice.sort()
+		if not zero:
+			result = int(dice[-1])
+		else:
+			result = int(dice[0])
+		value = f'**{result}** '
+		if result == 6:
+			if num >= 2:
+				if int(dice[-2]) == 6:
+					value += ":white_check_mark:"
+			value += ":white_check_mark:"
+		elif result == 4 or result == 5:
+			value += ":warning:"
+		else:
+			value += ":x:"
+		embed.add_field(name = "Result", value = value, inline = False)
 	else:
-		result = int(dice[0])
-
-	value = f'**{result}** '
-	if result == 6:
-		if num >= 2:
-			if int(dice[-2]) == 6:
-				value += ":white_check_mark:"
-		value += ":white_check_mark:"
-	elif result == 4 or result == 5:
-		value += ":warning:"
-	else:
-		value += ":x:"
-	embed.add_field(name = "Result", value = value, inline = False)
+		total = 0
+		for d in dice:
+			total += int(d)
+		value = f"**{total}**"
+		embed.add_field(name = "Total", value = value, inline = False)
 	return embed
 
 class Roll(commands.Cog):
@@ -53,8 +52,12 @@ class Roll(commands.Cog):
 		if num == 0:
 			num = 2
 			zero = True
-		dice = [str(random.choice(range(1,num_dice_sides))) for _ in range(num)]
-		embed = generate_embed(ctx, dice, num, zero)
+		dice = [str(random.choice(range(1,num_dice_sides + 1))) for _ in range(num)]
+		if num_dice_sides == 6:
+			checking_result = True
+		else:
+			checking_result = False
+		embed = generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides)
 		await ctx.send(embed = embed)
 	
 
