@@ -281,7 +281,7 @@ class Factions(commands.Cog):
 				elif faction_obj.clocks[clock_index].progress < 0:
 					faction_obj.clocks[clock_index].progress = 0
 					await ctx.send(embed = faction_obj.gm_display(), ephemeral = True)
-			await self.save_faction(faction_obj.name)
+			await self.save_faction(ctx, faction_obj.name)
 		else:
 			await ctx.send(f"There is no faction matching {faction.title()} that you have access to.")
 		
