@@ -121,10 +121,9 @@ class GameClocks(commands.Cog):
     
     @commands.hybrid_command(name = "wipe", description = "Delete all clocks in all channels.")
     async def wipe_clocks(self, ctx):
-        await ctx.defer(ephemeral = True)
         if ctx.author.id == 280116409852362754:
             self.clocks = []
-            await ctx.send("The clocks have been wiped.")
+            await ctx.send("The clocks have been wiped.", ephemeral = True)
         else:
             await ctx.send("You lack sufficient permissions to use this command.", ephemeral = True)
     
