@@ -65,24 +65,6 @@ class GetResponse(discord.ui.Modal):
         await self.msg.edit(embed = self.faction.gm_display(ctx=self.ctx))
         await interaction.response.send_message(f'Thanks for your response. {self.faction.name} has been updated. Please see the edited embed.', ephemeral=True)
 
-class SelectMenus(discord.ui.Select):
-    def __init__(self, field: str, msg: discord.Message):
-        super().__init__()
-        self.field = field
-        self.msg = msg
-        options = []
-
-        field = field.lower()
-        if field == "tier":
-            options = [0, 1, 2, 3, 4, 5, 6]
-        elif field == "hold":
-            options = ['S', 'W']
-        elif field == "status":
-            options == ["-3", "-2", "-1", "0", "+1", "+2", "+3"]
-        
-        self.options = options
-
-    
 class ModifyFactionButtons(discord.ui.View):
 
     def __init__(self, bot, ctx, faction_obj : Faction, original_embed : discord.Message):
