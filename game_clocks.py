@@ -15,7 +15,7 @@ class Clocks(commands.Cog):
 
     async def generate_embed(self, ctx, clock: Clock):
         if clock.total == 4 or clock.total == 6 or clock.total == 8 or clock.total == 12:
-            image_path = f"ClockImages/Blades_clock_{clock.total}_{clock.progress}.png"
+            image_path = f"ClockImages\\Blades_clock_{clock.total}_{clock.progress}.png"
             file = discord.File(image_path, filename = f"Blades_clock_{clock.total}_{clock.progress}.png")
             embed = discord.Embed(title = "", description = clock.description)
             embed.set_image(url=f"attachment://Blades_clock_{clock.total}_{clock.progress}.png")

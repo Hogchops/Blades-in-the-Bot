@@ -44,9 +44,9 @@ class Factions(commands.Cog):
 		self.faction_list.append(faction_obj)
 
 	def init_info(self):
-		for file in os.listdir("factions/"):
+		for file in os.listdir("factions\\"):
 			if file.endswith(".json"):
-				with open(f"factions/{file}", 'r') as infile:
+				with open(f"factions\\{file}", 'r') as infile:
 					json_string = json.load(infile)
 					json_obj = json.loads(json_string)
 					self.add_faction_from_json(json_obj)
@@ -54,7 +54,7 @@ class Factions(commands.Cog):
 	def save_info(self):
 		for faction in self.faction_list:
 			file_name = faction.name.lower().replace(" ", "")
-			with open(f'factions/{file_name}.json', 'w') as outfile:
+			with open(f'factions\\{file_name}.json', 'w') as outfile:
 				json_string = faction.toJson()
 				outfile.write(json.dumps(json_string))
 
@@ -63,7 +63,7 @@ class Factions(commands.Cog):
 		if index == -1:
 			return -1
 		file_name = self.faction_list[index].name.lower().replace(" ", "")
-		with open(f"factions/{file_name}.json", 'w') as outfile:
+		with open(f"factions\\{file_name}.json", 'w') as outfile:
 			json_string = self.faction_list[index].toJson()
 			outfile.write(json.dumps(json_string))
 		return 1
