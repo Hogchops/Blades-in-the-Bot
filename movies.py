@@ -10,9 +10,7 @@ class Movie(commands.Cog):
         self.bot = bot
         self.movie_list = []
         self.finished_list = []
-        self.movie_list.append("Star Wars (OT)")
-        self.finished_list.append("The Other Guys")
-        self.save_list()
+        self.load_list()
 
     def find(self, movie_name):
         for i in range(len(self.movie_list)):
@@ -21,19 +19,19 @@ class Movie(commands.Cog):
         return -1
 
     def save_list(self):
-        file_path = "movies.json"
+        file_path = "MovieLists\\movies.json"
         with open(file_path, 'w') as f:
             json.dump(self.movie_list, f)
-        finished_path = "finished_movies.json"
+        finished_path = "MovieLists\\finished_movies.json"
         with open(finished_path, 'w') as f:
             json.dump(self.finished_list, f)
             
     def load_list(self):
-        file_path = "movies.json"
+        file_path = "MovieLists\\movies.json"
         with open(file_path, 'r') as f:
             json_data = json.load(f)
             self.movie_list = json_data
-        finished_path = "finished_movies.json"
+        finished_path = "MovieLists\\finished_movies.json"
         with open(finished_path, 'r') as f:
             json_data = json.load(f)
             self.finished_list= json_data
