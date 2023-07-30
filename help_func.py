@@ -16,8 +16,11 @@ class MyHelp(commands.HelpCommand):
                 cog_name = getattr(cog, "qualified_name", "No Category")
                 embed.add_field(name = cog_name, value = "\n".join(command_signatures), inline=False)
 
-            channel = self.get_destination()
-            await channel.send(embed = embed)
+        channel = self.get_destination()
+        await channel.send(embed = embed)
+
+    async def send_cog_help(self, cog):
+        embed = discord.Embed(title = cog.qualified_name or "No Category", description = cog.description, color = discord.Color.magenta())
 
         if filtered_commands := await self.filter_commands(cog.get_commands()):
             for command in filtered_commands:
