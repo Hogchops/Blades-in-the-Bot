@@ -206,7 +206,7 @@ class Factions(commands.Cog):
 				await ctx.send("You are not the GM of this faction.")
 			else:
 				msg = await ctx.send(embed = self.faction_list[index].gm_display())
-				await ctx.send(f"When you are done modifying, please save the faction via `/gm s {factions.title()}`", ephemeral = True)
+				await ctx.send(f"When you are done modifying, please save the faction via `/gm save {factions.title()}`", ephemeral = True)
 				await ctx.send("Select the corresponding button to edit the faction.", view = ModifyFactionButtons(self.bot, ctx, self.faction_list[index], msg), ephemeral = True)
 	
 	@gm.command(name="save", aliases = ['s'])

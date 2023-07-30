@@ -62,7 +62,7 @@ class GetResponse(discord.ui.Modal):
             if self.add_clock.value != "":
                 user_input = self.add_clock.value.splitlines()
                 self.faction.add_clock(user_input[0], int(user_input[1]), int(user_input[2]))
-        await self.msg.edit(embed = self.faction.gm_display(ctx=self.ctx))
+        await self.msg.edit(embed = self.faction.gm_display())
         await interaction.response.send_message(f'Thanks for your response. {self.faction.name} has been updated. Please see the edited embed.', ephemeral=True)
 
 class ModifyFactionButtons(discord.ui.View):
