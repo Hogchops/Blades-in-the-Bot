@@ -43,15 +43,15 @@ class GetResponse(discord.ui.Modal):
             self.faction.set("contacts", contacts_list)
         elif self.field_name == "clocks":
             clocks_list = []
-            if len(self.clock_fields) > 0:
-                for clock_obj in self.clock_fields:
-                    user_input = clock_obj.value.splitlines()
-                    if user_input != "":
-                        description = user_input[0]
-                        progress = int(user_input[1])
-                        total = int(user_input[2])
-                        clock_obj = Clock(description, progress, total)
-                        clocks_list.append(clock_obj)
+            for clock_obj in self.clock_fields:
+                user_input = clock_obj.value.splitlines()
+                print(user_input)
+                if user_input != "":
+                    description = user_input[0]
+                    progress = int(user_input[1])
+                    total = int(user_input[2])
+                    clock_obj = Clock(description, progress, total)
+                    clocks_list.append(clock_obj)
             self.faction.set("clocks", clocks_list)
             if self.add_clock.value != "":
                 user_input = self.add_clock.value.splitlines()
