@@ -52,6 +52,13 @@ class GetResponse(discord.ui.Modal):
                     total = int(user_input[2])
                     clock_obj = Clock(description, progress, total)
                     clocks_list.append(clock_obj)
+                else:
+                    user_input = clock_obj.placeholder.splitlines()
+                    description = user_input[0]
+                    progress = int(user_input[1])
+                    total = int(user_input[2])
+                    clock_obj = Clock(description, progress, total)
+                    clocks_list.append(clock_obj)
             self.faction.set("clocks", clocks_list)
             if self.add_clock.value != "":
                 user_input = self.add_clock.value.splitlines()
