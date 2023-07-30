@@ -65,6 +65,8 @@ class GameClocks(commands.Cog):
         index = self.find_clock(description, ctx)
         if index != -1:
             await self.generate_embed(ctx, self.clocks[index])
+        else:
+            await ctx.send("No clock found matching the description entered.")
 
     @commands.hybrid_command(name = "tick", description = "Tick a clock by an amount.")
     @app_commands.autocomplete(description = autocomplete)
@@ -83,6 +85,9 @@ class GameClocks(commands.Cog):
             if self.clocks[index].progress < 0:
                 self.clocks[index].progress = 0
             await self.generate_embed(ctx, self.clocks[index])
+        else:
+            await ctx.send("No clock found matching the description entered.")
+
 
     @commands.hybrid_command(name = "delete", description = "Delete a clock by the description.")
     @app_commands.autocomplete(description = autocomplete)
@@ -96,6 +101,8 @@ class GameClocks(commands.Cog):
         if index != -1:
             del self.clocks[index]
             await ctx.send("The clock has been deleted.")
+        else:
+            await ctx.send("No clock found matching the description entered.")
     
     @commands.hybrid_command(name = "reset", description = "Reset a clock.")
     @app_commands.autocomplete(description = autocomplete)
@@ -109,12 +116,13 @@ class GameClocks(commands.Cog):
         if index != -1:
             self.clocks[index].progress = 0
             await self.generate_embed(ctx, self.clocks[index])
+        else:
+            await ctx.send("No clock found matching the description entered.")
     
     @commands.hybrid_command(name = "wipe", description = "Delete all clocks in all channels.")
     async def wipe_clocks(self, ctx):
         await ctx.defer(ephemeral = True)
         if ctx.author.id == 280116409852362754:
-            await ctx.defer()
             self.clocks = []
             await ctx.send("The clocks have been wiped.")
         else:
