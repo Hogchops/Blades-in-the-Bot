@@ -47,7 +47,11 @@ class Roll(commands.Cog):
 
 	@commands.hybrid_command(name = "r", aliases = ["roll"], description = "Roll some dice.") 
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
-	async def roll(self, ctx, num: int = 1, num_dice_sides: int = 6):
+	@app_commands.describe(
+		num = "Number of dice you are rolling",
+		num_dice_sides = "Number of sides for each die."
+	)
+	async def roll(self, ctx, num: int, num_dice_sides: int = 6):
 		zero = False
 		if num == 0:
 			num = 2
