@@ -123,7 +123,7 @@ class Factions(commands.Cog):
 		]
 		
 	@commands.hybrid_command(name="faction", aliases = ['f'], description = "Lookup the inputted faction.")
-	@app_commands.guilds(discord.Object(id = 807855936106135562))
+	#@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.autocomplete(factions = autocomplete)
 	@app_commands.describe(
 		factions = "Enter a faction name."
@@ -136,7 +136,7 @@ class Factions(commands.Cog):
 			await ctx.send(embed = self.faction_list[index].player_display(ctx))
 
 	@commands.hybrid_command(name="list", aliases = ['l'], description = "List the factions.")
-	@app_commands.guilds(discord.Object(id = 807855936106135562))
+	#@app_commands.guilds(discord.Object(id = 807855936106135562))
 	async def list_factions(self, ctx):
 		await ctx.defer(ephemeral = True)
 		output = "**Factions:**\n"

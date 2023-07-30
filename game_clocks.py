@@ -62,7 +62,7 @@ class Clocks(commands.Cog):
                 return self.find_clock[chosen]
 
     @commands.hybrid_command(name = "clock", aliases = ['c'], description = "Create a clock with a description, a total, and some parts already ticked.")
-    @app_commands.guilds(discord.Object(id = 807855936106135562))
+    #@app_commands.guilds(discord.Object(id = 807855936106135562))
     @app_commands.describe(
         description = "Enter a description for the clock.",
         total = "Enter the total number of ticks this clock should have. Entering 4, 6, 8, or 12 will yield pictures with the clock.",
@@ -82,7 +82,7 @@ class Clocks(commands.Cog):
         ]
     
     @commands.hybrid_command(name = "clocks", description = "Show a clock in the channel based on description.")
-    @app_commands.guilds(discord.Object(id = 807855936106135562))
+    #@app_commands.guilds(discord.Object(id = 807855936106135562))
     @app_commands.autocomplete(description = autocomplete)
     @app_commands.describe(
         description = "Enter the description of the clock you wish to show."
@@ -95,7 +95,7 @@ class Clocks(commands.Cog):
             await self.generate_embed(ctx, self.clocks[index])
 
     @commands.hybrid_command(name = "tick", description = "Tick a clock by an amount.")
-    @app_commands.guilds(discord.Object(id = 807855936106135562))
+    #@app_commands.guilds(discord.Object(id = 807855936106135562))
     @app_commands.autocomplete(description = autocomplete)
     @app_commands.describe(
         description = "Enter the description for the clock you want to tick.",
@@ -114,7 +114,7 @@ class Clocks(commands.Cog):
             await self.generate_embed(ctx, self.clocks[index])
 
     @commands.hybrid_command(name = "delete", description = "Delete a clock by the description.")
-    @app_commands.guilds(discord.Object(id = 807855936106135562))
+    #@app_commands.guilds(discord.Object(id = 807855936106135562))
     @app_commands.autocomplete(description = autocomplete)
     @app_commands.describe(
         description = "Enter the description of the clock you wish to delete."

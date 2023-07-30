@@ -47,7 +47,7 @@ class Roll(commands.Cog):
 		self.bot = bot
 
 	@commands.hybrid_command(name = "r", aliases = ["roll"], description = "Roll some dice.") 
-	@app_commands.guilds(discord.Object(id = 807855936106135562))
+	#@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.describe(
 		num = "Enter the number of dice you want to roll. Entering 0 will roll 2 dice.",
 		num_dice_sides = "Enter the number of sides for each die. If you leave this blank or enter 6, we will provide results along with your role."
