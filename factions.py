@@ -246,7 +246,8 @@ class Factions(commands.Cog):
 		final_choices = []
 		faction = inter.namespace.part_type
 
-		faction_obj = self.find(faction)
+		index = self.find(faction)
+		faction_obj = self.faction_list[index]
 		for clock_obj in faction_obj.clocks:
 			choices.append(clock_obj.description)
 		print(choices)
