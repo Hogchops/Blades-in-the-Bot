@@ -181,7 +181,7 @@ class Factions(commands.Cog):
 	)
 	async def add_faction(self, ctx, name: str):
 		await ctx.defer(ephemeral = True)
-		default_faction = Faction(f"{name.title()}", 0, "hold", "0", "description", [], "notes", "secret notes", ctx.author)
+		default_faction = Faction(f"{name.title()}", 0, "hold", "0", "description", [], "notes", "secret notes", ctx.author.id)
 		self.faction_list.append(default_faction)
 		await self.save_faction(ctx, name)
 		await ctx.send(f"I have created a default faction with the name {name.title()}.\nPlease modify its values using `/gm m {name.title()}`", ephemeral = True)
