@@ -259,7 +259,12 @@ class Factions(commands.Cog):
 	@gm.command(name = "tick", aliases = ['t'])
 	@app_commands.autocomplete(faction = autocomplete_gm, clock = get_all_parts)
 	@app_commands.guilds(discord.Object(id=807855936106135562))
-	async def tick_faction_clock(self, ctx, part_type: str, part_name: str):
+	@app_commands.describe(
+		part_type = "Enter the faction name that has the clock you want to tick.",
+		part_name = "Enter the description of the clock that you wish to tick.",
+		amount = "Enter the amount you wish to tick. Enter 0 to roll the tier and have it manually be ticked."
+	)
+	async def tick_faction_clock(self, ctx, part_type: str, part_name: str, amount: int):
 		pass
 	
 async def setup(bot):
