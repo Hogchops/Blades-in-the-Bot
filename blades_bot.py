@@ -71,6 +71,16 @@ class MyHelp(commands.HelpCommand):
                 embed.add_field(name=self.get_command_signature(command), value=command.help or "No Help Message Found... ")
 
         await self.get_destination().send(embed=embed)
+	
+    async def send_command_help(self, command):
+        embed = discord.Embed(title=self.get_command_signature(command), color=discord.Color.blurple())
+        if command.help:
+            embed.description = command.help
+        if alias := command.aliases:
+            embed.add_field(name="Aliases", value=", ".join(alias), inline=False)
+
+        channel = self.get_destination()
+        await channel.send(embed=embed)
 
 bot.help_command = MyHelp()
 
