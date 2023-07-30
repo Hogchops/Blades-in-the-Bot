@@ -11,8 +11,8 @@ def generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides):
 	embed.set_author(name = ctx.author.display_name, icon_url = str(ctx.author.display_avatar.url))	
 	rolls = ""
 	for i in range(num - 1):
-		rolls += dice[i] + ", "
-	rolls += dice[-1]
+		rolls += str(dice[i]) + ", "
+	rolls += str(dice[-1])
 	num_dice = num
 	if zero:
 		num_dice = 0    
@@ -20,13 +20,13 @@ def generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides):
 	if checking_result:	
 		dice.sort()
 		if not zero:
-			result = int(dice[-1])
+			result = dice[-1]
 		else:
-			result = int(dice[0])
+			result = dice[0]
 		value = f'**{result}** '
 		if result == 6:
 			if num >= 2:
-				if int(dice[-2]) == 6:
+				if dice[-2] == 6:
 					value += ":white_check_mark:"
 			value += ":white_check_mark:"
 		elif result == 4 or result == 5:
@@ -37,7 +37,7 @@ def generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides):
 	else:
 		total = 0
 		for d in dice:
-			total += int(d)
+			total += d
 		value = f"**{total}**"
 		embed.add_field(name = "Total", value = value, inline = False)
 	return embed
@@ -56,7 +56,7 @@ class Roll(commands.Cog):
 		if num == 0:
 			num = 2
 			zero = True
-		dice = [str(random.choice(range(1,num_dice_sides + 1))) for _ in range(num)]
+		dice = [random.choice(range(1,num_dice_sides + 1)) for _ in range(num)]
 		if num_dice_sides == 6:
 			checking_result = True
 		else:
@@ -74,7 +74,7 @@ class Roll(commands.Cog):
 		if num == 0:
 			num = 2
 			zero = True
-		dice = [str(random.choice(range(1,num_dice_sides + 1))) for _ in range(num)]
+		dice = [random.choice(range(1,num_dice_sides + 1)) for _ in range(num)]
 		if num_dice_sides == 6:
 			checking_result = True
 		else:
