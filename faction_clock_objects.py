@@ -5,12 +5,12 @@ from roll import generate_embed
 
 class Clock():
 
-    def __init__(self, description, progress, total, channel: discord.TextChannel = None):
+    def __init__(self, description: str, progress: int, total: int):
         self.description = description
         self.progress = progress
         self.total = total
 
-    def advance(self, tier, ctx):
+    def advance(self, tier: int, ctx):
         dice = [random.choice(range(1,7)) for _ in range(tier)]
         dice.sort()
         result = 0
