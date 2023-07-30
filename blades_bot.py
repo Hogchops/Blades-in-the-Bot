@@ -83,7 +83,7 @@ class MyHelp(commands.HelpCommand):
         await channel.send(embed=embed)
 bot.help_command = MyHelp()
 
-@commands.slash_command(name = "help")
+@tree.command(name = "help")
 @app_commands.guilds(id = 807855936106135562)
 async def slash_help(self, inter: discord.Interaction):
 	await inter.response.defer(ephemeral = True)
