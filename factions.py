@@ -115,10 +115,10 @@ class Factions(commands.Cog):
 					chosen = self.find(close_matches[int(msg.content)-1])
 					return chosen
 				
-	async def autocomplete_gm(self, ctx, current: str) -> List[app_commands.Choice[str]]:
+	async def autocomplete_gm(self, interaction: discord.Interaction, current: str) -> List[app_commands.Choice[str]]:
 		choices = []
 		for faction in self.faction_list:
-			if faction.creator == ctx.author.id:
+			if faction.creator == interaction.user.id
 				choices.append(faction.name)
 		return [
 			app_commands.Choice(name = choice, value = choice)
