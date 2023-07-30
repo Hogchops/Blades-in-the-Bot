@@ -256,9 +256,8 @@ class Factions(commands.Cog):
 	@gm.command(name = "tick", aliases = ['t'])
 	@app_commands.autocomplete(faction = autocomplete_gm, clock = get_all_parts)
 	@app_commands.guilds(discord.Object(id=807855936106135562))
-	async def tick_faction_clock(self, ctx, faction: str, clock: str = None):
-		await ctx.defer(ephemeral = True)
-
+	async def tick_faction_clock(self, ctx, faction: str, clock: str):
+		pass
 	
 async def setup(bot):
 	await bot.add_cog(Factions(bot))
