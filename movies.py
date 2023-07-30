@@ -22,12 +22,11 @@ class Movie(commands.Cog):
         with open(file_path, 'w') as f:
             json.dump(self.movie_list, f)
             
-
     def load_list(self):
         file_path = "movies.json"
         with open(file_path, 'r') as f:
             json_data = json.load(f)
-            print(type(json_data))
+            self.movie_list = json_data
 
     @commands.hybrid_group(name = "movie", aliases = ['m'])
     @app_commands.guilds(discord.Object(id = 807855936106135562))
