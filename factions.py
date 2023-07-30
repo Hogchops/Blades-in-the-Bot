@@ -115,18 +115,18 @@ class Factions(commands.Cog):
 					chosen = self.find(close_matches[int(msg.content)-1])
 					return chosen
 				
-	async def autocomplete_gm(self, ctx, current: str) -> List[app_commands.Choice[str]]:
+	async def autocomplete_gm(self, inter: discord.interactions.Interaction, current: str) -> List[app_commands.Choice[str]]:
 		choices = []
-		print(type(ctx))
 		for faction in self.faction_list:
-			if faction.creator == 1:
+			print(str(faction.creator == inter.user.id))
+			if faction.creator == inter.user.id:
 				choices.append(faction.name)
 		return [
 			app_commands.Choice(name = choice, value = choice)
 			for choice in choices if current.lower() in choice.lower()
 		]
 	
-	async def autocomplete(self, ctx, current: str) -> List[app_commands.Choice[str]]:
+	async def autocomplete(self, inter: discord.interactions.Interaction, current: str) -> List[app_commands.Choice[str]]:
 		choices = [faction.name for faction in self.faction_list]
 		return [
 			app_commands.Choice(name = choice, value = choice)
