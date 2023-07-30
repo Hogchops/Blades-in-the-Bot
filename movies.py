@@ -26,7 +26,7 @@ class Movie(commands.Cog):
     def load_list(self):
         file_path = "movies.json"
         with open(file_path, 'r') as f:
-            json_data = json.load(file_path)
+            json_data = json.load(f)
             print(type(json_data))
 
     @commands.hybrid_group(name = "movie", aliases = ['m'])
