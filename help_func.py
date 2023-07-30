@@ -7,7 +7,7 @@ class MyHelp(commands.HelpCommand):
     
     async def send_bot_help(self, mapping):
         embed = discord.Embed(title = "Help", color = discord.Color.magenta())
-        embed.set_author(name = self.context.author.display_name, url = self.context.author.display_avatar.url)
+        embed.set_author(name = self.context.author.display_name, icon_url = self.context.author.display_avatar.url)
         for cog, commands in mapping.items():
             filtered = await self.filter_commands(commands, sort=True)
             command_signatures = [self.get_command_signature(c) for c in filtered]
