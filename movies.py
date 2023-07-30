@@ -10,6 +10,7 @@ class Movie(commands.Cog):
         self.bot = bot
         self.movie_list = []
         self.movie_list.append("Star Wars (OT)")
+        self.save_list()
 
     def find(self, movie_name):
         for i in range(len(self.movie_list)):
