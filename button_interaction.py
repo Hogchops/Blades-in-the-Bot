@@ -4,7 +4,6 @@ import asyncio
 from faction_clock_objects import Faction
 from faction_clock_objects import Clock
 
-
 class GetResponse(discord.ui.Modal):
 
     def __init__(self, title: str, faction: Faction, msg: discord.Message, ctx):
@@ -56,10 +55,9 @@ class GetResponse(discord.ui.Modal):
             if self.add_clock.value != "":
                 user_input = self.add_clock.value.splitlines()
                 self.faction.add_clock(user_input[0], int(user_input[1]), int(user_input[2]))
-        await self.msg.edit(embed = self.faction.gm_display(ctx=self.ctx))
+        await self.msg.edit(embed = self.fsaction.gm_display(ctx=self.ctx))
         await interaction.response.send_message(f'Thanks for your response. {self.faction.name} has been updated. Please see the edited embed.', ephemeral=True)
     
-
 class ModifyFactionButtons(discord.ui.View):
 
     def __init__(self, bot, ctx, faction_obj : Faction, original_embed : discord.Message):
@@ -126,52 +124,3 @@ class ModifyFactionButtons(discord.ui.View):
     async def ninth_button_callback(self, interaction, button):
         response = GetResponse(title = "Clocks", faction = self.faction_obj, msg = self.original_embed, ctx=self.ctx)
         await interaction.response.send_modal(response)
-
-class MyViewCreatingClocks(discord.ui.View):
-
-    def __init__(self, bot, ctx, clock: Clock):
-        super().__init__()
-        self.bot = bot
-        self.ctx = ctx
-        self.clock = clock
-
-    def check(self, m):
-        return m.author == self.ctx.message.author
-    
-    async def try_function(self):
-        try:
-            msg = await self.bot.wait_for('message', timeout = 30, check = self.check)
-        except asyncio.TimeoutError:
-            await self.ctx.send("Timeout error, please try again.")
-            return -1
-        else:
-            return msg
-
-    @discord.ui.button(label = "Description", style = discord.ButtonStyle.primary)
-    async def description_button(self, interaction, button):
-        await interaction.response.send_message("Type a description for this clock.")
-        msg = await self.try_function()
-        if msg != -1:
-            self.clock.description = msg.content
-        
-    @discord.ui.button(label = "Progress", style = discord.ButtonStyle.primary)
-    async def progress_button(self, interaction, button):
-        await interaction.response.send_message("Type a progress number for this clock.")
-        msg = await self.try_function()
-        if msg != -1:
-            self.clock.progress = int(msg.content)
-
-    @discord.ui.button(label = "Total", style = discord.ButtonStyle.primary)
-    async def total_button(self, interaction, button):
-        await interaction.response.send_message("Type a total number for this clock.")
-        msg = await self.try_function()
-        if msg != -1:
-            self.clock.total = int(msg.content)
-
-class MyViewClocks(discord.ui.View):
-
-    def __init__(self, bot, ctx, clocks: Clock):
-        super().__init__()
-        self.bot = bot
-        self.ctx = ctx
-        self.clocks = clocks

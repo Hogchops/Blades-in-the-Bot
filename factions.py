@@ -127,6 +127,7 @@ class Factions(commands.Cog):
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.autocomplete(factions = autocomplete)
 	async def display_faction(self, ctx, factions: str):
+		await ctx.defer()
 		factions = factions.lower()
 		index = await self.search_func(ctx, factions)
 		if index != -1:
@@ -162,6 +163,7 @@ class Factions(commands.Cog):
 
 	@gm.command(name="add", aliases=["a"])
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
+	@commands.has_permissions(administrator = True)
 	async def add_faction(self, ctx, name: str):
 		default_faction = Faction(f"{name.title()}", 0, "hold", "0", "description", [], "notes", "secret notes")
 		self.faction_list.append(default_faction)
@@ -171,6 +173,7 @@ class Factions(commands.Cog):
 	@gm.command(name="modify", aliases=["m"])
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.autocomplete(factions = autocomplete)
+	@commands.has_permissions(administrator = True)
 	async def modify_faction(self, ctx, factions: str):
 		await ctx.defer(ephemeral = True)
 		index = await self.search_func(ctx, factions)
@@ -182,6 +185,7 @@ class Factions(commands.Cog):
 	@gm.command(name="save", aliases = ['s'])
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.autocomplete(factions = autocomplete)
+	@commands.has_permissions(administrator = True)
 	async def save_faction_input(self, ctx, factions: str):
 		result = await self.save_faction(ctx, factions)
 		if result == 1:
@@ -190,6 +194,7 @@ class Factions(commands.Cog):
 	@gm.command(name = "delete", aliases = ['d'])
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.autocomplete(factions = autocomplete)
+	@commands.has_permissions(administrator = True)
 	async def delete_faction(self, ctx, factions: str):
 		index = await self.search_func(ctx, factions)
 		if index != -1:

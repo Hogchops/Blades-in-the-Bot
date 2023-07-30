@@ -48,14 +48,15 @@ class Roll(commands.Cog):
 
 	@commands.hybrid_command(name = "r", aliases = ["roll"], description = "Roll some dice.", usage = "`/r [num]` or `=r [num]")
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
-	async def roll(self, ctx, num: int = 1):
+	async def roll(self, ctx, num: int = 1, num_dice_sides: int = 6):
 		zero = False
 		if num == 0:
 			num = 2
 			zero = True
-		dice = [str(random.choice(range(1,7))) for _ in range(num)]
+		dice = [str(random.choice(range(1,num_dice_sides))) for _ in range(num)]
 		embed = generate_embed(ctx, dice, num, zero)
 		await ctx.send(embed = embed)
+	
 
 async def setup(bot):
 	await bot.add_cog(Roll(bot)) 

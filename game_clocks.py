@@ -4,15 +4,26 @@ from faction_clock_objects import Clock
 from difflib import get_close_matches
 from asyncio import TimeoutError
 from asyncio import wait_for
+from discord import app_commands
+from typing import List
 
 class Clocks(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
         self.clocks = []
-    
-    def generate_embed(self, index):
-        pass
+
+    async def generate_embed(self, ctx, clock: Clock):
+        if clock.total == 4 or clock.total == 6 or clock.total == 8 or clock.total == 12:
+            image_path = f"ClockImages/Blades_clock_{clock.total}_{clock.progress}.png"
+            file = discord.File(image_path, filename = f"Blades_clock_{clock.total}_{clock.progress}.png")
+            embed = discord.Embed(title = "", description = clock.description)
+            embed.set_image(url=f"attachment://Blades_clock_{clock.total}_{clock.progress}.png")
+            await ctx.send(file = file, embed = embed)
+        else:
+            embed = discord.Embed(title = "", description = clock.description)
+            embed.add_field(name=f"{clock.progress}/{clock.total}", value="")
+            await ctx.send(embed = embed)
     
     def find_clock(self, description):
         for i in range(len(self.clocks)):
@@ -49,18 +60,52 @@ class Clocks(commands.Cog):
                 chosen = self.find_clock(close_matches[int(msg.content) - 1])
                 return self.find_clock[chosen]
 
-    @commands.group(name = "clock", aliases = ['c'])
-    async def clock_group(self, ctx):
-        if ctx.invoked_subcommand is None:
-            output = "Here are your active clocks:\n"
-            for clock in self.clocks:
-                output += f"{clock.description} **{clock.progress}/{clock.total}**\n"
-            await ctx.send(output)
+    @commands.hybrid_command(name = "clock", aliases = ['c'], description = "Create a clock with a description, a total, and some parts already ticked.")
+    @app_commands.guilds(discord.Object(id = 807855936106135562))
+    async def clock(self, ctx, description: str, total: int, progress: int = 0):
+        await ctx.defer()
+        clock = Clock(description, progress, total)
+        await self.generate_embed(ctx, clock)
+        self.clocks.append(clock)
     
-    #@clock_group.command(name = "add", aliases = ['a'])
-    #async def add_clock(interaction: discord.Interaction, ):
-    #    pass
+    async def autocomplete(self, ctx, current: str) -> List[app_commands.Choice[str]]:
+        choices = [clock.description for clock in self.clocks]
+        return [
+            app_commands.Choice(name = choice, value = choice)
+            for choice in choices if current.lower() in choice.lower()
+        ]
+    
+    @commands.hybrid_command(name = "clocks", description = "Show a clock in the channel based on description.")
+    @app_commands.guilds(discord.Object(id = 807855936106135562))
+    @app_commands.autocomplete(description = autocomplete)
+    async def clocks_display(self, ctx, description: str):
+        await ctx.defer()
+        description = description.lower()
+        index = self.find_clock(description)
+        if index != -1:
+            await self.generate_embed(ctx, self.clocks[index])
+
+    @commands.hybrid_command(name = "tick", description = "Tick a clock by an amount.")
+    @app_commands.guilds(discord.Object(id = 807855936106135562))
+    @app_commands.autocomplete(description = autocomplete)
+    async def tick_clock(self, ctx, description: str, amount: int):
+        await ctx.defer()
+        description = description.lower()
+        index = self.find_clock(description)
+        if index != -1:
+            self.clocks[index].progress += amount
+            await self.generate_embed(ctx, self.clocks[index])
+
+    @commands.hybrid_command(name = "delete", description = "Delete a clock by the description.")
+    @app_commands.guilds(discord.Object(id = 807855936106135562))
+    @app_commands.autocomplete(description = autocomplete)
+    async def delete_clock(self, ctx, description: str):
+        await ctx.defer()
+        description = description.lower()
+        index = self.find_clock(description)
+        if index != -1:
+            del self.clocks[index]
+            await ctx.send("The clock has been deleted.")
     
 async def setup(bot):
     await bot.add_cog(Clocks(bot))
-
