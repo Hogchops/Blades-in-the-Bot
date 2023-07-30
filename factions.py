@@ -115,6 +115,13 @@ class Factions(commands.Cog):
 					chosen = self.find(close_matches[int(msg.content)-1])
 					return chosen
 				
+	async def autocomplete_gm(self, ctx, current: str) -> List[app_commands.Choice[str]]:
+		choices = [faction.name for faction in self.faction_list if faction.creator == ctx.author]
+		return [
+			app_commands.Choice(name = choice, value = choice)
+			for choice in choices if current.lower() in choice.lower()
+		]
+	
 	async def autocomplete(self, ctx, current: str) -> List[app_commands.Choice[str]]:
 		choices = [faction.name for faction in self.faction_list]
 		return [
@@ -155,7 +162,7 @@ class Factions(commands.Cog):
 
 	@gm.command(name="faction", aliases = ['f'])
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
-	@app_commands.autocomplete(factions = autocomplete)
+	@app_commands.autocomplete(factions = autocomplete_gm)
 	@commands.has_permissions(administrator = True)
 	@app_commands.describe(
 		factions = "Enter a faction name."
@@ -173,14 +180,15 @@ class Factions(commands.Cog):
 		name = "Enter a faction name for this new faction."
 	)
 	async def add_faction(self, ctx, name: str):
-		default_faction = Faction(f"{name.title()}", 0, "hold", "0", "description", [], "notes", "secret notes")
+		await ctx.defer(ephemeral = True)
+		default_faction = Faction(f"{name.title()}", 0, "hold", "0", "description", [], "notes", "secret notes", ctx.author)
 		self.faction_list.append(default_faction)
 		await self.save_faction(ctx, name)
 		await ctx.send(f"I have created a default faction with the name {name.title()}.\nPlease modify its values using `/gm m {name.title()}`", ephemeral = True)
 
 	@gm.command(name="modify", aliases=["m"])
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
-	@app_commands.autocomplete(factions = autocomplete)
+	@app_commands.autocomplete(factions = autocomplete_gm)
 	@commands.has_permissions(administrator = True)
 	@app_commands.describe(
 		factions = "Enter a faction name."
@@ -195,7 +203,7 @@ class Factions(commands.Cog):
 	
 	@gm.command(name="save", aliases = ['s'])
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
-	@app_commands.autocomplete(factions = autocomplete)
+	@app_commands.autocomplete(factions = autocomplete_gm)
 	@commands.has_permissions(administrator = True)
 	@app_commands.describe(
 		factions = "Enter a faction name."
@@ -207,7 +215,7 @@ class Factions(commands.Cog):
 	
 	@gm.command(name = "delete", aliases = ['d'])
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
-	@app_commands.autocomplete(factions = autocomplete)
+	@app_commands.autocomplete(factions = autocomplete_gm)
 	@commands.has_permissions(administrator = True)
 	@app_commands.describe(
 		factions = "Enter a faction name."

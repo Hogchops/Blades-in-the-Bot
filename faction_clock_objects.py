@@ -4,10 +4,11 @@ import discord
 
 class Clock():
 
-    def __init__(self, description, progress, total):
+    def __init__(self, description, progress, total, creator: discord.User = None):
         self.description = description
         self.progress = progress
         self.total = total
+        self.creator = creator
 
     def advance(self, tier):
         dice = [random.choice(range(1,7)) for _ in range(tier)]
@@ -35,7 +36,7 @@ class Clock():
 
 class Faction:
 
-    def __init__(self, name, tier, hold, rep, description, contacts, notes, secret_notes):
+    def __init__(self, name, tier, hold, rep, description, contacts, notes, secret_notes, creator: discord.User = None):
         self.name = name
         self.tier = tier
         self.hold = hold
@@ -45,6 +46,7 @@ class Faction:
         self.notes = notes
         self.secret_notes = secret_notes
         self.clocks = []
+        self.creator = creator
     
     def set(self, field: str, value):
         field = field.lower()
@@ -119,6 +121,8 @@ class Faction:
         if self.secret_notes != "":
             embed.add_field(name = "Secret Notes", value = self.secret_notes)
         if len(self.clocks) > 0:
+            output = ""
             for clock in self.clocks:
-                embed.add_field(name = f'Clock {clock.progress}/{clock.total}', value = clock.description)
+                output += f"{clock.description} **{clock.progress}/{clock.total}**\n"
+            embed.add_field(name = "Clocks", value = output)
         return embed
