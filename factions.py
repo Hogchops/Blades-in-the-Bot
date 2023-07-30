@@ -136,7 +136,7 @@ class Factions(commands.Cog):
 			app_commands.Choice(name = choice, value = choice)
 			for choice in choices if current.lower() in choice.lower()
 		]
-		
+	
 	@commands.hybrid_command(name="faction", aliases = ['f'], description = "Lookup the inputted faction.")
 	@app_commands.autocomplete(factions = autocomplete)
 	@app_commands.describe(
@@ -238,6 +238,26 @@ class Factions(commands.Cog):
 				os.remove(f"factions/{file_name}.json")
 				del self.faction_list[index]
 				await ctx.send("Faction deleted successfully.", ephemeral = True)
+	
+
+	async def get_all_parts(self, inter: discord.interactions.Interaction, current):
+		await inter.response.defer()
+		choices = []
+		final_choices = []
+		partType = inter.namespace.part_type
+		for part in partType["options"]:
+			choices.append(part)
+		print(choices)
+		for choice in choices:
+			if current.lower() in choice.lower():
+				final_choices.append(app_commands.Choice(name = choice, value = choice))
+		return final_choices
+
+	@gm.command(name = "tick", aliases = ['t'])
+	@app_commands.autocomplete(part_type = autocomplete_gm, part_name = get_all_parts)
+	async def tick_faction_clock(self, ctx, part_type: str, part_name: str = None):
+		await ctx.defer(ephemeral = True)
+
 	
 async def setup(bot):
 	await bot.add_cog(Factions(bot))
