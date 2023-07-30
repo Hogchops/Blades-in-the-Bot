@@ -62,6 +62,8 @@ class Factions(commands.Cog):
 		index = await self.search_func(ctx, faction_name)
 		if index == -1:
 			return -1
+		if ctx.author.id != self.faction_list[index].creator:
+			return -1
 		file_name = self.faction_list[index].name.lower().replace(" ", "")
 		with open(f"factions\\{file_name}.json", 'w') as outfile:
 			json_string = self.faction_list[index].toJson()
@@ -118,7 +120,6 @@ class Factions(commands.Cog):
 	async def autocomplete_gm(self, inter: discord.interactions.Interaction, current: str) -> List[app_commands.Choice[str]]:
 		choices = []
 		for faction in self.faction_list:
-			print(str(faction.creator == inter.user.id))
 			if faction.creator == inter.user.id:
 				choices.append(faction.name)
 		return [
@@ -175,7 +176,10 @@ class Factions(commands.Cog):
 		await ctx.defer(ephemeral = True)
 		index = await self.search_func(ctx, factions)
 		if index != -1:
-			await ctx.send(embed = self.faction_list[index].gm_display(ctx), ephemeral = True)
+			if self.faction_list[index].creator != ctx.author.id:
+				await ctx.send("You are not the GM for this faction.")
+			else:
+				await ctx.send(embed = self.faction_list[index].gm_display(ctx), ephemeral = True)
 
 	@gm.command(name="add", aliases=["a"])
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
@@ -201,9 +205,12 @@ class Factions(commands.Cog):
 		await ctx.defer(ephemeral = True)
 		index = await self.search_func(ctx, factions)
 		if index != -1:
-			msg = await ctx.send(embed = self.faction_list[index].gm_display(ctx))
-			await ctx.send(f"When you are done modifying, please save the faction via `/gm s {factions.title()}`", ephemeral = True)
-			await ctx.send("Select the corresponding button to edit the faction.", view = ModifyFactionButtons(self.bot, ctx, self.faction_list[index], msg), ephemeral = True)
+			if self.faction_list[index].creator != ctx.author.id:
+				await ctx.send("You are not the GM of this faction.")
+			else:
+				msg = await ctx.send(embed = self.faction_list[index].gm_display(ctx))
+				await ctx.send(f"When you are done modifying, please save the faction via `/gm s {factions.title()}`", ephemeral = True)
+				await ctx.send("Select the corresponding button to edit the faction.", view = ModifyFactionButtons(self.bot, ctx, self.faction_list[index], msg), ephemeral = True)
 	
 	@gm.command(name="save", aliases = ['s'])
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
@@ -216,6 +223,8 @@ class Factions(commands.Cog):
 		result = await self.save_faction(ctx, factions)
 		if result == 1:
 			await ctx.send(f"You have successfully saved {factions.title()}", ephemeral = True)
+		else:
+			await ctx.send("Something went wrong, either no faction was found or you are not the gm of this faction.", ephemeral = True)
 	
 	@gm.command(name = "delete", aliases = ['d'])
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
@@ -227,10 +236,13 @@ class Factions(commands.Cog):
 	async def delete_faction(self, ctx, factions: str):
 		index = await self.search_func(ctx, factions)
 		if index != -1:
-			file_name = self.faction_list[index].name.lower().replace(' ','')
-			os.remove(f"factions/{file_name}.json")
-			del self.faction_list[index]
-			await ctx.send("Faction deleted successfully.", ephemeral = True)
+			if self.faction_list[index].creator != ctx.author.id:
+				await ctx.send("You are not the gm of this faction.")
+			else:
+				file_name = self.faction_list[index].name.lower().replace(' ','')
+				os.remove(f"factions/{file_name}.json")
+				del self.faction_list[index]
+				await ctx.send("Faction deleted successfully.", ephemeral = True)
 	
 async def setup(bot):
 	await bot.add_cog(Factions(bot))
