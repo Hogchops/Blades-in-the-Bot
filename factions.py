@@ -35,7 +35,8 @@ class Factions(commands.Cog):
 		notes = dict_obj["notes"]
 		contacts = dict_obj["contacts"]
 		secret_notes = dict_obj["secret_notes"]
-		faction_obj = Faction(name, tier, hold, rep, description, contacts, notes, secret_notes)
+		creator = dict_obj["creator"]
+		faction_obj = Faction(name, tier, hold, rep, description, contacts, notes, secret_notes, creator)
 		for i in range(len(dict_obj["clocks"])):
 			clock_description = dict_obj["clocks"][i]["description"]
 			clock_progress = dict_obj["clocks"][i]["progress"]
@@ -65,6 +66,8 @@ class Factions(commands.Cog):
 		if ctx.author.id != self.faction_list[index].creator:
 			return -1
 		file_name = self.faction_list[index].name.lower().replace(" ", "")
+		if file_name in os.listdir("factions\\"):
+			return -1
 		with open(f"factions\\{file_name}.json", 'w') as outfile:
 			json_string = self.faction_list[index].toJson()
 			outfile.write(json.dumps(json_string))
@@ -135,7 +138,6 @@ class Factions(commands.Cog):
 		]
 		
 	@commands.hybrid_command(name="faction", aliases = ['f'], description = "Lookup the inputted faction.")
-	#@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.autocomplete(factions = autocomplete)
 	@app_commands.describe(
 		factions = "Enter a faction name."
@@ -148,27 +150,22 @@ class Factions(commands.Cog):
 			await ctx.send(embed = self.faction_list[index].player_display(ctx))
 
 	@commands.hybrid_command(name="list", aliases = ['l'], description = "List the factions.")
-	#@app_commands.guilds(discord.Object(id = 807855936106135562))
-	async def list_factions(self, ctx):
+	async def list_factions(self, ctx: commands.Context):
 		await ctx.defer(ephemeral = True)
-		output = "**Factions:**\n"
+		embed = discord.Embed(name = "Factions", description = "The list of factions created using this bot.", color = discord.Color.magenta())
+		embed.set_author(name = ctx.author.display_name, icon_url = ctx.author.display_avatar.url)
+		value = ""
 		for faction in self.faction_list:
-			output += f"{faction.name}\n"
-		await ctx.send(output, ephemeral = True)
-
-	#@commands.guild_only()
-	#@commands.has_permissions(administrator = True)
+			value += f"{faction.name.title()}\n"
+		embed.add_field(name = "Factions", value = value)
+		await ctx.send(embed = embed, ephemeral = True)
 
 	@commands.hybrid_group(name = "gm", aliases = ['dm'])
-	@app_commands.guilds(discord.Object(id = 807855936106135562))
-	@commands.has_permissions(administrator = True)
 	async def gm(self, ctx):
 		pass
 
 	@gm.command(name="faction", aliases = ['f'])
-	@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.autocomplete(factions = autocomplete_gm)
-	@commands.has_permissions(administrator = True)
 	@app_commands.describe(
 		factions = "Enter a faction name."
 	)
@@ -182,22 +179,22 @@ class Factions(commands.Cog):
 				await ctx.send(embed = self.faction_list[index].gm_display(ctx), ephemeral = True)
 
 	@gm.command(name="add", aliases=["a"])
-	@app_commands.guilds(discord.Object(id = 807855936106135562))
-	@commands.has_permissions(administrator = True)
 	@app_commands.describe(
 		name = "Enter a faction name for this new faction."
 	)
 	async def add_faction(self, ctx, name: str):
 		await ctx.defer(ephemeral = True)
-		default_faction = Faction(f"{name.title()}", 0, "hold", "0", "description", [], "notes", "secret notes", ctx.author.id)
-		self.faction_list.append(default_faction)
-		await self.save_faction(ctx, name)
-		await ctx.send(f"I have created a default faction with the name {name.title()}.\nPlease modify its values using `/gm m {name.title()}`", ephemeral = True)
+		index = self.find(name)
+		if index != -1:
+			await ctx.send("There is already a faction with that name.")
+		else:
+			default_faction = Faction(f"{name.title()}", 0, "hold", "0", "description", [], "notes", "secret notes", ctx.author.id)
+			self.faction_list.append(default_faction)
+			await self.save_faction(ctx, name)
+			await ctx.send(f"I have created a default faction with the name {name.title()}.\nPlease modify its values using `/gm modify {name.title()}`", ephemeral = True)
 
 	@gm.command(name="modify", aliases=["m"])
-	@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.autocomplete(factions = autocomplete_gm)
-	@commands.has_permissions(administrator = True)
 	@app_commands.describe(
 		factions = "Enter a faction name."
 	)
@@ -213,13 +210,12 @@ class Factions(commands.Cog):
 				await ctx.send("Select the corresponding button to edit the faction.", view = ModifyFactionButtons(self.bot, ctx, self.faction_list[index], msg), ephemeral = True)
 	
 	@gm.command(name="save", aliases = ['s'])
-	@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.autocomplete(factions = autocomplete_gm)
-	@commands.has_permissions(administrator = True)
 	@app_commands.describe(
 		factions = "Enter a faction name."
 	)
 	async def save_faction_input(self, ctx, factions: str):
+		await ctx.defer(ephemeral = True)
 		result = await self.save_faction(ctx, factions)
 		if result == 1:
 			await ctx.send(f"You have successfully saved {factions.title()}", ephemeral = True)
@@ -227,13 +223,12 @@ class Factions(commands.Cog):
 			await ctx.send("Something went wrong, either no faction was found or you are not the gm of this faction.", ephemeral = True)
 	
 	@gm.command(name = "delete", aliases = ['d'])
-	@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.autocomplete(factions = autocomplete_gm)
-	@commands.has_permissions(administrator = True)
 	@app_commands.describe(
 		factions = "Enter a faction name."
 	)
 	async def delete_faction(self, ctx, factions: str):
+		await ctx.defer(ephemeral = True)
 		index = await self.search_func(ctx, factions)
 		if index != -1:
 			if self.faction_list[index].creator != ctx.author.id:

@@ -47,7 +47,6 @@ class Roll(commands.Cog):
 		self.bot = bot
 
 	@commands.hybrid_command(name = "r", aliases = ["roll"], description = "Roll some dice.") 
-	#@app_commands.guilds(discord.Object(id = 807855936106135562))
 	@app_commands.describe(
 		num = "Enter the number of dice you want to roll. Entering 0 will roll 2 dice.",
 		num_dice_sides = "Enter the number of sides for each die. If you leave this blank or enter 6, we will provide results along with your role."
@@ -64,6 +63,24 @@ class Roll(commands.Cog):
 			checking_result = False
 		embed = generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides)
 		await ctx.send(embed = embed)
+
+	@commands.hybrid_command(name = "gr", description = "Roll hidden dice.")
+	@app_commands.describe(
+		num = "Enter the number of dice you want to roll. Entering 0 will roll 2 dice.",
+		num_dice_sides = "Enter the number of sides for each die. If you leave this blank or enter 6, we will provide results along with your role."
+	)
+	async def groll(self, ctx: commands.Context, num: int, num_dice_sides: int = 6):
+		zero = False
+		if num == 0:
+			num = 2
+			zero = True
+		dice = [str(random.choice(range(1,num_dice_sides + 1))) for _ in range(num)]
+		if num_dice_sides == 6:
+			checking_result = True
+		else:
+			checking_result = False
+		embed = generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides)
+		await ctx.send(embed = embed, ephemeral = True)
 
 async def setup(bot):
 	await bot.add_cog(Roll(bot)) 
