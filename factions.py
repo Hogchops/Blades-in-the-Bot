@@ -268,7 +268,8 @@ class Factions(commands.Cog):
 		faction_obj = self.faction_list[index]
 		clock_index = faction_obj.find_clock(clock)
 		if amount == 0:
-			faction_obj.clocks[clock_index].advance(int(faction_obj.tier))
+			num = faction_obj.clocks[clock_index].advance(int(faction_obj.tier))
+			await ctx.send(f"Your clock advanced by {num}.", embed = faction_obj.gm_display(), ephemeral = True)
 		else:
 			faction_obj.clocks[clock_index].progress += amount
 			if faction_obj.clocks[clock_index].progress > faction_obj.clocks[clock_index].total:

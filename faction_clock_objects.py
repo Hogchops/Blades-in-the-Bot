@@ -24,7 +24,10 @@ class Clock():
             result = 1
         self.progress += result
         if self.progress > self.total:
+            increase = self.total - self.progress + result
             self.progress = self.total
+            return increase
+        return result
     
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys = True, indent = 4)
