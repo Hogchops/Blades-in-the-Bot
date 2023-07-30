@@ -59,6 +59,3 @@ class MyHelp(commands.HelpCommand):
 		embed.add_field(name = "Clocks", value = "Blades in the Bot can create clocks for use during play. Use `/clock` and fill in the required arguments to create a clock. Use `/tick [num]` to tick an existing clock. Use `/delete` to delete a clock.", inline = False)
 		await inter.response.send_message(embed = embed, ephemeral = True)
 	'''
-
-def setup(bot):
-    bot.help_command = MyHelp()

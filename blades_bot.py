@@ -2,6 +2,7 @@ import os
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
+from help_func import MyHelp
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -32,6 +33,6 @@ async def load_cogs():
 	await bot.load_extension("factions")
 	await bot.load_extension("game_clocks")
 	await bot.load_extension("movies")
-	await bot.load_extension("help")
 
+bot.help_command = MyHelp()
 bot.run(TOKEN)
