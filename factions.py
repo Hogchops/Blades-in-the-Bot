@@ -50,7 +50,6 @@ class Factions(commands.Cog):
 					json_string = json.load(infile)
 					json_obj = json.loads(json_string)
 					self.add_faction_from_json(json_obj)
-	
 
 	def save_info(self):
 		for faction in self.faction_list:
