@@ -244,20 +244,19 @@ class Factions(commands.Cog):
 		await inter.response.defer()
 		choices = []
 		final_choices = []
-		partType = inter.namespace.part_type
-		print(partType)
-		for part in partType["options"]:
-			choices.append(part)
-		print(choices)
+		faction = inter.namespace.faction
+		faction_obj = self.find(faction)
+		for clock_obj in faction_obj.clocks:
+			choices.append(clock_obj.description)
 		for choice in choices:
 			if current.lower() in choice.lower():
 				final_choices.append(app_commands.Choice(name = choice, value = choice))
 		return final_choices
 
 	@gm.command(name = "tick", aliases = ['t'])
-	@app_commands.autocomplete(part_type = autocomplete_gm, part_name = get_all_parts)
+	@app_commands.autocomplete(faction = autocomplete_gm, clock = get_all_parts)
 	@app_commands.guilds(discord.Object(id=807855936106135562))
-	async def tick_faction_clock(self, ctx, part_type: str, part_name: str = None):
+	async def tick_faction_clock(self, ctx, faction: str, clock: str = None):
 		await ctx.defer(ephemeral = True)
 
 	
