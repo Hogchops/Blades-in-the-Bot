@@ -243,7 +243,7 @@ class Factions(commands.Cog):
 	async def get_all_parts(self, inter: discord.interactions.Interaction, current):
 		choices = []
 		final_choices = []
-		faction_name = inter.namespace.part_type
+		faction_name = inter.namespace.faction
 
 		index = self.find(faction_name)
 		faction_obj = self.faction_list[index]
@@ -256,7 +256,7 @@ class Factions(commands.Cog):
 		return final_choices
 
 	@gm.command(name = "tick", aliases = ['t'])
-	@app_commands.autocomplete(part_type = autocomplete_gm, part_name = get_all_parts)
+	@app_commands.autocomplete(faction = autocomplete_gm, clock = get_all_parts)
 	@app_commands.describe(
 		faction = "Enter the faction name that has the clock you want to tick.",
 		clock = "Enter the description of the clock that you wish to tick.",
