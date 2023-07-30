@@ -46,7 +46,7 @@ class Roll(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
-	@commands.hybrid_command(name = "r", aliases = ["roll"], description = "Roll some dice.", usage = "`/r [num]` or `=r [num]")
+	@commands.hybrid_command(name = "r", aliases = ["roll"], description = "Roll some dice.") 
 	@app_commands.guilds(discord.Object(id = 807855936106135562))
 	async def roll(self, ctx, num: int = 1, num_dice_sides: int = 6):
 		zero = False
