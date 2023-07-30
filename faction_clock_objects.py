@@ -114,9 +114,9 @@ class Faction:
     
     def gm_display(self, ctx):
         embed = discord.Embed(title = self.name, description = self.description, color = discord.Color.magenta())
-        embed.add_field(name = f'Tier {self.tier}', value = '', inline = True)
-        embed.add_field(name = f'Hold {self.hold}', value = '', inline = True)
-        embed.add_field(name = f'Status {self.rep}', value = '', inline = True)
+        embed.add_field(name = f'Tier: {self.tier}', value = '', inline = True)
+        embed.add_field(name = f'Hold: {self.hold}', value = '', inline = True)
+        embed.add_field(name = f'Status: {self.rep}', value = '', inline = True)
         names = ""
         for contact in self.contacts:
             names += contact + "\n"
