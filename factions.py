@@ -257,7 +257,7 @@ class Factions(commands.Cog):
 		return final_choices
 
 	@gm.command(name = "tick", aliases = ['t'])
-	@app_commands.autocomplete(faction = autocomplete_gm, clock = get_all_parts)
+	@app_commands.autocomplete(part_type = autocomplete_gm, part_name = get_all_parts)
 	@app_commands.guilds(discord.Object(id=807855936106135562))
 	@app_commands.describe(
 		part_type = "Enter the faction name that has the clock you want to tick.",
