@@ -259,6 +259,7 @@ class Factions(commands.Cog):
 	@gm.command(name = "tick", aliases = ['t'])
 	@app_commands.autocomplete(faction = autocomplete_gm, clock = get_all_parts)
 	@app_commands.guilds(discord.Object(id=807855936106135562))
+	@app_commands.rename(part_type = "faction", part_name = "clock")
 	async def tick_faction_clock(self, ctx, faction: str, clock: str):
 		pass
 	
