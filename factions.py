@@ -244,7 +244,7 @@ class Factions(commands.Cog):
 		await inter.response.defer()
 		choices = []
 		final_choices = []
-		faction = inter.namespace.faction
+		faction = inter.namespace.part_type
 		faction_obj = self.find(faction)
 		for clock_obj in faction_obj.clocks:
 			choices.append(clock_obj.description)
@@ -254,9 +254,9 @@ class Factions(commands.Cog):
 		return final_choices
 
 	@gm.command(name = "tick", aliases = ['t'])
-	@app_commands.autocomplete(faction = autocomplete_gm, clock = get_all_parts)
+	@app_commands.autocomplete(part_type = autocomplete_gm, part_name = get_all_parts)
 	@app_commands.guilds(discord.Object(id=807855936106135562))
-	async def tick_faction_clock(self, ctx, faction: str, clock: str):
+	async def tick_faction_clock(self, ctx, part_type: str, part_name: str):
 		pass
 	
 async def setup(bot):
