@@ -24,23 +24,23 @@ class MyHelp(commands.HelpCommand):
 
         if filtered_commands := await self.filter_commands(cog.get_commands()):
             for command in filtered_commands:
-                embed.add_field(name=self.get_command_signature(command), value=command.help or "No Help Message Found... ")
+                embed.add_field(name=self.get_command_signature(command), value=command.description or "No Help Message Found... ")
 
         await self.get_destination().send(embed=embed)
 
     async def send_group_help(self, group):
-        embed = discord.Embed(title=self.get_command_signature(group), description=group.help, color=discord.Color.magenta())
+        embed = discord.Embed(title=self.get_command_signature(group), description=group.description, color=discord.Color.magenta())
 
         if filtered_commands := await self.filter_commands(group.commands):
             for command in filtered_commands:
-                embed.add_field(name=self.get_command_signature(command), value=command.help or "No Help Message Found... ")
+                embed.add_field(name=self.get_command_signature(command), value=command.description or "No Help Message Found... ")
 
         await self.get_destination().send(embed=embed)
 	
     async def send_command_help(self, command):
         embed = discord.Embed(title=self.get_command_signature(command), color=discord.Color.magenta())
-        if command.help:
-            embed.description = command.help
+        if command.description:
+            embed.description = command.description
         if alias := command.aliases:
             embed.add_field(name="Aliases", value=", ".join(alias), inline=False)
 
