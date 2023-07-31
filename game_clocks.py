@@ -7,7 +7,7 @@ from asyncio import wait_for
 from discord import app_commands
 from typing import List
 
-class GameClocks(commands.Cog):
+class Clocks(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -135,4 +135,4 @@ class GameClocks(commands.Cog):
             await ctx.send("You lack sufficient permissions to use this command.", ephemeral = True)
     
 async def setup(bot):
-    await bot.add_cog(GameClocks(bot))
+    await bot.add_cog(Clocks(bot))
