@@ -164,7 +164,7 @@ class Factions(commands.Cog):
 	async def gm(self, ctx):
 		pass
 
-	@gm.command(name="faction", aliases = ['f'])
+	@gm.command(name="faction", aliases = ['f'], description = "Display the GM version of a faction that you've created.")
 	@app_commands.autocomplete(factions = autocomplete_gm)
 	@app_commands.describe(
 		factions = "Enter a faction name."
@@ -178,7 +178,7 @@ class Factions(commands.Cog):
 			else:
 				await ctx.send(embed = self.faction_list[index].gm_display(), ephemeral = True)
 
-	@gm.command(name="add", aliases=["a"])
+	@gm.command(name="add", aliases=["a"], description = "Create a new faction.")
 	@app_commands.describe(
 		name = "Enter a faction name for this new faction."
 	)
@@ -193,7 +193,7 @@ class Factions(commands.Cog):
 			await self.save_faction(ctx, name)
 			await ctx.send(f"I have created a default faction with the name {name.title()}.\nPlease modify its values using `/gm modify {name.title()}`", ephemeral = True)
 
-	@gm.command(name="modify", aliases=["m"])
+	@gm.command(name="modify", aliases=["m"], description = "Modify a faction that you've created.")
 	@app_commands.autocomplete(factions = autocomplete_gm)
 	@app_commands.describe(
 		factions = "Enter a faction name."
@@ -209,7 +209,7 @@ class Factions(commands.Cog):
 				await ctx.send(f"When you are done modifying, please save the faction via `/gm save {factions.title()}`", ephemeral = True)
 				await ctx.send("Select the corresponding button to edit the faction.", view = ModifyFactionButtons(self.bot, ctx, self.faction_list[index], msg), ephemeral = True)
 	
-	@gm.command(name="save", aliases = ['s'])
+	@gm.command(name="save", aliases = ['s'], description = "Save a faction that you created.")
 	@app_commands.autocomplete(factions = autocomplete_gm)
 	@app_commands.describe(
 		factions = "Enter a faction name."
@@ -222,7 +222,7 @@ class Factions(commands.Cog):
 		else:
 			await ctx.send("Something went wrong, either no faction was found or you are not the gm of this faction.", ephemeral = True)
 	
-	@gm.command(name = "delete", aliases = ['d'])
+	@gm.command(name = "delete", aliases = ['d'], description = "Delete a faction that you created")
 	@app_commands.autocomplete(factions = autocomplete_gm)
 	@app_commands.describe(
 		factions = "Enter a faction name."
@@ -255,7 +255,7 @@ class Factions(commands.Cog):
 				final_choices.append(app_commands.Choice(name = choice, value = choice))
 		return final_choices
 
-	@gm.command(name = "tick", aliases = ['t'])
+	@gm.command(name = "tick", aliases = ['t'], description = "Tick a faction's clock.")
 	@app_commands.autocomplete(faction = autocomplete_gm, clock = get_all_parts)
 	@app_commands.describe(
 		faction = "Enter the faction name that has the clock you want to tick.",
