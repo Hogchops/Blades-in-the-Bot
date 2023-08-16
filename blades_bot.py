@@ -34,5 +34,9 @@ async def load_cogs():
 	await bot.load_extension("game_clocks")
 	await bot.load_extension("movies")
 
+@commands.command(name = "hello")
+async def hello(ctx):
+	await ctx.send("Hello " + ctx.author.display_name)
+
 bot.help_command = MyHelp()
 bot.run(TOKEN)
