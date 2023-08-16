@@ -25,7 +25,7 @@ def generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides):
 			result = dice[0]
 		value = f'**{result}** '
 		if result == 6:
-			if num >= 2:
+			if num >= 2 and not zero:
 				if dice[-2] == 6:
 					value += ":white_check_mark:"
 			value += ":white_check_mark:"
