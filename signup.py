@@ -20,13 +20,6 @@ class Signup(commands.Cog):
         self.embed_msg = msg
         await ctx.send("Press the button to signup for that day. Press each button that you would be willing to make. When a day fills up to 4, you will be locked in for that day.\n\nTo remove your name from a day, press the button again.", view = SignupButtons(self.bot, ctx, msg, self.week))
 
-    async def autocomplete_dotw(self, inter: discord.integrations.Integration, current: str) -> List[app_commands.Choice[str]]:
-        choices = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
-        return [
-            app_commands.Choice(name = choice, value = choice)
-            for choice in choices if current.lower() in choice.lower()
-        ]
-
     @commands.hybrid_command(name="sr", description="Remove someone from a confirmed list.")
     @app_commands.autocomplete(day = autocomplete_dotw)
     async def remove(self, ctx: commands.Context, name: str, day: str):
@@ -46,6 +39,13 @@ class Signup(commands.Cog):
                 await self.embed_msg.edit(embed=self.week.generate_embed())
         else:
             await ctx.send("You do not have permissions for this.", ephemeral=True)
-        
+
+    async def autocomplete_dotw(self, inter: discord.integrations.Integration, current: str) -> List[app_commands.Choice[str]]:
+        choices = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        return [
+            app_commands.Choice(name = choice, value = choice)
+            for choice in choices if current.lower() in choice.lower()
+        ]
 async def setup(bot):
+
     await bot.add_cog(Signup(bot))
