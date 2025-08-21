@@ -27,7 +27,7 @@ class Signup(commands.Cog):
             for choice in choices if current.lower() in choice.lower()
         ]
 
-    @commands.hybrid_command(name="schedule remove", aliases=["r"], description="Remove someone from a confirmed list.")
+    @commands.hybrid_command(name="sr", description="Remove someone from a confirmed list.")
     @app_commands.autocomplete(day = autocomplete_dotw)
     async def remove(self, ctx: commands.Context, name: str, day: str):
         if ctx.author.get_role(814732436054867968) != None:
