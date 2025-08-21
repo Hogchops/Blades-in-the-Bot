@@ -33,7 +33,8 @@ class Week():
         return -1
     
     def purge_user_from_other_days(self, name: str, day: str):
-        day_list = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"].remove(day)
+        day_list = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        day_list.remove(day)
         for d in day_list:
             self.day_dict[d].remove(name)
 
