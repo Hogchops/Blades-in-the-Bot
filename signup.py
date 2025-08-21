@@ -10,7 +10,7 @@ class Signup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.week = Week()
-        self.embed_msg
+        self.embed_msg = None
 
     @commands.hybrid_command(name="signup", description="Create the signup embed for the week.")
     async def get_signups(self, ctx: commands.Context):
