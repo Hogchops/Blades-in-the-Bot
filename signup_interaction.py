@@ -27,9 +27,16 @@ class SignupButtons(discord.ui.View):
 
     async def button_handle(self, interaction: discord.Interaction, day: str):
         username = interaction.user.display_name
-        self.week.button(username, day)
-        await self.embed_msg.edit(embed=self.week.generate_embed())
-        await interaction.response.defer()
+        i = self.week.button(username, day)
+        if i != -1:
+            if i == 1:
+                await self.ctx.send("A session is confirmed on " + day + " with the people listed above. This session can still accept more players.")
+                await interaction.response.send_message("You are now locked into this session, and your availability on other dates has been removed from the lists.", ephemeral=True)
+            else:
+                await interaction.response.defer()
+            await self.embed_msg.edit(embed=self.week.generate_embed())
+        else:
+            await interaction.response.send_message("I could not add or remove you from that time, it's already confirmed or it's already full", ephemeral=True)
     
     @discord.ui.button(label = "Sunday", style = discord.ButtonStyle.primary)
     async def first_button_callback(self, interaction: discord.Interaction, button):
