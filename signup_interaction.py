@@ -30,11 +30,11 @@ class SignupButtons(discord.ui.View):
         i = self.week.button(username, day)
         if i != -1:
             if i == 1:
-                await interaction.channel.send("A session is confirmed on **" + day + "** at **7:00 pm EST** with the people listed above. This session can still accept more players.",ephemeral=False)
+                await interaction.channel.send("A session is confirmed on **" + day + "** at **7:00 pm EST** with the people listed above. This session can still accept more players.")
             await self.embed_msg.edit(embed=self.week.generate_embed())
             await interaction.response.defer()
         else:
-            await interaction.channel.send("I could not add or remove you from that day, it's already confirmed or it's already full", ephemeral=True)
+            await interaction.user.send("I could not add or remove you from that day, it's already confirmed or it's already full")
             await interaction.response.defer()
     
     @discord.ui.button(label = "Sunday", style = discord.ButtonStyle.primary)
