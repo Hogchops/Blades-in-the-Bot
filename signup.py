@@ -20,10 +20,6 @@ class Signup(commands.Cog):
         self.embed_msg = msg
         await ctx.send("Press the button to signup for that day. Press each button that you would be willing to make. When a day fills up to 4, you will be locked in for that day.\n\nTo remove your name from a day, press the button again.", view = SignupButtons(self.bot, ctx, msg, self.week))
 
-    @commands.hybrid_group(name = "schedule")
-    async def schedule(self, ctx):
-        pass
-
     async def autocomplete_dotw(self, inter: discord.integrations.Integration, current: str) -> List[app_commands.Choice[str]]:
         choices = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         return [
@@ -31,7 +27,7 @@ class Signup(commands.Cog):
             for choice in choices if current.lower() in choice.lower()
         ]
 
-    @schedule.command(name="remove", aliases=["r"], description="Remove someone from a confirmed list.")
+    @commands.hybrid_command(name="schedule remove", aliases=["r"], description="Remove someone from a confirmed list.")
     @app_commands.autocomplete(day = autocomplete_dotw)
     async def remove(self, ctx: commands.Context, name: str, day: str):
         if ctx.author.get_role(814732436054867968) != None:
