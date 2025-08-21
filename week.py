@@ -11,6 +11,9 @@ class Week():
         self.friday = []
         self.saturday = []
 
+        self.session_full = 5
+        self.session_confirmed = 4
+
         self.day_dict = {
             "sunday": self.sunday,
             "monday": self.monday,
@@ -41,19 +44,19 @@ class Week():
                 self.remove_user_from_day(name, d)
 
     def button(self, name: str, day: str) -> int:
-        if self.day_dict[day].__len__() > 1:
+        if self.day_dict[day].__len__() >= self.session_full:
             return -1
         i = self.get_user_day(name, day)
         if i == -1:
             self.add_user_to_day(name, day)
-            if self.day_dict[day].__len__() > 1:
+            if self.day_dict[day].__len__() >= self.session_confirmed:
                 for user in self.day_dict[day]:
                     self.purge_user_from_other_days(user, day)
                 return 1
             else:
                 return 0 
         else:
-            if self.day_dict[day].__len__() > 1:
+            if self.day_dict[day].__len__() >= self.session_confirmed:
                 return -1
             else:
                 self.remove_user_from_day(name, day)
