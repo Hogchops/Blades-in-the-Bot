@@ -25,7 +25,7 @@ class Week():
         self.day_dict[day].append(name)
 
     def remove_user_from_day(self, name: str, day: str) -> int:
-        day_list = self.day_dict[day]
+        day_list = self.day_dict[day.lower()]
         i = self.get_user_day(name, day)
         if i != -1:
             day_list.remove(name.lower())
@@ -40,7 +40,7 @@ class Week():
             self.remove_user_from_day(name, day)
     
     def get_user_day(self, name: str, day: str) -> int:
-        day_list = self.day_dict[day]
+        day_list = self.day_dict[day.lower()]
         for i in range(day_list.__len__()):
             if day_list[i].lower() == name.lower():
                 return i
@@ -53,8 +53,8 @@ class Week():
             embed.add_field(name = days[i], description = self.day_string(days[i]))
         return embed
 
-    def day_string(self, day) -> str:
-        day_list = self.day_dict[day]
+    def day_string(self, day: str) -> str:
+        day_list = self.day_dict[day.lower()]
         output = ""
         for i in day_list:
             output += i + "\n"
