@@ -7,6 +7,7 @@ from week import Week
 class GetSignupResponse(discord.ui.Modal):
 
     def __init__(self, ctx: commands.context):
+        super().__init__()
         self.ctx = ctx
 
     async def on_submit(self, interaction):
