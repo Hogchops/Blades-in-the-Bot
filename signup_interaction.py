@@ -2,7 +2,6 @@ import discord
 import discord.ext
 import asyncio
 from discord.ext import commands
-from signup import Signup
 from week import Week
 
 class SignupButtons(discord.ui.View):
