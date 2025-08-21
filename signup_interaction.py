@@ -37,33 +37,39 @@ class SignupButtons(discord.ui.View):
         username = interaction.user.name
         self.week.button(username, "monday")
         await self.embed_msg.edit(embed=self.week.generate_embed())
+        await interaction.response.defer()
 
     @discord.ui.button(label = "Tuesday", style = discord.ButtonStyle.primary)
     async def third_button_callback(self, interaction: discord.Interaction, button):
         username = interaction.user.name
         self.week.button(username, "tuesday")
         await self.embed_msg.edit(embed=self.week.generate_embed())
+        await interaction.response.defer()
 
     @discord.ui.button(label = "Wednesday", style = discord.ButtonStyle.primary)
     async def fourth_button_callback(self, interaction: discord.Interaction, button):
         username = interaction.user.name
         self.week.button(username, "wednesday")
         await self.embed_msg.edit(embed=self.week.generate_embed())
+        await interaction.response.defer()
 
     @discord.ui.button(label = "Thursday", style = discord.ButtonStyle.primary)
     async def fifth_button_callback(self, interaction: discord.Interaction, button):
         username = interaction.user.name
         self.week.button(username, "thursday")
         await self.embed_msg.edit(embed=self.week.generate_embed())
+        await interaction.response.defer()
 
     @discord.ui.button(label = "Friday", style = discord.ButtonStyle.primary)
     async def sixth_button_callback(self, interaction: discord.Interaction, button):
         username = interaction.user.name
         self.week.button(username, "friday")
         await self.embed_msg.edit(embed=self.week.generate_embed())
+        await interaction.response.defer()
 
     @discord.ui.button(label = "Saturday", style = discord.ButtonStyle.primary)
     async def seventh_button_callback(self, interaction: discord.Interaction, button):
         username = interaction.user.name
         self.week.button(username, "saturday")
-        await self.embed_msg.edit(embed=self.week.generate_embed())           
+        await self.embed_msg.edit(embed=self.week.generate_embed())
+        await interaction.response.defer()           
