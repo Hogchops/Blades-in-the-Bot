@@ -24,13 +24,16 @@ class SignupButtons(discord.ui.View):
             return -1
         else:
             return msg
+
+    async def button_handle(self, interaction: discord.Interaction, day: str):
+        username = interaction.user.display_name
+        self.week.button(username, day)
+        await self.embed_msg.edit(embed=self.week.generate_embed())
+        await interaction.response.defer()
     
     @discord.ui.button(label = "Sunday", style = discord.ButtonStyle.primary)
     async def first_button_callback(self, interaction: discord.Interaction, button):
-        username = interaction.user.display_name
-        self.week.button(username, "sunday")
-        await self.embed_msg.edit(embed=self.week.generate_embed())
-        await interaction.response.defer()
+        await self.button_handle(interaction, "sunday")
 
     @discord.ui.button(label = "Monday", style = discord.ButtonStyle.primary)
     async def second_button_callback(self, interaction: discord.Interaction, button):
