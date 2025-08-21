@@ -4,6 +4,14 @@ import asyncio
 from discord.ext import commands
 from week import Week
 
+class GetSignupResponse(discord.ui.Modal):
+
+    def __init__(self, ctx: commands.context):
+        self.ctx = ctx
+
+    async def on_submit(self, interaction):
+        return await super().on_submit(interaction)
+
 class SignupButtons(discord.ui.View):
 
     def __init__(self, bot, ctx: commands.Context, embed_msg : discord.Message, week: Week):
