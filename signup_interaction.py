@@ -14,7 +14,7 @@ class GetSignupResponse(discord.ui.Modal):
         self.embed_msg = embed_msg
         self.username = username
 
-    async def on_submit(self, interaction: discord.Interaction) -> Week:
+    async def on_submit(self, interaction: discord.Interaction):
         self.week.button(self.username, self.day)
         await interaction.response.edit_message(embed=self.week.generate_embed())
 
@@ -42,7 +42,7 @@ class SignupButtons(discord.ui.View):
     @discord.ui.button(label = "Sunday", style = discord.ButtonStyle.primary)
     async def first_button_callback(self, interaction: discord.Interaction, button):
         response = GetSignupResponse(self.ctx, self.week, self.embed_msg, "sunday", interaction.user.name)
-        await self.week = interaction.response.send_message(response)
+        await interaction.response.send_message(response)
 
     @discord.ui.button(label = "Monday", style = discord.ButtonStyle.primary)
     async def second_button_callback(self, interaction: discord.Interaction, button):
