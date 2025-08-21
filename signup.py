@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 from signup_interaction import SignupButtons
 from week import Week
+from typing import List
 
 class Signup(commands.Cog):
 
