@@ -50,7 +50,7 @@ class Week():
         embed = discord.Embed(title = "Session Signups", description = "If you see your name listed under a day, you are signed up for that day.", color = discord.Color.blurple())
         days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         for i in range(7):
-            embed.add_field(name = days[i], description = self.day_string(days[i]))
+            embed.add_field(name = days[i], value = self.day_string(days[i]))
         return embed
 
     def day_string(self, day: str) -> str:
