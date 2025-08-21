@@ -65,4 +65,4 @@ class SignupButtons(discord.ui.View):
     async def seventh_button_callback(self, interaction: discord.Interaction, button):
         username = interaction.user.name
         self.week.button(username, "saturday")
-        await self.embed_msg.edit(self.week.generate_embed())           
+        await self.embed_msg.edit(embed = self.week.generate_embed())           
