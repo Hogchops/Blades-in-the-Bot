@@ -35,13 +35,14 @@ class Week():
     def purge_user_from_other_days(self, name: str, day: str):
         day_list = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         day_list.remove(day)
+        print(day_list)
         for d in day_list:
             i = self.get_user_day(name, d)
             if i != -1:
                 self.remove_user_from_day(name, d)
 
     def button(self, name: str, day: str) -> int:
-        if self.day_dict[day].__len__() > 5:
+        if self.day_dict[day].__len__() > 1:
             return -1
         i = self.get_user_day(name, day)
         if i == -1:
