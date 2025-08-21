@@ -28,7 +28,7 @@ class Week():
         day_list = self.day_dict[day.lower()]
         i = self.get_user_day(name, day)
         if i != -1:
-            day_list.remove(name.lower())
+            day_list.remove(name)
             return 0
         return -1
     
