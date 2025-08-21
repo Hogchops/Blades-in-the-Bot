@@ -30,7 +30,7 @@ class Signup(commands.Cog):
     @commands.hybrid_command(name="sr", description="Remove someone from a confirmed list.")
     @app_commands.autocomplete(day = autocomplete_dotw)
     async def remove(self, ctx: commands.Context, name: str, day: str):
-        if ctx.author.get_role(814732436054867968) != None:
+        if ctx.author.id == 280116409852362754:
             day_dict = {
                 "sunday": self.week.sunday,
                 "monday": self.week.monday,
