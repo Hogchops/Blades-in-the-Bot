@@ -14,7 +14,7 @@ class Signup(commands.Cog):
     async def get_signups(self, ctx: commands.Context):
         self.week = Week()
         await ctx.defer(ephemeral=True)
-        embed = self.generate_embed()
+        embed = self.week.generate_embed()
         msg = await ctx.send(embed=embed)
         await ctx.send("Press the button to signup for that day. Press each button that you would be willing to make. When a day fills up to 4, you will be locked in for that day.\n\nTo remove your name from a day, press the button again.", view = SignupButtons(self.bot, ctx, msg, self.week))
 
