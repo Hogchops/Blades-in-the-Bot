@@ -29,7 +29,7 @@ class Signup(commands.Cog):
 
     @commands.hybrid_command(name="sr", description="Remove someone from a confirmed list.")
     @app_commands.autocomplete(day = autocomplete_dotw)
-    async def remove(self, ctx: commands.Context, name: str, day: str):
+    async def remove(self, ctx: commands.Context, name: discord.user, day: str):
         if ctx.author.id == 280116409852362754:
             day_dict = {
                 "sunday": self.week.sunday,
@@ -47,6 +47,25 @@ class Signup(commands.Cog):
         else:
             await ctx.send("You do not have permissions for this.", ephemeral=True)
 
+    @commands.hybrid_command(name="sessions", description="List sessions.")
+    async def sessions(self, ctx: commands.Context):
+        day_dict = {
+                "sunday": self.week.sunday,
+                "monday": self.week.monday,
+                "tuesday": self.week.tuesday,
+                "wednesday": self.week.wednesday,
+                "thursday": self.week.thursday,
+                "friday": self.week.friday,
+                "saturday": self.week.saturday
+        }
+        dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        for d in dotw:
+            day_list = day_dict[d]
+            if day_list.__len__() >= 4:
+                msg = f"# Session Announcement: {d.title()}\n"
+                for user in day_list:
+                    msg += user.mention + "\n"
+        
 async def setup(bot):
 
     await bot.add_cog(Signup(bot))
