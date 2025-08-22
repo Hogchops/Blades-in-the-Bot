@@ -37,25 +37,20 @@ class Week():
         }
 
     @classmethod
-    def from_dict(cls, data, guild: discord.Guild):
+    async def from_dict(cls, data, guild: discord.Guild):
         week = cls()
-        week.sunday = [guild.get_member(user_id) for user_id in data.get("sunday", []) if guild.get_member(user_id)]
-        week.monday = [guild.get_member(user_id) for user_id in data.get("monday", []) if guild.get_member(user_id)]
-        week.tuesday = [guild.get_member(user_id) for user_id in data.get("tuesday", []) if guild.get_member(user_id)]
-        week.wednesday = [guild.get_member(user_id) for user_id in data.get("wednesday", []) if guild.get_member(user_id)]
-        week.thursday = [guild.get_member(user_id) for user_id in data.get("thursday", []) if guild.get_member(user_id)]
-        week.friday = [guild.get_member(user_id) for user_id in data.get("friday", []) if guild.get_member(user_id)]
-        week.saturday = [guild.get_member(user_id) for user_id in data.get("saturday", []) if guild.get_member(user_id)]
+        dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        for day in dotw:
+            week_list = []
+            for user_id in data.get(day, []):
+                try:
+                    member = await guild.fetch_member(user_id)
+                except discord.NotFound:
+                    continue
+                week_list.append(member)
+            setattr(week, day, week_list)
 
-        week.day_dict = {
-            "sunday": week.sunday,
-            "monday": week.monday,
-            "tuesday": week.tuesday,
-            "wednesday": week.wednesday,
-            "thursday": week.thursday,
-            "friday": week.friday,
-            "saturday": week.saturday
-        }
+        week.day_dict = {day: getattr(week, day) for day in dotw}
         print(week.to_string())
         return week
 
