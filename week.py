@@ -24,24 +24,24 @@ class Week():
             "saturday": self.saturday
         }
     
-    def add_user_to_day(self, user: discord.user, day: str):
+    def add_user_to_day(self, user: discord.User, day: str):
         self.day_dict[day].append(user)
 
-    def remove_user_from_day(self, user: discord.user, day: str) -> int:
+    def remove_user_from_day(self, user: discord.User, day: str) -> int:
         day_list = self.day_dict[day.lower()]
         if user in day_list:
             day_list.remove(user)
             return 0
         return -1
     
-    def purge_user_from_other_days(self, user: discord.user, day: str):
+    def purge_user_from_other_days(self, user: discord.User, day: str):
         day_list = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         day_list.remove(day)
         for d in day_list:
             if user in self.day_dict[d]:
                 self.remove_user_from_day(user, d)
 
-    def button(self, user: discord.user, day: str) -> int:
+    def button(self, user: discord.User, day: str) -> int:
         if self.day_dict[day].__len__() >= self.session_full:
             return -1
         if user in self.day_dict[day]: 
@@ -59,7 +59,7 @@ class Week():
                 self.remove_user_from_day(user, day)
                 return 0
     
-    def get_user_day(self, user: discord.user, day: str) -> int:
+    def get_user_day(self, user: discord.User, day: str) -> int:
         day_list = self.day_dict[day.lower()]
         for i in range(day_list.__len__()):
             if day_list[i] == user:
