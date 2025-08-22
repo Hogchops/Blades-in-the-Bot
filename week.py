@@ -26,6 +26,7 @@ class Week():
     
     def add_user_to_day(self, user: discord.User, day: str):
         self.day_dict[day].append(user)
+        print(self.day_dict[day])
 
     def remove_user_from_day(self, user: discord.User, day: str) -> int:
         day_list = self.day_dict[day.lower()]
