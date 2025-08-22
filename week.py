@@ -1,4 +1,5 @@
 import discord
+from datetime import date, timedelta
 
 class Week():
     
@@ -70,8 +71,10 @@ class Week():
     def generate_embed(self) -> discord.Embed:
         embed = discord.Embed(title = "Session Signups", description = "If you see your name listed under a day, you are signed up for that day.", color = discord.Color.blurple())
         days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        week_dates = self.get_next_week_dates()
         for i in range(7):
-            embed.add_field(name = "__" + days[i] + "__", value = self.day_string(days[i]))
+            name = f"__{days[i]} {week_dates[i].strftime("%m/%d")}__"
+            embed.add_field(name = name, value = self.day_string(days[i]))
         return embed
 
     def day_string(self, day: str) -> str:
@@ -83,3 +86,12 @@ class Week():
             output += f"{k}: {i.display_name}\n"
             k += 1
         return output
+    
+    def get_next_week_dates(self):
+        today = date.today()
+
+        days_ahead = (6 - today.weekday()) % 7
+        next_sunday = today + timedelta(days=days_ahead)
+
+        week_dates = [(next_sunday + timedelta(days=i)) for i in range(7)]
+        return week_dates
