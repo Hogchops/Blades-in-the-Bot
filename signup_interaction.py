@@ -20,7 +20,7 @@ class SignupButtons(discord.ui.View):
     
     async def button_handle(self, interaction: discord.Interaction, day: str):
         user = interaction.user
-        channel = self.bot.get_channel(self.channel_id)
+        channel = await self.bot.fetch_channel(self.channel_id)
         embed_msg = await channel.fetch_message(self.embed_id)
 
         i = self.week.button(user, day)
