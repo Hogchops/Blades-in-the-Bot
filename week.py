@@ -45,7 +45,7 @@ class Week():
         if self.day_dict[day].__len__() >= self.session_full:
             return -1
         print("hi")
-        if user not in self.day_dict[day]: 
+        if not (user in self.day_dict[day]): 
             print("HEY")
             self.add_user_to_day(user, day)
             print("added")
