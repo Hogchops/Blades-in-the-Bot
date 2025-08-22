@@ -23,6 +23,7 @@ class Signup(commands.Cog):
                 self.saved_embed_id = data["embed_id"]
                 self.saved_view_id = data["view_id"]
                 self.week = Week.from_dict(data["week"], self.bot.get_guild(807855936106135562))
+                print(self.week)
         except FileNotFoundError:
             self.week = Week()
 
