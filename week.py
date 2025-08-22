@@ -96,6 +96,8 @@ class Week():
             if self.day_dict[day].__len__() >= self.session_confirmed:
                 for player in self.day_dict[day]:
                     self.purge_user_from_other_days(player, day)
+                if self.day_dict[day].__len__() == self.session_confirmed:
+                    return 2
                 return 1
             else:
                 return 0 
