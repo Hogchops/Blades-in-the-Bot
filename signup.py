@@ -62,11 +62,10 @@ class Signup(commands.Cog):
         for d in dotw:
             day_list = day_dict[d]
             if day_list.__len__() >= 4:
-                msg = f"# Session Announcement: {d.title()}\n"
+                msg = f"## Session Announcement: {d.title()}\n"
                 for user in day_list:
                     msg += user.mention + "\n"
-                msg += "\n"
-        await ctx.send(msg)
+                await ctx.send(msg)
         
 async def setup(bot):
     await bot.add_cog(Signup(bot))
