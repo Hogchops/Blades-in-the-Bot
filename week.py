@@ -11,8 +11,8 @@ class Week():
         self.friday = []
         self.saturday = []
 
-        self.session_full = 5
-        self.session_confirmed = 4
+        self.session_full = 2
+        self.session_confirmed = 2
 
         self.day_dict = {
             "sunday": self.sunday,
