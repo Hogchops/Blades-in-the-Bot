@@ -44,11 +44,8 @@ class Week():
     def button(self, user: discord.User, day: str) -> int:
         if self.day_dict[day].__len__() >= self.session_full:
             return -1
-        print("hi")
         if not (user in self.day_dict[day]): 
-            print("HEY")
             self.add_user_to_day(user, day)
-            print("added")
             if self.day_dict[day].__len__() >= self.session_confirmed:
                 for player in self.day_dict[day]:
                     self.purge_user_from_other_days(player, day)
