@@ -56,6 +56,7 @@ class Week():
             "friday": week.friday,
             "saturday": week.saturday
         }
+        print(week.to_string())
         return week
 
     def generate_embed(self) -> discord.Embed:
@@ -127,3 +128,13 @@ class Week():
 
         week_dates = [(next_sunday + timedelta(days=i)) for i in range(7)]
         return week_dates
+    
+    def to_string(self):
+        output = ""
+        dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        for d in dotw:
+            output += f"{d.title()}:\n"
+            for i in self.day_dict[d]:
+                output += f"{i.display_name()}\n"
+            output += "\n"
+        return output
