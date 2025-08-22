@@ -73,7 +73,7 @@ class Week():
         days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         week_dates = self.get_next_week_dates()
         for i in range(7):
-            name = f"__{days[i]} {week_dates[i].strftime("%m/%d")}__"
+            name = f"__{days[i]} {week_dates[i].strftime('%m/%d')}__"
             embed.add_field(name = name, value = self.day_string(days[i]))
         return embed
 
