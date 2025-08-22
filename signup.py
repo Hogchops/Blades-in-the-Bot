@@ -65,7 +65,7 @@ class Signup(commands.Cog):
                 msg = f"## Session Announcement: {d.title()}\n"
                 for user in day_list:
                     msg += user.mention + "\n"
-                await ctx.send(msg)
+                await ctx.channel.send(msg)
         
 async def setup(bot):
     await bot.add_cog(Signup(bot))
