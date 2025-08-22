@@ -32,7 +32,7 @@ class Signup(commands.Cog):
             if channel:
                 try:
                     view_msg = await channel.fetch_message(self.saved_view_id)
-                    self.bot.add_view(SignupButtons(self.bot, self.saved_channel_id, self.saved_embed_id, self.saved_view_id, self.week), message_id=view_msg.id)
+                    self.bot.add_view(SignupButtons(self.bot, self.week, self.saved_channel_id, self.saved_embed_id, self.saved_view_id, self.week), message_id=view_msg.id)
                     print(f"Signup restored on message {view_msg.id}\n")
                 except Exception as e:
                     print("Could not restore signup:", e)
