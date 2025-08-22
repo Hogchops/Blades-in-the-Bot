@@ -38,8 +38,12 @@ class Signup(commands.Cog):
             self.week = Week()
         except Exception as e:
             print("Could not restore signup:", e)
+        
+    def is_owner():
+        return commands.check(lambda ctx: ctx.author.id == 280116409852362754)
     
     @commands.hybrid_command(name="signup", description="Create the signup embed for the week.")
+    @is_owner()
     async def get_signups(self, ctx: commands.Context):
         if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
             try:
@@ -84,25 +88,24 @@ class Signup(commands.Cog):
 
     @commands.hybrid_command(name="sr", description="Remove someone from a confirmed list.")
     @app_commands.autocomplete(day = autocomplete_dotw)
+    @is_owner()
     async def remove(self, ctx: commands.Context, name: discord.User, day: str):
-        if ctx.author.id == 280116409852362754:
-            day_dict = {
-                "sunday": self.week.sunday,
-                "monday": self.week.monday,
-                "tuesday": self.week.tuesday,
-                "wednesday": self.week.wednesday,
-                "thursday": self.week.thursday,
-                "friday": self.week.friday,
-                "saturday": self.week.saturday
-            }
-            day_list = day_dict[day.lower()]
-            if name in day_list:
-                day_list.remove(name)
-                await self.embed_msg.edit(embed=self.week.generate_embed())
-        else:
-            await ctx.send("You do not have permissions for this.", ephemeral=True)
+        day_dict = {
+            "sunday": self.week.sunday,
+            "monday": self.week.monday,
+            "tuesday": self.week.tuesday,
+            "wednesday": self.week.wednesday,
+            "thursday": self.week.thursday,
+            "friday": self.week.friday,
+            "saturday": self.week.saturday
+        }
+        day_list = day_dict[day.lower()]
+        if name in day_list:
+            day_list.remove(name)
+            await self.embed_msg.edit(embed=self.week.generate_embed())
 
     @commands.hybrid_command(name="sessions", description="List sessions.")
+    @is_owner()
     async def sessions(self, ctx: commands.Context):
         day_dict = {
                 "sunday": self.week.sunday,
