@@ -18,7 +18,7 @@ class Signup(commands.Cog):
         embed = self.week.generate_embed()
         msg = await ctx.send(embed=embed)
         self.embed_msg = msg
-        await ctx.send("Press the button to signup for that day. Press each button that you would be willing to make. When a day fills up to 4, you will be locked in for that day.\n\nTo remove your name from a day, press the button again.", view = SignupButtons(self.bot, ctx, msg, self.week))
+        await ctx.send("@everyone Signups are active for the next calendar week. Press a button to signup for the corresponding day. Sign up for each day that you would be willing to make. When a day fills up to 4, you will be locked in for that day.\n\nTo remove your name from a day, press the button again.", view = SignupButtons(self.bot, ctx, msg, self.week))
 
     async def autocomplete_dotw(self, inter: discord.integrations.Integration, current: str) -> List[app_commands.Choice[str]]:
         choices = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
