@@ -28,7 +28,7 @@ class SignupButtons(discord.ui.View):
             if i == 1:
                 await channel.send("A session is confirmed on **" + day.title() + "** at **7:00 pm EST** with the people listed above. This session can still accept more players.")
 
-            await embed_msg.edit(embed=self.cog.generate_embed())
+            await embed_msg.edit(embed=self.week.generate_embed())
             state = {
                 "channel_id": channel.id,
                 "embed_id": self.embed_id,
