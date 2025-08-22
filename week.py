@@ -45,13 +45,11 @@ class Week():
             for user_id in data.get(day, []):
                 try:
                     member = await guild.fetch_member(user_id)
+                    week_list.append(member)
                 except discord.NotFound:
                     continue
-                week_list.append(member)
             setattr(week, day, week_list)
-
         week.day_dict = {day: getattr(week, day) for day in dotw}
-        print(week.to_string())
         return week
 
     def generate_embed(self) -> discord.Embed:
