@@ -24,7 +24,6 @@ class Signup(commands.Cog):
                 self.saved_channel_id = data["channel_id"]
                 self.saved_embed_id = data["embed_id"]
                 self.saved_view_id = data["view_id"]
-                print("got here <3")
                 self.week = await Week.from_dict(data["week"], guild) 
             print("got here!")
             if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
