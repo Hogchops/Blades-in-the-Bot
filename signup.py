@@ -60,7 +60,7 @@ class Signup(commands.Cog):
                        allowed_mentions=discord.AllowedMentions(everyone=True))
         self.saved_view_id = view_msg.id
                        
-        view = SignupButtons(self.bot, self.week, self.msg.channel.id, self.saved_embed_id, self.saved_view_id)     
+        view = SignupButtons(self.bot, self.week, self.saved_channel_id, self.saved_embed_id, self.saved_view_id)     
         await view_msg.edit(view=view)
 
 
