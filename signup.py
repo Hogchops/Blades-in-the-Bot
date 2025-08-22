@@ -16,27 +16,29 @@ class Signup(commands.Cog):
         self.saved_embed_id = None
         self.saved_view_id = None
 
+    async def cog_load(self):
+        guild = await self.bot.fetch_guild(807855936106135562)
         try:
             with open("signup_state.json", "r") as f:
                 data = json.load(f)
                 self.saved_channel_id = data["channel_id"]
                 self.saved_embed_id = data["embed_id"]
                 self.saved_view_id = data["view_id"]
-                self.week = Week.from_dict(data["week"], self.bot.get_guild(807855936106135562))
-                print(self.week)
+                self.week = await Week.from_dict(data["week"], guild) 
+
+            if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
+                try:
+                    channel = await self.bot.fetch_channel(self.saved_channel_id)
+                    view_msg = await channel.fetch_message(self.saved_view_id)
+                    self.bot.add_view(SignupButtons(self.week, self.saved_channel_id, self.saved_embed_id, self.saved_view_id))
+                    print(f"Signup restored on message {view_msg.id}")
+                except discord.NotFound:
+                    print(f"Channel {self.saved_channel_id} not found. Skipping restore.")
+                    return
         except FileNotFoundError:
             self.week = Week()
-
-    async def cog_load(self):
-        if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
-            channel = await self.bot.fetch_channel(self.saved_channel_id)
-            if channel:
-                try:
-                    view_msg = await channel.fetch_message(self.saved_view_id)
-                    self.bot.add_view(SignupButtons(self.bot, self.week, self.saved_channel_id, self.saved_embed_id, self.saved_view_id))
-                    print(f"Signup restored on message {view_msg.id}\n")
-                except Exception as e:
-                    print("Could not restore signup:", e)
+        except Exception as e:
+            print("Could not restore signup:", e)
     
     @commands.hybrid_command(name="signup", description="Create the signup embed for the week.")
     async def get_signups(self, ctx: commands.Context):
