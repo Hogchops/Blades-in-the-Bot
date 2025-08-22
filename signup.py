@@ -10,7 +10,7 @@ class Signup(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.week = Week()
+        self.week = None
         self.session_confirmed = 4
         self.saved_channel_id = None
         self.saved_embed_id = None
@@ -24,7 +24,7 @@ class Signup(commands.Cog):
                 self.saved_view_id = data["view_id"]
                 self.week = Week.from_dict(data["week"], self.bot.get_guild(807855936106135562))
         except FileNotFoundError:
-            pass
+            self.week = Week()
 
     async def cog_load(self):
         if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
