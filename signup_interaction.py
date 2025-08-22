@@ -4,11 +4,13 @@ import asyncio
 from discord.ext import commands
 from week import Week
 import json
-from signup import Signup
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from signup import Signup
 
 class SignupButtons(discord.ui.View):
 
-    def __init__(self, cog: Signup, bot, week: Week, channel_id: int, embed_id: int, view_id: int):
+    def __init__(self, cog: "Signup", bot, week: Week, channel_id: int, embed_id: int, view_id: int):
         super().__init__(timeout=None)
         self.bot = bot
         self.cog = cog
