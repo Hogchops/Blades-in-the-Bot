@@ -29,7 +29,7 @@ class Signup(commands.Cog):
                 try:
                     channel = await self.bot.fetch_channel(self.saved_channel_id)
                     view_msg = await channel.fetch_message(self.saved_view_id)
-                    self.bot.add_view(SignupButtons(self.week, self.saved_channel_id, self.saved_embed_id, self.saved_view_id))
+                    self.bot.add_view(SignupButtons(self.week, self.bot, self.saved_channel_id, self.saved_embed_id, self.saved_view_id))
                     print(f"Signup restored on message {view_msg.id}")
                 except discord.NotFound:
                     print(f"Channel {self.saved_channel_id} not found. Skipping restore.")
