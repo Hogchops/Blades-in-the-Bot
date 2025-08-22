@@ -4,12 +4,14 @@ import asyncio
 from discord.ext import commands
 from week import Week
 import json
+from signup import Signup
 
 class SignupButtons(discord.ui.View):
 
-    def __init__(self, bot, week: Week, channel_id: int, embed_id: int, view_id: int):
+    def __init__(self, cog: Signup, bot, week: Week, channel_id: int, embed_id: int, view_id: int):
         super().__init__(timeout=None)
         self.bot = bot
+        self.cog = cog
         self.week = week
         self.channel_id = channel_id
         self.embed_id = embed_id
@@ -25,7 +27,7 @@ class SignupButtons(discord.ui.View):
             if i == 1:
                 await channel.send("A session is confirmed on **" + day.title() + "** at **7:00 pm EST** with the people listed above. This session can still accept more players.")
 
-            await embed_msg.edit(embed=self.week.generate_embed())
+            await embed_msg.edit(embed=self.cog.generate_embed())
             state = {
                 "channel_id": channel.id,
                 "embed_id": self.embed_id,
