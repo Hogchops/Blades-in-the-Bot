@@ -54,7 +54,6 @@ class Week():
             else:
                 return 0 
         else:
-            print("not found")
             if self.day_dict[day].__len__() >= self.session_confirmed:
                 return -1
             else:
@@ -69,11 +68,11 @@ class Week():
         return -1
 
     def generate_embed(self) -> discord.Embed:
-        embed = discord.Embed(title = "Session Signups", description = "If you see your name listed under a day, you are signed up for that day.", color = discord.Color.blurple())
+        embed = discord.Embed(title = "Session Signups", description = "If you see your name listed under a day, you are signed up for that day. All times are 7:00 pm EST.", color = discord.Color.blurple())
         days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         week_dates = self.get_next_week_dates()
         for i in range(7):
-            name = f"__{days[i]} {week_dates[i].strftime('%m/%d')}__"
+            name = f"__{days[i]}__ __{week_dates[i].strftime('%m/%d')}__"
             embed.add_field(name = name, value = self.day_string(days[i]))
         return embed
 
