@@ -11,6 +11,8 @@ class Signup(commands.Cog):
         self.bot = bot
         self.week = Week()
         self.embed_msg = None
+        
+        self.session_confirmed = 2
 
     @commands.hybrid_command(name="signup", description="Create the signup embed for the week.")
     async def get_signups(self, ctx: commands.Context):
@@ -63,7 +65,7 @@ class Signup(commands.Cog):
         date_index = 0
         for d in dotw:
             day_list = day_dict[d]
-            if day_list.__len__() >= 4:
+            if day_list.__len__() >= self.session_confirmed:
                 msg = f"## Session Announcement: {d.title()} {week_dates[date_index].strftime('%m/%d')}\n"
                 for user in day_list:
                     msg += user.mention + "\n"
