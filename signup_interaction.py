@@ -26,8 +26,8 @@ class SignupButtons(discord.ui.View):
             return msg
 
     async def button_handle(self, interaction: discord.Interaction, day: str):
-        username = interaction.user.display_name
-        i = self.week.button(username, day)
+        user = interaction.user
+        i = self.week.button(user, day)
         if i != -1:
             if i == 1:
                 await interaction.channel.send("A session is confirmed on **" + day.title() + "** at **7:00 pm EST** with the people listed above. This session can still accept more players.")
