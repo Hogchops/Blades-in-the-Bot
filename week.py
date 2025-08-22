@@ -24,7 +24,30 @@ class Week():
             "friday": self.friday,
             "saturday": self.saturday
         }
-    
+
+    def to_dict(self):
+        return {
+            "sunday": self.sunday,
+            "monday": self.monday,
+            "tuesday": self.tuesday,
+            "wednesday": self.wednesday,
+            "thursday": self.thursday,
+            "friday": self.friday,
+            "saturday": self.saturday
+        }
+
+    def from_dict(self, data):
+        week = Week()
+        week.sunday = data.get("sunday", [])
+        week.monday = data.get("monday", [])
+        week.tuesday = data.get("tuesday", [])
+        week.wednesday = data.get("wednesday", [])
+        week.thursday = data.get("thursday", [])
+        week.friday = data.get("friday", [])
+        week.saturday = data.get("saturday", [])
+        return week
+
+
     def add_user_to_day(self, user: discord.User, day: str):
         self.day_dict[day].append(user)
 
