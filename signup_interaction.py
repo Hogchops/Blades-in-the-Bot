@@ -10,9 +10,10 @@ if TYPE_CHECKING:
 
 class SignupButtons(discord.ui.View):
 
-    def __init__(self, week: Week, channel_id: int, embed_id: int, view_id: int):
+    def __init__(self, bot, week: Week, channel_id: int, embed_id: int, view_id: int):
         super().__init__(timeout=None)
         self.week = week
+        self.bot = bot
         self.channel_id = channel_id
         self.embed_id = embed_id
         self.view_id = view_id
