@@ -64,7 +64,7 @@ class Signup(commands.Cog):
         for d in dotw:
             day_list = day_dict[d]
             if day_list.__len__() >= 4:
-                msg = f"## Session Announcement: {d.title()} {week_dates[date_index].strftime("%m/%d")}\n"
+                msg = f"## Session Announcement: {d.title()} {week_dates[date_index].strftime('%m/%d')}\n"
                 for user in day_list:
                     msg += user.mention + "\n"
                 await ctx.channel.send(msg)
