@@ -61,7 +61,7 @@ class Signup(commands.Cog):
         dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         for d in dotw:
             day_list = day_dict[d]
-            if day_list.__len__() >= 4:
+            if day_list.__len__() >= 2:
                 msg = f"## Session Announcement: {d.title()}\n"
                 for user in day_list:
                     msg += user.mention + "\n"
