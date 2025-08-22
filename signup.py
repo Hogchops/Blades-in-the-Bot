@@ -28,7 +28,7 @@ class Signup(commands.Cog):
 
     async def cog_load(self):
         if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
-            channel = self.bot.get_channel(self.saved_channel_id)
+            channel = await self.bot.fetch_channel(self.saved_channel_id)
             if channel:
                 try:
                     view_msg = await channel.fetch_message(self.saved_view_id)
@@ -41,7 +41,7 @@ class Signup(commands.Cog):
     async def get_signups(self, ctx: commands.Context):
         if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
             try:
-                old_channel = self.bot.get_channel(self.saved_channel_id)
+                old_channel = await self.bot.fetch_channel(self.saved_channel_id)
                 if old_channel:
                     old_view = await old_channel.fetch_message(self.saved_view_id)
                     old_embed = await old_channel.fetch_message(self.saved_embed_id)
