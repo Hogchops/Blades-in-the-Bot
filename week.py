@@ -69,6 +69,7 @@ class Week():
         for i in day_list:
             if i:
                 output += f"{k}: {i.display_name}\n"
+                k = k + 1
         return output
 
     def add_user_to_day(self, user: discord.User, day: str):
