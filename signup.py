@@ -59,13 +59,16 @@ class Signup(commands.Cog):
                 "saturday": self.week.saturday
         }
         dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        week_dates = self.week.get_next_week_dates()
+        date_index = 0
         for d in dotw:
             day_list = day_dict[d]
             if day_list.__len__() >= 4:
-                msg = f"## Session Announcement: {d.title()}\n"
+                msg = f"## Session Announcement: {d.title()} {week_dates[date_index].strftime("%m/%d")}\n"
                 for user in day_list:
                     msg += user.mention + "\n"
                 await ctx.channel.send(msg)
+            date_index += 1
         
 async def setup(bot):
     await bot.add_cog(Signup(bot))
