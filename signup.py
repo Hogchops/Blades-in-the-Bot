@@ -22,7 +22,7 @@ class Signup(commands.Cog):
                 self.saved_channel_id = data["channel_id"]
                 self.saved_embed_id = data["embed_id"]
                 self.saved_view_id = data["view_id"]
-                self.week = Week.from_dict(data["week"])
+                self.week = Week.from_dict(data["week"], self.bot.get_guild(807855936106135562))
         except FileNotFoundError:
             pass
 
@@ -37,30 +37,6 @@ class Signup(commands.Cog):
                 except Exception as e:
                     print("Could not restore signup:", e)
     
-    def generate_embed(self) -> discord.Embed:
-        embed = discord.Embed(title = "Session Signups", description = "If you see your name listed under a day, you are signed up for that day. All times are 7:00 pm EST.", color = discord.Color.blurple())
-        days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-        week_dates = self.week.get_next_week_dates()
-        for i in range(7):
-            name = f"__{days[i]}__ __{week_dates[i].strftime('%m/%d')}__"
-            embed.add_field(name = name, value = self.day_string(days[i]))
-        return embed
-    
-    def day_string(self, day: str) -> str:
-        day_list = self.week.day_dict[day.lower()]
-        output = ""
-        k = 1
-        guild = self.bot.get_guild(807855936106135562)
-        if not guild:
-            return "(Could not fetch guild)"
-        for i in day_list:
-            member = guild.get_member(i)
-            if member:
-                output += f"{k}: {member.display_name}\n"
-            else:
-                output += f"{k}: <Unknown User {i}>\n"
-        return output
-
     @commands.hybrid_command(name="signup", description="Create the signup embed for the week.")
     async def get_signups(self, ctx: commands.Context):
         if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
@@ -76,7 +52,7 @@ class Signup(commands.Cog):
 
         self.week = Week()
 
-        msg = await ctx.send(embed=self.generate_embed())
+        msg = await ctx.send(embed=self.week.generate_embed())
         self.saved_channel_id = msg.channel.id
         self.saved_embed_id = msg.id
 
@@ -84,7 +60,7 @@ class Signup(commands.Cog):
                        allowed_mentions=discord.AllowedMentions(everyone=True))
         self.saved_view_id = view_msg.id
                        
-        view = SignupButtons(self.bot, self, self.week, self.saved_channel_id, self.saved_embed_id, self.saved_view_id)     
+        view = SignupButtons(self.bot, self.week, self.saved_channel_id, self.saved_embed_id, self.saved_view_id)     
         await view_msg.edit(view=view)
 
 
