@@ -12,7 +12,7 @@ class Signup(commands.Cog):
         self.week = Week()
         self.embed_msg = None
         
-        self.session_confirmed = 2
+        self.session_confirmed = 4
 
     @commands.hybrid_command(name="signup", description="Create the signup embed for the week.")
     async def get_signups(self, ctx: commands.Context):
