@@ -12,13 +12,13 @@ class Faction():
     
     def generate_embed(self) -> Embed:
         if self.affiliation == 0:
-            color = Color.light_gray
+            color = Color.light_grey()
         elif self.affiliation == 1:
-            color = Color.orange
+            color = Color.orange()
         elif self.affiliation == 2:
-            color = Color.red
+            color = Color.red()
         else:
-            color = Color.magenta
+            color = Color.magenta()
 
         embed = Embed(title = self.title, description = self.description, color = color)
         embed.add_field(name = "Tier", value = self.tier)
