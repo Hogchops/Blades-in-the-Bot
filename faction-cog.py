@@ -120,8 +120,8 @@ class Factions(commands.Cog):
         faction = self.find_faction(title)
         if faction:
             self.factions.remove(faction)
-            if os.path.exists(f"Factions/{title.lower().replace(" ", "_")}.json"):
-                os.remove(f"Factions/{title.lower().replace(" ", "_")}.json")
+            if os.path.exists(f"Factions/{title.lower().replace(' ', '_')}.json"):
+                os.remove(f"Factions/{title.lower().replace(' ', '_')}.json")
                 await interaction.response.send_message(f"Faction {title} successfully deleted.", ephemeral=True)
             else:
                 await interaction.response.send_message(f"Faction {title} removed but file not deleted.",ephemeral=True)
