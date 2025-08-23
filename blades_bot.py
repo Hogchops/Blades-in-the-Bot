@@ -33,6 +33,7 @@ async def load_cogs():
 	await bot.load_extension("signup-cog")
 	await bot.load_extension("clocks-cog")
 	await bot.load_extension("help-cog")
+	await bot.load_extension("faction-cog")
 	
 bot.help_command = MyHelp()
 bot.run(TOKEN)
