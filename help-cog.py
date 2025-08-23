@@ -14,6 +14,7 @@ class HelpCog(commands.Cog):
         query = "Optional: command or cog name to get detailed help."
     )
     async def help_slash(self, interaction: discord.Interaction, query: Optional[str] = None):
+        is_owner = interaction.user.id == 280116409852362754
         if query:
             command = self.bot.tree.get_command(query)
             if command:
@@ -38,7 +39,7 @@ class HelpCog(commands.Cog):
         )
 
         for cmd in self.bot.tree.get_commands():
-            if getattr(cmd, "hidden", False):
+            if not is_owner and getattr(cmd, "hidden", False):
                 continue
             embed.add_field(
                 name = f"/{cmd.name}",
