@@ -60,7 +60,7 @@ class Factions(commands.Cog):
         self.factions.append(faction)
 
         folder = Path("Factions")
-        filename = title.replace(" ", "_") + ".json"
+        filename = title.lower().replace(" ", "_") + ".json"
         filepath = folder / filename
 
         try:
