@@ -158,7 +158,7 @@ class Signup(commands.Cog):
                     #self.bot.loop.create_task(self.send_reminders(members, day, delay))
                     output = f"Reminders scheduled for **{day}** at {remind_time} EST. The people receiving them are:\n"
                     for member in members:
-                        output += f"{member.display_name()}\n"
+                        output += f"{member.display_name}\n"
                     await ctx.send(output, ephemeral=True)
         
     async def send_reminders(self, members, day, delay):
