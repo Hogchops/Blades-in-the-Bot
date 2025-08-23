@@ -28,13 +28,13 @@ class Faction():
         
     def get_image(self) -> File:
         if self.affiliation == 0:
-            fp = f"FactionImages\\empire_png.png"
+            fp = f"FactionImages\\empire.png"
             fn = f"empire_png.png"
         elif self.affiliation == 1:
-            fp = f"FactionImages\\hutt_png.png"
+            fp = f"FactionImages\\hutt.png"
             fn = f"hutt_png.png"
         elif self.affiliation == 2:
-            fp = f"FactionImages\\rebellion_png.png"
+            fp = f"FactionImages\\rebellion.png"
             fn = f"rebellion_png.png"
         else:
             return None
