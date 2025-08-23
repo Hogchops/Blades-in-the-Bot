@@ -141,7 +141,7 @@ class Signup(commands.Cog):
         if not self.week:
             await ctx.send("No data found", ephemeral=True)
             return
-        dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        dotw = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
         now = datetime.now(EST)
 
         for i, day in enumerate(dotw):
