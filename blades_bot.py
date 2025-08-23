@@ -29,7 +29,7 @@ async def on_command_error(ctx, error):
 	await ctx.send(f"An error has occurred: {str(error)}")
 
 async def load_cogs():
-	await bot.load_extension("roll")
+	await bot.load_extension("roll-cog")
 	await bot.load_extension("signup-cog")
 	await bot.load_extension("clocks-cog")
 	await bot.load_extension("help-cog")
