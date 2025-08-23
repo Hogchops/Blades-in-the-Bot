@@ -37,10 +37,12 @@ class HelpCog(commands.Cog):
             icon_url = interaction.user.display_avatar.url
         )
 
-        for cog_name, cog in self.bot.cogs.items():
-            commands_list = await self.get_cog_commands(cog)
-            if commands_list:
-                embed.add_field(name = cog_name, value = "\n".join(commands_list), inline=False)
+        for cmd in self.bot.tree.get_commands():
+            embed.add_field(
+                name = f"/{cmd.name}",
+                value = cmd.description or "No description provided.",
+                inline = False
+            )
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
     
