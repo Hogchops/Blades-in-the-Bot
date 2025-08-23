@@ -9,9 +9,6 @@ class HelpCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
     
-    async def cog_load(self):
-        self.bot.tree.add_command(self.help_slash)
-
     @app_commands.command(name = "help", description = "Show help for commands or a specific cog/command.")
     @app_commands.describe(
         query = "Optional: command or cog name to get detailed help."
