@@ -164,7 +164,7 @@ class Signup(commands.Cog):
                 else:
                     await self.send_reminders(members, day, 0)
                     await ctx.send(f"Reminders immediately sent for **{remind_time.strftime('%A, %Y-%m-%d')}**.", ephemeral=True)
-        
+    
     async def send_reminders(self, members, day, delay):
         await asyncio.sleep(delay)
         for member in members:
@@ -173,5 +173,7 @@ class Signup(commands.Cog):
             except Exception as e:
                 print(f"Could not DM {member}: {e}")
         
+    remind_sessions.hidden = True
+    
 async def setup(bot):
     await bot.add_cog(Signup(bot))
