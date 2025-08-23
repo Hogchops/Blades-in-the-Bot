@@ -4,7 +4,12 @@ from discord import app_commands
 from signup_interaction import SignupButtons
 from week import Week
 from typing import List
+from datetime import datetime, timedelta, time
+from zoneinfo import ZoneInfo
 import json
+import asyncio
+
+EST = ZoneInfo("America/New_York")
 
 class Signup(commands.Cog):
 
@@ -15,6 +20,7 @@ class Signup(commands.Cog):
         self.saved_channel_id = None
         self.saved_embed_id = None
         self.saved_view_id = None
+        self.scheduled_reminders = {}
 
     async def cog_load(self):
         guild = await self.bot.fetch_guild(807855936106135562)
@@ -38,6 +44,7 @@ class Signup(commands.Cog):
             self.week = Week()
         except Exception as e:
             print("Could not restore signup:", e)
+
         
     def is_owner():
         return commands.check(lambda ctx: ctx.author.id == 280116409852362754)
@@ -127,6 +134,40 @@ class Signup(commands.Cog):
                     msg += user.mention + "\n"
                 await ctx.channel.send(msg)
             date_index += 1
+
+    @commands.hybrid_command(name="remind", description="Send a reminder to people locked in for sessions")
+    @is_owner()
+    async def remind_sessions(self, ctx: commands.Context):
+        if not self.week:
+            await ctx.send("No data found", ephemeral=True)
+            return
+        dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        now = datetime.now(EST)
+
+        for i, day in enumerate(dotw):
+            members = getattr(self.week, day, [])
+            if len(members) >= self.session_confirmed:
+                today = now.date()
+                target_date = today + timedelta(days = (i - today.weekday()) % 7)
+                session_time = datetime.combine(target_date, time(19,0), tzinfo=EST)
+
+                remind_time = session_time - timedelta(days = 1)
+                delay = (remind_time - now).total_seconds()
+
+                if delay > 0:
+                    #self.bot.loop.create_task(self.send_reminders(members, day, delay))
+                    output = f"Reminders scheduled for **{day}** at {remind_time} EST. The people receiving them are:\n"
+                    for member in members:
+                        output += f"{member.display_name()}\n"
+                    await ctx.send(output, ephemeral=True)
+        
+    async def send_reminders(self, members, day, delay):
+        await asyncio.sleep(delay)
+        for member in members:
+            try:
+                await member.send(f"Reminder: you are signed up for a session tomorrow, {day} at 7pm EST.")
+            except Exception as e:
+                print(f"Could not DM {member}: {e}")
         
 async def setup(bot):
     await bot.add_cog(Signup(bot))
