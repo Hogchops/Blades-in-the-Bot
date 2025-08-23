@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 import json
 import asyncio
 
-EST = ZoneInfo("America/New_York")
+EST = ZoneInfo("US/Eastern")
 
 class Signup(commands.Cog):
 
