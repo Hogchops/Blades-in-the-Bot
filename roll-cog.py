@@ -6,9 +6,9 @@ from difflib import get_close_matches
 from discord import app_commands
 from discord.ext.commands import Context
 
-def generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides):
+def generate_embed(interaction: discord.Interaction, dice, num, zero, checking_result, num_dice_sides):
 	embed = discord.Embed(title = '', description = '', color = discord.Color.magenta())
-	embed.set_author(name = ctx.author.display_name, icon_url = str(ctx.author.display_avatar.url))	
+	embed.set_author(name = interaction.user.display_name, icon_url = str(interaction.user.display_avatar.url))	
 	rolls = ""
 	for i in range(num - 1):
 		rolls += str(dice[i]) + ", "
@@ -51,7 +51,7 @@ class Roll(commands.Cog):
 		num = "Enter the number of dice you want to roll. Entering 0 will roll 2 dice.",
 		num_dice_sides = "Enter the number of sides for each die. If you leave this blank or enter 6, we will provide results along with your role."
 	)
-	async def roll(self, ctx, num: int, num_dice_sides: int = 6):
+	async def roll(self, interaction: discord.Interaction, num: int, num_dice_sides: int = 6):
 		zero = False
 		if num == 0:
 			num = 2
@@ -61,15 +61,15 @@ class Roll(commands.Cog):
 			checking_result = True
 		else:
 			checking_result = False
-		embed = generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides)
-		await ctx.send(embed = embed)
+		embed = generate_embed(interaction, dice, num, zero, checking_result, num_dice_sides)
+		await interaction.response.send_message(embed = embed)
 
 	@app_commands.command(name = "gr", description = "Roll hidden dice.")
 	@app_commands.describe(
 		num = "Enter the number of dice you want to roll. Entering 0 will roll 2 dice.",
 		num_dice_sides = "Enter the number of sides for each die. If you leave this blank or enter 6, we will provide results along with your role."
 	)
-	async def groll(self, ctx: commands.Context, num: int, num_dice_sides: int = 6):
+	async def groll(self, interaction: discord.Interaction, num: int, num_dice_sides: int = 6):
 		zero = False
 		if num == 0:
 			num = 2
@@ -79,8 +79,8 @@ class Roll(commands.Cog):
 			checking_result = True
 		else:
 			checking_result = False
-		embed = generate_embed(ctx, dice, num, zero, checking_result, num_dice_sides)
-		await ctx.send(embed = embed, ephemeral = True)
+		embed = generate_embed(interaction, dice, num, zero, checking_result, num_dice_sides)
+		await interaction.response.send_message(embed = embed, ephemeral = True)
 	
 	groll.hidden = True
 
