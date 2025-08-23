@@ -33,7 +33,9 @@ class GameClocks(commands.Cog):
         image = clock.get_image()
         embed.set_image(url = f"attachment://Blades_clock_{clock.total}_{clock.progress}.png")
         msg = await ctx.send(file=image, embed=embed)
-        await msg.pin()
+        system_msg = await msg.pin()
+        if system_msg:
+            await system_msg.delete()
         clock.embed_id = msg.id
         clock.channel_id = msg.channel.id
         self.clocks.append(clock)
