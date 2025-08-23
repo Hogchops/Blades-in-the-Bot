@@ -156,7 +156,7 @@ class Signup(commands.Cog):
                 delay = (remind_time - now).total_seconds()
 
                 if delay > 0:
-                    #self.bot.loop.create_task(self.send_reminders(members, day, delay))
+                    self.bot.loop.create_task(self.send_reminders(members, day, delay))
                     output = f"Reminders scheduled for {remind_time.strftime('%Y-%m-%d %H:%M:%S %Z')} EST. The people receiving them are:\n"
                     for member in members:
                         output += f"{member.display_name}\n"
