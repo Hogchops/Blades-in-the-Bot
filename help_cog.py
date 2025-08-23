@@ -15,7 +15,7 @@ class HelpCog(commands.Cog):
     )
     async def help_slash(self, interaction: discord.Interaction, query: Optional[str] = None):
         if query:
-            command = self.bot.get_command(query)
+            command = self.bot.tree.get_command(query)
             if command:
                 embed = discord.Embed(
                     title = f"/{command.name} {command.signature}" if hasattr(command, "signature") else f"/{command.name}",
