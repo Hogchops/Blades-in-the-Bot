@@ -174,6 +174,9 @@ class Signup(commands.Cog):
                 print(f"Could not DM {member}: {e}")
         
     remind_sessions.hidden = True
+    sessions.hidden = True
+    remove.hidden = True
+    get_signups.hidden = True
     
 async def setup(bot):
     await bot.add_cog(Signup(bot))
