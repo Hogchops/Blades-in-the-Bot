@@ -135,7 +135,7 @@ class Signup(commands.Cog):
                 await ctx.channel.send(msg)
             date_index += 1
 
-    @commands.hybrid_command(name="remind", description="Send a reminder to people locked in for sessions")
+    @commands.hybrid_command(name="notify", description="Send a reminder to people locked in for sessions")
     @is_owner()
     async def remind_sessions(self, ctx: commands.Context):
         if not self.week:
