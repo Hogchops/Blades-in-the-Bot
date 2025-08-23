@@ -161,6 +161,9 @@ class Signup(commands.Cog):
                     for member in members:
                         output += f"{member.display_name}\n"
                     await ctx.send(output, ephemeral=True)
+                else:
+                    await self.send_reminders(members, day, 0)
+                    await ctx.send(f"Reminders immediately sent for **{remind_time.strftime('%A, %Y-%m-%d')}**.", ephemeral=True)
         
     async def send_reminders(self, members, day, delay):
         await asyncio.sleep(delay)
