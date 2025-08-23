@@ -131,6 +131,6 @@ class Week():
         for d in dotw:
             output += f"{d.title()}:\n"
             for i in self.day_dict[d]:
-                output += f"{i.display_name()}\n"
+                output += f"{i.display_name}\n"
             output += "\n"
         return output
