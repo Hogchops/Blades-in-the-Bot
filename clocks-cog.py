@@ -67,7 +67,7 @@ class GameClocks(commands.Cog):
         else:
             await ctx.send("No clock found matching the description entered.")   
     
-    @commands.hybrid_command(name = "pdelete", aliases = "pd", description = "Delete a clock.")
+    @commands.hybrid_command(name = "pdelete", aliases = ["pd"], description = "Delete a clock.")
     @app_commands.autocomplete(description = autocomplete)
     @app_commands.describe(
         description = "Enter the description for the clock you wish to delete."
