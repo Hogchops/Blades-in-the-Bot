@@ -10,11 +10,6 @@ class GameClocks(commands.Cog):
         self.bot = bot
         self.clocks: List[GameClock] = []
 
-    async def cog_load(self):
-        self.bot.add_command(self.clock)
-        self.bot.add_command(self.tick_clock)
-        self.bot.add_command(self.delete_clock)
-
     async def autocomplete(self, ctx: discord.Interaction, current: str) -> List[app_commands.Choice[str]]:
         choices = []
         for clock in self.clocks:
