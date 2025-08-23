@@ -111,7 +111,7 @@ class Factions(commands.Cog):
             await interaction.response.send_message(f"I could not find faction {title}.", ephemeral=True)
         
     @app_commands.command(name="remove-faction", description="Remove a faction.")
-    @autocomplete(title = autocomplete)
+    @app_commands.autocomplete(title = autocomplete)
     @app_commands.describe(
         title = "The title of the faction you wish to remove."
     )
