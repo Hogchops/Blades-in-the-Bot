@@ -33,9 +33,7 @@ class GameClocks(commands.Cog):
         image = clock.get_image()
         embed.set_image(url = f"attachment://Blades_clock_{clock.total}_{clock.progress}.png")
         msg = await ctx.send(file=image, embed=embed)
-        system_msg = await msg.pin()
-        if system_msg:
-            await system_msg.delete()
+        await msg.pin()
         clock.embed_id = msg.id
         clock.channel_id = msg.channel.id
         self.clocks.append(clock)
@@ -50,7 +48,7 @@ class GameClocks(commands.Cog):
     async def tick_clock(self, ctx, description: str, amount: int):
         await ctx.defer()
         description = description.lower()
-        clock = next((c for c in self.clocks if c.description == description), None)
+        clock = next((c for c in self.clocks if c.description.lower() == description), None)
         if clock:
             clock.progress += amount
             if clock.progress > clock.total:
@@ -68,6 +66,24 @@ class GameClocks(commands.Cog):
             await ctx.send("Updated the clock.",ephemeral = True)
         else:
             await ctx.send("No clock found matching the description entered.")   
+    
+    @commands.hybrid_command(name = "pdelete", aliases = "pd", description = "Delete a clock.")
+    @app_commands.autocomplete(description = autocomplete)
+    @app_commands.describe(
+        description = "Enter the description for the clock you wish to delete."
+    )
+    async def delete_clock(self, ctx, description: str):
+        await ctx.defer()
+        description = description.lower()
+        clock = next((c for c in self.clocks if c.description.lower() == description))
+        if clock:
+            clock_channel = await self.bot.fetch_channel(clock.channel_id)
+            embed_msg = await clock_channel.fetch_message(clock.embed_id)
+
+            await embed_msg.delete()
+            await ctx.send("Deleted the clock.", ephemeral=True)
+        else:
+            await ctx.send("Clock not found.", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(GameClocks(bot))
