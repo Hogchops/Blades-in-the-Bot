@@ -142,6 +142,7 @@ class Signup(commands.Cog):
             await ctx.send("No data found", ephemeral=True)
             return
         dotw = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+
         now = datetime.now(EST)
 
         for i, day in enumerate(dotw):
@@ -156,7 +157,7 @@ class Signup(commands.Cog):
 
                 if delay > 0:
                     #self.bot.loop.create_task(self.send_reminders(members, day, delay))
-                    output = f"Reminders scheduled for **{day}** at {remind_time} EST. The people receiving them are:\n"
+                    output = f"Reminders scheduled for {remind_time.strftime('%Y-%m-%d %H:%M:%S %Z')} EST. The people receiving them are:\n"
                     for member in members:
                         output += f"{member.display_name}\n"
                     await ctx.send(output, ephemeral=True)
