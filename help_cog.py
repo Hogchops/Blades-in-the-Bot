@@ -2,14 +2,31 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from help_func import MyHelp
+from typing import Optional
 
 class HelpCog(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name = "help", description = "Show help for commands.")
-    async def help_slash(self, interaction: discord.Interaction):
+    @app_commands.command(name = "help", description = "Show help for commands or a specific cog/command.")
+    @app_commands.describe(
+        query = "Optional: command or cog name to get detailed help."
+    )
+    async def help_slash(self, interaction: discord.Interaction, query: Optional[str] = None):
+        if query:
+            command = self.bot.get_command(query)
+            if command:
+                embed = discord.Embed(
+                    title = f"/{command.name} {command.signature}" if hasattr(command, "signature") else f"/{command.name}",
+                    description = command.description or "No description provided.",
+                    color = discord.Color.magenta()
+                )
+                if command.aliases:
+                    embed.add_field(name = "Aliases", value = ", ".join(command.aliases), inline=False)
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return
+
         embed = discord.Embed(
             title = "Help",
             description = "List of available commands",
