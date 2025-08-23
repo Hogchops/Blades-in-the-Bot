@@ -8,12 +8,12 @@ class GameClocks(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.clocks = []
+        self.clocks: List[GameClock] = []
 
     async def autocomplete(self, ctx, current: str) -> List[app_commands.Choice[str]]:
         choices = []
         for clock in self.clocks:
-            if ctx.channel == clock.channel:
+            if ctx.channel_id == clock.channel_id:
                 choices.append(clock.description)
         return [
             app_commands.Choice(name = choice, value = choice)
