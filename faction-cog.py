@@ -99,5 +99,5 @@ class Factions(commands.Cog):
         else:
             await interaction.response.send_message(f"I could not find faction {title}.", ephemeral=True)
         
-
-
+async def setup(bot):
+    await bot.add_cog(Factions(bot))
