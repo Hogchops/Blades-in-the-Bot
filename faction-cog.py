@@ -72,7 +72,7 @@ class Factions(commands.Cog):
             image = faction.get_image()
             embed.set_author(
                 name = interaction.user.display_name,
-                icon_url = interaction.user.display_icon.url
+                icon_url = interaction.user.display_avatar.url
             )
             if image:
                 embed.set_thumbnail(url = f"attachment://{image.filename}")
