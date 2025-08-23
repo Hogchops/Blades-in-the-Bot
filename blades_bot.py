@@ -30,8 +30,6 @@ async def on_command_error(ctx, error):
 
 async def load_cogs():
 	await bot.load_extension("roll")
-	await bot.load_extension("factions")
-	await bot.load_extension("game_clocks")
 	await bot.load_extension("signup-cog")
 	await bot.load_extension("clocks-cog")
 	await bot.load_extension("help-cog")
