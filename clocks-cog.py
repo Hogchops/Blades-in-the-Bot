@@ -78,8 +78,11 @@ class GameClocks(commands.Cog):
             clock_channel = await self.bot.fetch_channel(clock.channel_id)
             embed_msg = await clock_channel.fetch_message(clock.embed_id)
 
-            await embed_msg.delete()
-            await ctx.response.send_message("Deleted the clock.", ephemeral=True)
+            if embed_msg:
+                await embed_msg.delete()
+                await ctx.response.send_message("Deleted the clock.", ephemeral=True)
+            else:
+                await ctx.response.send_message("Could not find the message.", ephemeral=True)
         else:
             await ctx.response.send_message("Clock not found.", ephemeral=True)
 
