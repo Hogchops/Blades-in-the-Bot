@@ -36,7 +36,7 @@ class Factions(commands.Cog):
                 return faction
         return None
     
-    @app_commands.command(name = "add faction", description = "Create a faction.")
+    @app_commands.command(name = "add-faction", description = "Create a faction.")
     @app_commands.describe(
         title = "Enter the faction title.",
         description = "Enter the faction description.",
