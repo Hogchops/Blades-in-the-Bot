@@ -80,7 +80,7 @@ class Factions(commands.Cog):
             choices.append(faction.title)
         return [
             app_commands.Choice(name = choice, value = choice)
-            for choice in choices if current.lower() == choice.lower()
+            for choice in choices if current.lower() in choice.lower()
         ]
 
     @app_commands.command(name = "faction", description = "View a faction.")
