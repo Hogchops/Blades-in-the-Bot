@@ -20,7 +20,7 @@ class GameClocks(commands.Cog):
             for choice in choices if current.lower() in choice.lower()
         ]
     
-    @app_commands.command(name = "pclock", description = "Create a clock with a description, a total, and some parts already ticked.")
+    @app_commands.command(name = "clock", description = "Create a clock with a description, a total, and some parts already ticked.")
     @app_commands.describe(
         description = "Enter a description for the clock.",
         total = "Enter the total number of ticks this clock should have. Entering 4, 6, 8, or 12 will yield pictures with the clock.",
@@ -39,7 +39,7 @@ class GameClocks(commands.Cog):
         self.clocks.append(clock)
 
 
-    @app_commands.command(name = "ptick", description = "Tick a clock by an amount.")
+    @app_commands.command(name = "tick", description = "Tick a clock by an amount.")
     @app_commands.autocomplete(description = autocomplete)
     @app_commands.describe(
         description = "Enter the description for the clock you want to tick.",
@@ -66,7 +66,7 @@ class GameClocks(commands.Cog):
         else:
             await ctx.response.send_message("No clock found matching the description entered.", ephemeral=True)
     
-    @app_commands.command(name = "pdelete", description = "Delete a clock.")
+    @app_commands.command(name = "delete", description = "Delete a clock.")
     @app_commands.autocomplete(description = autocomplete)
     @app_commands.describe(
         description = "Enter the description for the clock you wish to delete."
