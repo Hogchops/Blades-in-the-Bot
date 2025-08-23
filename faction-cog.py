@@ -69,8 +69,15 @@ class Factions(commands.Cog):
             
             embed = faction.generate_embed()
             image = faction.get_image()
-            embed.set_image(url = f"attachment://{image.filename}.png")
-            await interaction.response.send_message(embed=embed, file=image, ephemeral=True)
+            embed.set_author(
+                name = interaction.user.display_name,
+                icon_url = interaction.user.display_icon.url
+            )
+            if image:
+                embed.set_thumbnail(url = f"attachment://{image.filename}.png")
+                await interaction.response.send_message(embed=embed, file=image, ephemeral=True)
+            else:
+                await interaction.response.send_message(embed=embed)
         except Exception as e:
             await interaction.response.send_message(f"Failed to save faction: {e}")
     
