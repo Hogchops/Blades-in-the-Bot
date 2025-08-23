@@ -5,6 +5,7 @@ from faction_obj import Faction
 from typing import List
 import json
 from pathlib import Path
+import os
 
 class Factions(commands.Cog):
 
@@ -41,7 +42,7 @@ class Factions(commands.Cog):
         title = "Enter the faction title.",
         description = "Enter the faction description.",
         tier = "Enter the faction tier.",
-        affiliation = "Enter the affiliation of the faction.",
+        affiliation = "Enter the affiliation of the faction. Empire: 0, Hutt: 1, Rebel: 2",
         contact = "Enter the faction contact.",
         leader = "Enter the faction leader."
     )
@@ -109,5 +110,23 @@ class Factions(commands.Cog):
         else:
             await interaction.response.send_message(f"I could not find faction {title}.", ephemeral=True)
         
+    @app_commands.command(name="remove-faction", description="Remove a faction.")
+    @autocomplete(title = autocomplete)
+    @app_commands.describe(
+        title = "The title of the faction you wish to remove."
+    )
+    @is_owner()
+    async def delete_faction(self, interaction: discord.Interaction, title: str):
+        faction = self.find_faction(title)
+        if faction:
+            self.factions.remove(faction)
+            if os.path.exists(f"Factions/{title.lower().replace(" ", "_")}.json"):
+                os.remove(f"Factions/{title.lower().replace(" ", "_")}.json")
+                await interaction.response.send_message(f"Faction {title} successfully deleted.", ephemeral=True)
+            else:
+                await interaction.response.send_message(f"Faction {title} removed but file not deleted.",ephemeral=True)
+        else:
+            await interaction.response.send_message(f"Faction {title} not found.")
+
 async def setup(bot):
     await bot.add_cog(Factions(bot))
