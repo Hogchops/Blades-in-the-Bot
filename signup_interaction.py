@@ -1,12 +1,6 @@
 import discord
-import discord.ext
-import asyncio
-from discord.ext import commands
 from week import Week
 import json
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from signup import Signup
 
 class SignupButtons(discord.ui.View):
 
