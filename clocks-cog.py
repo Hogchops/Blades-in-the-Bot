@@ -63,6 +63,7 @@ class GameClocks(commands.Cog):
             image = clock.get_image()
             embed.set_image(url = f"attachment://Blades_clock_{clock.total}_{clock.progress}.png")
             await embed_msg.edit(embed=embed, attachments=[image])
+            await ctx.send("Updated the clock.",ephemeral = True)
         else:
             await ctx.send("No clock found matching the description entered.")   
 
