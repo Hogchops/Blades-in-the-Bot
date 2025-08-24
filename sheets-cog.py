@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 from signup_interaction import SignupButtons
 import gspread
+from typing import List
 from oauth2client.service_account import ServiceAccountCredentials
 
 class Sheets(commands.Cog):
@@ -22,8 +23,66 @@ class Sheets(commands.Cog):
         self.narshaddaa = client.open("Planets and Sectors").worksheet("Nar Shaddaa")
         self.ordmantell = client.open("Planets and Sectors").worksheet("Ord Mantell")
         self.frontier = client.open("Planets and Sectors").worksheet("Frontier Worlds")
-
     
+    def planet_dict(self, planet_name: str):
+        planet_sheet = getattr(self, planet_name)
+        return {
+            "title": planet_sheet.acell("G17").value,
+            "heat": planet_sheet.acell("G19").value,
+            "wanted": planet_sheet.acell("I19").value,
+            "agency": planet_sheet.acell("K19").value,
+            "description": planet_sheet.acell("G24").value,
+            "modifier": planet_sheet.acell("G30").value,
+            "progress": planet_sheet.acell("J34").value,
+            "total": planet_sheet.acell("L34").value,
+            "fp": f"Systems\\{planet_name.lower()}.jpg",
+            "fn": f"{planet_name.lower()}.jpg"
+        }
+
+    def is_owner():
+        return commands.check(lambda ctx: ctx.author.id == 280116409852362754)
+    
+    async def autocomplete_planets(self, inter: discord.integrations.Integration, current: str) -> List[app_commands.Choice[str]]:
+        choices = ["Alderaan", "Coruscant", "Kuat", "Mygeeto", "Nar Shaddaa", "Ord Mantell", "Frontier Worlds"]
+        return [
+            app_commands.Choice(name = choice, value = choice)
+            for choice in choices if current.lower() in choice.lower()
+        ]
+    
+    @app_commands.command(name="planet", description="List the information for a planet.")
+    @app_commands.describe(
+        planet_name = "Enter a planet name."
+    )
+    @app_commands.autocomplete(planet_name = autocomplete_planets)
+    async def planet(self, interaction: discord.Interaction, planet_name: str):
+        planet = getattr(self, planet_name.lower())
+        if planet:
+            planet_dict = self.planet_dict(planet_name)
+            if planet_dict["agency"] == "ISB":
+                color = discord.Color.light_grey()
+            elif planet_dict["agency"] == "The Eye":
+                color = discord.Color.orange()
+            else:
+                color = discord.Color.magenta()
+            embed = discord.Embed(
+                title = planet_dict["title"],
+                description = planet_dict["description"],
+                color = color
+            )
+            embed.set_author(
+                name = interaction.user.display_name,
+                icon_url = interaction.user.display_avatar.url
+            )
+            embed.add_field(name="Heat:", value=planet_dict["heat"], inline=True)
+            embed.add_field(name="Wanted:", value=planet_dict["wanted"], inline=True)
+            embed.add_field(name="Agency:", value=planet_dict["agency"], inline=True)
+            embed.add_field(name="Wanted Clock:", value=f"{planet_dict["progress"]}/{planet_dict["total"]}", inline=True)
+            fp = planet_dict["fp"]
+            fn = planet_dict["fn"]
+            file = discord.File(fp, fn)
+            embed.set_image(url = f"attachment://{fn}")
+            await interaction.response.send_message(embed=embed, file=file)
+
     @app_commands.command(name="heat", description="List the heat and wanted levels of all the systems.")
     async def heat(self, interaction: discord.Interaction):
         a_heat = self.alderaan.acell("G19").value
@@ -42,6 +101,9 @@ class Sheets(commands.Cog):
         f_wanted = self.frontier.acell("I19").value
 
         print(f"A heat: {a_heat}, A wanted: {a_wanted}")
+    
+
+    
     
 async def setup(bot):
     await bot.add_cog(Sheets(bot))
