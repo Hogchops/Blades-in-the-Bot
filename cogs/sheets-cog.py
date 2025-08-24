@@ -57,13 +57,7 @@ class Sheets(commands.Cog):
             for choice in choices if current.lower() in choice.lower()
         ]
     
-    @app_commands.command(name="planet", description="List the information for a planet.")
-    @app_commands.describe(
-        planet_name = "Enter a planet name."
-    )
-    @app_commands.autocomplete(planet_name = autocomplete_planets)
-    async def planet(self, interaction: discord.Interaction, planet_name: str):
-        await interaction.response.defer()
+    async def send_planet_embed(self, interaction: discord.Interaction, planet_name: str):
         planet = getattr(self, planet_name.lower().replace(" ", ''))
         if planet:
             planet_dict = self.planet_dict(planet_name)
@@ -93,7 +87,16 @@ class Sheets(commands.Cog):
             fn = planet_dict["fn"]
             file = discord.File(fp, fn)
             embed.set_image(url = f"attachment://{fn}")
-            await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
+            await interaction.followup.send_message(embed=embed, file=file, ephemeral=True)
+
+    @app_commands.command(name="planet", description="List the information for a planet.")
+    @app_commands.describe(
+        planet_name = "Enter a planet name."
+    )
+    @app_commands.autocomplete(planet_name = autocomplete_planets)
+    async def planet(self, interaction: discord.Interaction, planet_name: str):
+        await interaction.response.defer()
+        await self.send_planet_embed(interaction, planet_name)
 
     @app_commands.command(name="heat", description="List the heat and wanted levels of all the systems.")
     async def heat(self, interaction: discord.Interaction):
@@ -168,7 +171,7 @@ class Sheets(commands.Cog):
             else:
                 new_heat = current_heat + heat
                 planet_sheet.update_acell("G19", new_heat)
-        await self.planet(interaction, old_planet_name)
+        await self.send_planet_embed(interaction, old_planet_name)
     
 async def setup(bot):
     await bot.add_cog(Sheets(bot))
