@@ -23,6 +23,7 @@ async def on_ready():
 async def setup_hook():
 	#guild = discord.Object(id = 807855936106135562)
 	#bot.tree.clear_commands(guild=guild)
+	print("Initializing sync->")
 	await bot.tree.sync()#
 
 @bot.event
@@ -30,11 +31,17 @@ async def on_command_error(ctx, error):
 	await ctx.send(f"An error has occurred: {str(error)}")
 
 async def load_cogs():
+	print("Loading roll-cog->")
 	await bot.load_extension("cogs.roll-cog")
+	print("Loading signup-cog->")
 	await bot.load_extension("cogs.signup-cog")
+	print("Loading clocks-cog->")
 	await bot.load_extension("cogs.clocks-cog")
+	print("Loading help-cog->")
 	await bot.load_extension("cogs.help-cog")
+	print("Loading faction-cog->")
 	await bot.load_extension("cogs.faction-cog")
+	print("loading sheets-cog->")
 	await bot.load_extension("cogs.sheets-cog")
 	
 bot.run(TOKEN)
