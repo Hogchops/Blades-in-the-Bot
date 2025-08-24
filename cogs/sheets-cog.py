@@ -31,6 +31,9 @@ class Sheets(commands.Cog):
         self.narshaddaa_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=310258739#gid=310258739"
         self.ordmantell_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1650912478#gid=1650912478"
         self.frontier_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1591646957#gid=1591646957"
+
+        for cmd in self.__cog_app_commands__:
+            cmd.extras["cog"] = self.__cog_name__
     
     def planet_dict(self, planet_name: str):
         planet_sheet = getattr(self, planet_name.lower().replace(" ", ''))

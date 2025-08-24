@@ -46,6 +46,9 @@ class Roll(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
+		for cmd in self.__cog_app_commands__:
+			cmd.extras["cog"] = self.__cog_name__
+
 	@app_commands.command(name = "r", description = "Roll some dice.") 
 	@app_commands.describe(
 		num = "Enter the number of dice you want to roll. Entering 0 will roll 2 dice.",

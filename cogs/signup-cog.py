@@ -26,6 +26,9 @@ class Signup(commands.Cog):
         self.reminders: List[Reminder] = []
         self.scheduled_tasks: dict[str, asyncio.Task] = {}
 
+        for cmd in self.__cog_app_commands__:
+            cmd.extras["cog"] = self.__cog_name__
+
     async def cog_load(self):
         guild = await self.bot.fetch_guild(807855936106135562)
         try:

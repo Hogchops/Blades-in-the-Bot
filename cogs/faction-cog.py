@@ -13,6 +13,9 @@ class Factions(commands.Cog):
         self.bot = bot
         self.factions: List[Faction] = []
 
+        for cmd in self.__cog_app_commands__:
+            cmd.extras["cog"] = self.__cog_name__
+
     async def cog_load(self):
         folder = Path("Factions")
         if not folder.exists():
