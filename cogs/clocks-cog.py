@@ -4,7 +4,7 @@ from discord import app_commands
 from objects.gameclock import GameClock
 from typing import List
 
-class GameClocks(commands.Cog):
+class Clocks(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -90,4 +90,4 @@ class GameClocks(commands.Cog):
             await ctx.response.send_message("Clock not found.", ephemeral=True)
 
 async def setup(bot):
-    await bot.add_cog(GameClocks(bot))
+    await bot.add_cog(Clocks(bot))
