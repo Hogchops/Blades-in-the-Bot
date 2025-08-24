@@ -31,21 +31,30 @@ class Sheets(commands.Cog):
         self.narshaddaa_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=310258739#gid=310258739"
         self.ordmantell_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1650912478#gid=1650912478"
         self.frontier_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1591646957#gid=1591646957"
+    
+    
 
     def planet_dict(self, planet_name: str):
         planet_sheet = getattr(self, planet_name.lower().replace(" ", ''))
-        return {
-            "title": planet_sheet.acell("G17").value,
-            "heat": planet_sheet.acell("G19").value,
-            "wanted": planet_sheet.acell("I19").value,
-            "agency": planet_sheet.acell("K19").value,
-            "description": planet_sheet.acell("G24").value,
-            "modifier": planet_sheet.acell("G30").value,
-            "progress": planet_sheet.acell("J34").value,
-            "total": planet_sheet.acell("L34").value,
-            "fp": f"Systems/{planet_name.lower().replace(' ', '_')}.jpg",
-            "fn": f"{planet_name.lower().replace(' ', '_')}.jpg"
-        }
+        try:
+            return {
+                "title": planet_sheet.acell("G17").value,
+                "heat": planet_sheet.acell("G19").value,
+                "wanted": planet_sheet.acell("I19").value,
+                "agency": planet_sheet.acell("K19").value,
+                "description": planet_sheet.acell("G24").value,
+                "modifier": planet_sheet.acell("G30").value,
+                "progress": planet_sheet.acell("J34").value,
+                "total": planet_sheet.acell("L34").value,
+                "fp": f"Systems/{planet_name.lower().replace(' ', '_')}.jpg",
+                "fn": f"{planet_name.lower().replace(' ', '_')}.jpg"
+            }
+        except gspread.exceptions.APIError as e:
+            print(f"Google Sheets API error: {e}")
+            return None
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            return None
 
     def is_owner():
         return commands.check(lambda ctx: ctx.author.id == 280116409852362754)
@@ -96,20 +105,27 @@ class Sheets(commands.Cog):
             await interaction.followup.send(embed=embed, file=file, ephemeral=True)
 
     async def send_heat_embed(self, interaction: discord.Interaction):
-        a_heat = self.alderaan.acell("G19").value
-        a_wanted = self.alderaan.acell("I19").value
-        c_heat = self.coruscant.acell("G19").value
-        c_wanted = self.coruscant.acell("I19").value
-        k_heat = self.kuat.acell("G19").value
-        k_wanted = self.kuat.acell("I19").value
-        m_heat = self.mygeeto.acell("G19").value
-        m_wanted = self.mygeeto.acell("I19").value
-        n_heat = self.narshaddaa.acell("G19").value
-        n_wanted = self.narshaddaa.acell("I19").value
-        o_heat = self.ordmantell.acell("G19").value
-        o_wanted = self.ordmantell.acell("I19").value
-        f_heat = self.frontier.acell("G19").value
-        f_wanted = self.frontier.acell("I19").value
+        try:
+            a_heat = self.alderaan.acell("G19").value
+            a_wanted = self.alderaan.acell("I19").value
+            c_heat = self.coruscant.acell("G19").value
+            c_wanted = self.coruscant.acell("I19").value
+            k_heat = self.kuat.acell("G19").value
+            k_wanted = self.kuat.acell("I19").value
+            m_heat = self.mygeeto.acell("G19").value
+            m_wanted = self.mygeeto.acell("I19").value
+            n_heat = self.narshaddaa.acell("G19").value
+            n_wanted = self.narshaddaa.acell("I19").value
+            o_heat = self.ordmantell.acell("G19").value
+            o_wanted = self.ordmantell.acell("I19").value
+            f_heat = self.frontier.acell("G19").value
+            f_wanted = self.frontier.acell("I19").value
+        except gspread.exceptions.APIError as e:
+            await interaction.followup.send(f"Rate limit hit. Try again in a moment.", ephemeral=True)
+            return
+        except Exception as e:
+            await interaction.followup.send(f"Unexpected error: {e}", ephemeral=True)
+            return
 
         embed = discord.Embed(
             title = "Heat and Wanted Levels",
@@ -133,45 +149,5 @@ class Sheets(commands.Cog):
         embed.set_thumbnail(url = f"attachment://{fn}")
         await interaction.followup.send(embed=embed, file=file, ephemeral=True)
 
-    @app_commands.command(name="heat", description="List the heat and wanted levels of all the systems.")
-    async def heat(self, interaction: discord.Interaction):
-        await interaction.response.defer()
-        await self.send_heat_embed(interaction)
-
-    @app_commands.command(name="add-heat", description="Add heat to a system.")
-    @app_commands.describe(
-        planet_name = "Enter a planet name.",
-        heat = "Enter an amount of heat you wish to add."
-    )
-    @app_commands.autocomplete(planet_name = autocomplete_planets)
-    @is_owner()
-    async def add_heat(self, interaction: discord.Interaction, planet_name: str, heat: int):
-        await interaction.response.defer()
-        planet_name = planet_name.lower().replace(' ', '')
-        planet_sheet = getattr(self, planet_name)
-        current_heat = int(planet_sheet.acell("G19").value)
-
-        if heat >= 0:
-            if current_heat + heat >= 7:
-                new_heat = current_heat + heat - 7
-                old_wanted_level = int(planet_sheet.acell("I19").value)
-                planet_sheet.update_acell("G19",  new_heat)
-                if old_wanted_level < 3:
-                    planet_sheet.update_acell("I19", old_wanted_level + 1)
-            else:
-                new_heat = current_heat + heat
-                planet_sheet.update_acell("G19", new_heat)
-        else:
-            if current_heat + heat < 0:
-                new_heat = 7 - current_heat + heat
-                old_wanted_level = int(planet_sheet.acell("I19").value)
-                planet_sheet.update_acell("G19", new_heat)
-                if old_wanted_level > 0:
-                    planet_sheet.update_acell("I19", old_wanted_level - 1)
-            else:
-                new_heat = current_heat + heat
-                planet_sheet.update_acell("G19", new_heat)
-        await self.send_heat_embed(interaction)
-    
 async def setup(bot):
     await bot.add_cog(Sheets(bot))
