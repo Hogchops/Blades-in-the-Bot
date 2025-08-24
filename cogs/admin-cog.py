@@ -40,7 +40,7 @@ class Admin(commands.Cog):
         )
         for i, note in enumerate(self.notes, 1):
             embed.add_field(name = f"Note {i}", value = note[:1024], inline=False)
-        await interaction.response.send_message(embed = embed)
+        await interaction.response.send_message(embed = embed, ephemeral=True)
     
     @app_commands.command(name = "delete-notes", description="Delete the notes.")
     @app_commands.default_permissions(administrator=True)
