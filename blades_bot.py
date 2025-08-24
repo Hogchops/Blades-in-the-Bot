@@ -36,5 +36,6 @@ async def load_cogs():
 	await bot.load_extension("cogs.help-cog")
 	await bot.load_extension("cogs.faction-cog")
 	await bot.load_extension("cogs.sheets-cog")
+	await bot.load_extension("cogs.admin-cog")
 	
 bot.run(TOKEN)
