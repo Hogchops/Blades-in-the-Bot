@@ -222,6 +222,7 @@ class Roll(commands.Cog):
 			color = discord.Color.magenta()
 		)
 		embed.add_field(name="Modifying the Gambit Pool Directly", value="You can modify the pool directly by using:\n`/add` to add a gambit\n`/spend` to spend a gambit.")
+		embed.add_field(name="Position and Effect",value="The `/roll` and `/groll` commands will assume risky/standard.\nMake sure to choose different values if you need to roll otherwise!")
 		embed.set_author(
 			name = interaction.user.display_name,
 			url = interaction.user.display_avatar.url
