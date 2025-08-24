@@ -51,7 +51,7 @@ class Sheets(commands.Cog):
         return commands.check(lambda ctx: ctx.author.id == 280116409852362754)
     
     async def autocomplete_planets(self, inter: discord.integrations.Integration, current: str) -> List[app_commands.Choice[str]]:
-        choices = ["Alderaan", "Coruscant", "Kuat", "Mygeeto", "Nar Shaddaa", "Ord Mantell", "Frontier Worlds"]
+        choices = ["Alderaan", "Coruscant", "Kuat", "Mygeeto", "Nar Shaddaa", "Ord Mantell", "Frontier"]
         return [
             app_commands.Choice(name = choice, value = choice)
             for choice in choices if current.lower() in choice.lower()
