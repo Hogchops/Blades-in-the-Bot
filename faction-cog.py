@@ -127,6 +127,36 @@ class Factions(commands.Cog):
                 await interaction.response.send_message(f"Faction {title} removed but file not deleted.",ephemeral=True)
         else:
             await interaction.response.send_message(f"Faction {title} not found.")
+    
+    async def autocomplete_fields(self, interaction: discord.Interaction, current: str) -> List[app_commands.Choice[str]]:
+        choices = ["title", "description", "tier", "affiliation", "contact", "leader"]
+        return [
+            app_commands.Choice(name = choice, value = choice)
+            for choice in choices if current.lower() in choice.lower()
+        ]
+    
+    @app_commands.command(name = "modify-faction", description = "Modify a faction.")
+    @app_commands.autocomplete(title = autocomplete)
+    @app_commands.autocomplete(field = autocomplete_fields)
+    @app_commands.describe(
+        title = "Enter the guild you are modifying.",
+        field = "Enter the field you are editing.",
+        value = "Enter the value you wish to replace the old one with."
+    )
+    async def modify_faction(self, interaction: discord.Interaction, title: str, field: str, value):
+        faction = self.find_faction(title)
+        if faction:
+            faction.modify(field, value)
 
+            folder = Path("Factions")
+            filename = title.lower().replace(" ", "_") + ".json"
+            filepath = folder / filename
+
+            try:
+                with open (filepath, "w", encoding = "utf-8") as f:
+                    json.dump(faction.to_dict(), f, indent=4)
+            except Exception as e:
+                print("Failed to modify file.")
+        
 async def setup(bot):
     await bot.add_cog(Factions(bot))
