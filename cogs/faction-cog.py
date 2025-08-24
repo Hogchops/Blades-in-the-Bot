@@ -28,9 +28,6 @@ class Factions(commands.Cog):
             except Exception as e:
                 print(f"Error loading {file.name}: {e}")
 
-    def is_owner():
-        return commands.check(lambda ctx: ctx.author.id == 280116409852362754)
-    
     def find_faction(self, title: str):
         for faction in self.factions:
             if faction.title == title:
@@ -46,7 +43,7 @@ class Factions(commands.Cog):
         contact = "Enter the faction contact.",
         leader = "Enter the faction leader."
     )
-    @is_owner()
+    @app_commands.default_permissions(administrator=True)
     async def create_faction(
         self,
         interaction: discord.Interaction,
@@ -116,7 +113,7 @@ class Factions(commands.Cog):
     @app_commands.describe(
         title = "The title of the faction you wish to remove."
     )
-    @is_owner()
+    @app_commands.default_permissions(administrator=True)
     async def delete_faction(self, interaction: discord.Interaction, title: str):
         faction = self.find_faction(title)
         if faction:
@@ -144,7 +141,7 @@ class Factions(commands.Cog):
         field = "Enter the field you are editing.",
         value = "Enter the value you wish to replace the old one with."
     )
-    @is_owner()
+    @app_commands.default_permissions(administrator=True)
     async def modify_faction(self, interaction: discord.Interaction, title: str, field: str, value: str):
         faction = self.find_faction(title)
         if faction:
