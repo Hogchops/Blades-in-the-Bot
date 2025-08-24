@@ -18,7 +18,7 @@ class HelpCog(commands.Cog):
 
         def is_command_visible(cmd: app_commands.Command):
             default_perms = getattr(cmd, "default_permissions", None)
-            if default_perms is not None and not default_perms.administrator:
+            if default_perms is not None and default_perms.administrator:
                 return is_admin or is_owner
             return True
         
