@@ -1,6 +1,6 @@
 import discord
 import random
-from dotenv import load_dotenv
+from dotenv import load_dotenv # type: ignore
 from discord.ext import commands
 from difflib import get_close_matches
 from discord import app_commands
