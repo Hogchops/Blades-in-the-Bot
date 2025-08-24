@@ -131,7 +131,7 @@ class Sheets(commands.Cog):
         fn = "empire.jpg"
         file = discord.File(fp, fn)
         embed.set_thumbnail(url = f"attachment://{fn}")
-        await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
+        await interaction.followup.send(embed=embed, file=file, ephemeral=True)
 
     @app_commands.command(name="heat", description="List the heat and wanted levels of all the systems.")
     async def heat(self, interaction: discord.Interaction):
