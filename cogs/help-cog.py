@@ -22,8 +22,8 @@ class HelpCog(commands.Cog):
         def is_command_visible(cmd: app_commands.Command):
             default_perms = getattr(cmd, "default_permissions", None)
             if default_perms is not None and not default_perms.administrator:
-                return True
-            return is_admin or is_owner
+                return is_admin or is_owner
+            return True
         
         if query:
             command = discord.utils.find(lambda c: c.name == query, self.bot.tree.get_commands())
