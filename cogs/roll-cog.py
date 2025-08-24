@@ -87,7 +87,7 @@ class Roll(commands.Cog):
 	)
 	@app_commands.autocomplete(position = position_autocomplete)
 	@app_commands.autocomplete(effect = effect_autocomplete)
-	async def roll_expanded(self, interaction: discord.Interaction, num: int, position: str = None, effect: str = None):
+	async def roll_expanded(self, interaction: discord.Interaction, num: int, position: str = "Risky", effect: str = "Standard"):
 		zero = False
 		if num == 0:
 			num = 2
