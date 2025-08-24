@@ -22,4 +22,3 @@ class GameClock():
             return file
         else:
             return None
-        
