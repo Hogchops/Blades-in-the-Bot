@@ -143,7 +143,7 @@ class Roll(commands.Cog):
 		embed.add_field(name=' '.join('🎲' for _ in range(self.gambits)), value="")
 		embed.set_author(
 			name = interaction.user.display_name,
-			url = interaction.user.display_avatar.url
+			icon_url = interaction.user.display_avatar.url
 		)
 		return embed
 	
@@ -163,7 +163,7 @@ class Roll(commands.Cog):
 				embed = self.generate_gambit_embed(interaction)
 				embed.set_author(
 					name = interaction.user.display_name,
-					url = interaction.user.display_avatar.url
+					icon_url = interaction.user.display_avatar.url
 				)
 				await msg.edit(embed = embed)
 			except Exception as e:
@@ -225,7 +225,7 @@ class Roll(commands.Cog):
 		embed.add_field(name="Position and Effect",value="The `/roll` and `/groll` commands will assume risky/standard.\nMake sure to choose different values if you need to roll otherwise!")
 		embed.set_author(
 			name = interaction.user.display_name,
-			url = interaction.user.display_avatar.url
+			icon_url = interaction.user.display_avatar.url
 		)
 		await interaction.response.send_message(embed = embed, ephemeral=True)
 
