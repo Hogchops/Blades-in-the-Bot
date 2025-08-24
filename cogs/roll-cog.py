@@ -196,6 +196,39 @@ class Roll(commands.Cog):
 			await msg.pin()
 			self.gambit_msg = msg.id
 			self.gambit_channel = interaction.channel.id
+	
+	@app_commands.command(name = "spend", description = "Spend a gambit")
+	async def gambit_spend(self, interaction: discord.Interaction):
+		if self.gambit_msg and self.gambit_channel:
+			await self.change_gambit(interaction, -1)
+			await interaction.response.send_message(f"You spent a gambit! You're now at {self.gambits}.")
+		else:
+			await interaction.response.send_message("There's no gambit pool to modify!", ephemeral=True)
+	
+	@app_commands.command(name = "add", description = "Add a gambit.")
+	async def gambit_add(self, interaction: discord.Interaction):
+		if self.gambit_msg and self.gambit_channel:
+			await self.change_gambit(interaction, 1)
+			await interaction.response.send_message(f"You added a gambit! You're now at {self.gambits}.")
+		else:
+			await interaction.response.send_message("There's no gambit pool to modify!", ephemeral=True)
+
+	@app_commands.command(name = "how-to-roll", description="How to roll.")
+	async def roll_help(self, interaction: discord.Interaction):
+		embed = discord.Embed(
+			title = "How to Roll",
+			description = "`/r [n]` for a basic nd6 roll.\n`/roll [n] <position> <effect>` for an advanced roll that will modify the gambit pool.\n"
+			"`/groll [n] <position> <effect>` for a (n+1)d6 roll, since you're spending a gambit!",
+			color = discord.Color.magenta()
+		)
+		embed.add_field(name = "`/r [n]`",value="A basic nd6 roll.")
+		embed.add_field(name = "`/roll [n] <position> <effect>`", value="An advanced nd6 roll that can modify the gambit pool and record position and effect.")
+		embed.add_field(name = "`/groll [n] <position> <effect>`", value="An advanced (n+1)d6 roll, since you spent a gambit!")
+		embed.set_author(
+			name = interaction.user.display_name,
+			url = interaction.user.display_avatar.url
+		)
+		await interaction.response.send_message(embed = embed, ephemeral=True)
 
 async def setup(bot):
 	await bot.add_cog(Roll(bot)) 
