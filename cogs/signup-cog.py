@@ -3,11 +3,13 @@ from discord.ext import commands
 from discord import app_commands
 from interactions.signup_interaction import SignupButtons
 from objects.week import Week
+from objects.reminder_obj import Reminder
 from typing import List
 from datetime import datetime, timedelta, time
 from zoneinfo import ZoneInfo
 import json
 import asyncio
+import os
 
 EST = ZoneInfo("US/Eastern")
 
@@ -20,7 +22,8 @@ class Signup(commands.Cog):
         self.saved_channel_id = None
         self.saved_embed_id = None
         self.saved_view_id = None
-        self.scheduled_reminders = {}
+
+        self.reminders: List[Reminder] = []
 
     async def cog_load(self):
         guild = await self.bot.fetch_guild(807855936106135562)
@@ -45,12 +48,30 @@ class Signup(commands.Cog):
         except Exception as e:
             print("Could not restore signup:", e)
 
-        
-    def is_owner():
-        return commands.check(lambda ctx: ctx.author.id == 280116409852362754)
-    
-    @commands.hybrid_command(name="signup", description="Create the signup embed for the week.")
-    @is_owner()
+        reminder_dir = "reminders"
+        os.makedirs(reminder_dir, exist_ok=True)
+
+        restored_count = 0
+        for file_name in os.listdir(reminder_dir):
+            if not file_name.endswith(".json"):
+                continue
+            fp = os.path.join(reminder_dir, file_name)
+            try:
+                with open(fp, "r") as f:
+                    data = json.load(f)
+                reminder = await Reminder.from_dict(data, guild) 
+
+                now = datetime.now(EST)
+                delay = (reminder.time - now).total_seconds()
+                asyncio.create_task(self.send_reminders(reminder.members, reminder.day, max(delay, 0), fp))
+
+                restored_count += 1
+            except Exception as e:
+                print(f"Could not restore reminder from {file_name}: {e}")
+        print(f"Restored {restored_count} reminders.")
+
+    @app_commands.command(name="signup", description="Create the signup embed for the week.")
+    @app_commands.default_permissions(administrator=True)
     async def get_signups(self, ctx: commands.Context):
         if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
             try:
@@ -112,8 +133,8 @@ class Signup(commands.Cog):
             await self.embed_msg.edit(embed=self.week.generate_embed())
             await interaction.response.send_message(f"{name.display_name} removed from {day}.", ephemeral=True)
 
-    @commands.hybrid_command(name="sessions", description="List sessions.")
-    @is_owner()
+    @app_commands.command(name="sessions", description="List sessions.")
+    @app_commands.default_permissions(administrator=True)
     async def sessions(self, ctx: commands.Context):
         day_dict = {
                 "sunday": self.week.sunday,
@@ -136,15 +157,16 @@ class Signup(commands.Cog):
                 await ctx.channel.send(msg)
             date_index += 1
 
-    @commands.hybrid_command(name="notify", description="Send a reminder to people locked in for sessions")
-    @is_owner()
-    async def remind_sessions(self, ctx: commands.Context):
+    @app_commands.command(name="notify", description="Send a reminder to people locked in for sessions")
+    @app_commands.default_permissions(administrator=True)
+    async def remind_sessions(self, interaction: discord.Interaction):
         if not self.week:
-            await ctx.send("No data found", ephemeral=True)
+            await interaction.response.send_message("No data found", ephemeral=True)
             return
+        
         dotw = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-
         now = datetime.now(EST)
+        messages = []
 
         for i, day in enumerate(dotw):
             members = getattr(self.week, day, [])
@@ -155,18 +177,38 @@ class Signup(commands.Cog):
 
                 remind_time = session_time - timedelta(days = 1)
                 delay = (remind_time - now).total_seconds()
+                
+                fn = f"reminder_{remind_time.strftime('%Y-%m-%d')}.json"
+                fp = os.path.join("reminders", fn)
 
                 if delay > 0:
-                    self.bot.loop.create_task(self.send_reminders(members, day, delay))
-                    output = f"Reminders scheduled for {remind_time.strftime('%Y-%m-%d %H:%M:%S %Z')} EST. The people receiving them are:\n"
-                    for member in members:
-                        output += f"{member.display_name}\n"
-                    await ctx.send(output, ephemeral=True)
+                    reminder = Reminder(remind_time, day)
+                    reminder.members.extend(members)
+
+                    with open(fp, "w") as f:
+                        json.dump(reminder.to_dict(), f, indent=2)
+                    
+                    asyncio.create_task(self.send_reminders(members, day, delay, fp))
+                    output = (
+                        f"Reminders scheduled for {remind_time.strftime('%Y-%m-%d %H:%M:%S %Z')} EST.\n"
+                        f"The people receiving them are:\n" +
+                        "\n".join(m.display_name for m in members)
+                    )
+                    messages.append(output)
                 else:
-                    await self.send_reminders(members, day, 0)
-                    await ctx.send(f"Reminders immediately sent for **{remind_time.strftime('%A, %Y-%m-%d')}**.", ephemeral=True)
+                    asyncio.create_task(self.send_reminders(members, day, 0, fp))
+                    output = (
+                        f"Reminders sent immediately for {remind_time.strftime('%A, %Y-%m-%d')}.\n"
+                        f"The people receiving them are:\n" +
+                        "\n".join(m.display_name for m in members)
+                    )
+                    messages.append(output)
+        if messages:
+            await interaction.response.send_message("\n\n".join(messages), ephemeral=True)
+        else:
+            await interaction.response.send_message("No sessions qualified for reminders.", ephemeral=True)
     
-    async def send_reminders(self, members, day, delay):
+    async def send_reminders(self, members, day, delay, fp: str | None):
         await asyncio.sleep(delay)
         for member in members:
             try:
@@ -174,9 +216,12 @@ class Signup(commands.Cog):
             except Exception as e:
                 print(f"Could not DM {member}: {e}")
         
-    remind_sessions.hidden = True
-    sessions.hidden = True
-    get_signups.hidden = True
-    
+        if fp:
+            try:
+                os.remove(fp)
+                print(f"Deleted reminder file: {fp}")
+            except FileNotFoundError:
+                pass
+        
 async def setup(bot):
     await bot.add_cog(Signup(bot))
