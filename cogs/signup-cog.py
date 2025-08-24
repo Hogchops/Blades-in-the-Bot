@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from signup_interaction import SignupButtons
-from week import Week
+from interactions.signup_interaction import SignupButtons
+from objects.week import Week
 from typing import List
 from datetime import datetime, timedelta, time
 from zoneinfo import ZoneInfo
