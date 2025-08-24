@@ -95,7 +95,7 @@ class Signup(commands.Cog):
 
     @app_commands.command(name="sr", description="Remove someone from a confirmed list.")
     @app_commands.autocomplete(day = autocomplete_dotw)
-    @is_owner()
+    @app_commands.default_permissions(administrator=True)
     async def remove(self, interaction: discord.Interaction, name: discord.User, day: str):
         day_dict = {
             "sunday": self.week.sunday,
@@ -176,7 +176,6 @@ class Signup(commands.Cog):
         
     remind_sessions.hidden = True
     sessions.hidden = True
-    remove.hidden = True
     get_signups.hidden = True
     
 async def setup(bot):
