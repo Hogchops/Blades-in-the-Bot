@@ -119,6 +119,7 @@ class Sheets(commands.Cog):
             name = interaction.user.display_name,
             icon_url = interaction.user.display_avatar.url
         )
+
         embed.add_field(name = "Alderaan", value = f"H: {a_heat}\nW: {a_wanted}")
         embed.add_field(name = "Coruscant", value = f"H: {c_heat}\nW: {c_wanted}")
         embed.add_field(name = "Kuat", value = f"H: {k_heat}\nW: {k_wanted}")
@@ -131,7 +132,6 @@ class Sheets(commands.Cog):
         file = discord.File(fp, fn)
         embed.set_thumbnail(url = f"attachment://{fn}")
         await interaction.response.send_message(embed=embed, file=file)
-    
     
 async def setup(bot):
     await bot.add_cog(Sheets(bot))
