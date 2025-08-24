@@ -124,7 +124,7 @@ class Roll(commands.Cog):
 			title = "Gambit Pool",
 			color = discord.Color.magenta()
 		)
-		embed.add_field(' '.join(':game_die' for i in range(self.gambits)))
+		embed.add_field(name=' '.join(':game_die' for i in range(self.gambits)))
 		embed.set_author(
 			name = interaction.user.display_name,
 			url = interaction.user.display_avatar.url
