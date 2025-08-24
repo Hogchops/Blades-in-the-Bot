@@ -13,7 +13,10 @@ class HelpCog(commands.Cog):
         query = "Optional: command or cog name to get detailed help."
     )
     async def help_slash(self, interaction: discord.Interaction, query: Optional[str] = None):
-        is_admin = interaction.user.guild_permissions.administrator
+        if interaction.guild and isinstance(interaction.user, discord.Member):
+            is_admin = interaction.user.guild_permissions.administrator
+        else:
+            is_admin = False
         is_owner = interaction.user.id == 280116409852362754
 
         def is_command_visible(cmd: app_commands.Command):
