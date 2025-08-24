@@ -107,7 +107,7 @@ class Roll(commands.Cog):
 	
 	@app_commands.command(name="gambit-roll", description="Roll and spend a gambit, giving you +1d.")
 	@app_commands.describe(
-		num = "Enter the original number of dice you wish to roll."
+		num = "Enter the original number of dice you wish to roll.",
 		position = "Desperate, Risky, or Controlled.",
 		effect = "Limited, Standard, or Great"
 	)
