@@ -2,7 +2,6 @@ import os
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
-from utils.help_func import MyHelp
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -13,7 +12,7 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 
-bot = commands.Bot(command_prefix = '=', intents=intents)
+bot = commands.Bot(command_prefix = None, intents=intents)
 
 @bot.event
 async def on_ready():
@@ -38,5 +37,4 @@ async def load_cogs():
 	await bot.load_extension("cogs.faction-cog")
 	await bot.load_extension("cogs.sheets-cog")
 	
-bot.help_command = MyHelp()
 bot.run(TOKEN)
