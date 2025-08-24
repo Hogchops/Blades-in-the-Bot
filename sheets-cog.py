@@ -81,11 +81,12 @@ class Sheets(commands.Cog):
                 name = interaction.user.display_name,
                 icon_url = interaction.user.display_avatar.url
             )
+            planet_name = planet_name.lower().replace(' ', '')
             embed.add_field(name="Planet Modifier", value=planet_dict["modifier"], inline=False)
             embed.add_field(name="Heat:", value=planet_dict["heat"], inline=True)
             embed.add_field(name="Wanted:", value=planet_dict["wanted"], inline=True)
             embed.add_field(name="Agency:", value=planet_dict["agency"], inline=True)
-            embed.add_field(name="Sheet: ", value=f"[link]({getattr(self, f'{planet_name.lower().replace(' ', '')}_link')})")
+            embed.add_field(name="Sheet: ", value=f"[link]({getattr(self, f'{planet_name}_link')})")
             embed.add_field(name="Wanted Clock:", value=f"{planet_dict['progress']}/{planet_dict['total']}", inline=True)
             fp = planet_dict["fp"]
             fn = planet_dict["fn"]
