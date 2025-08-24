@@ -25,7 +25,7 @@ class Sheets(commands.Cog):
         self.frontier = client.open("Planets and Sectors").worksheet("Frontier Worlds")
     
     def planet_dict(self, planet_name: str):
-        planet_sheet = getattr(self, planet_name)
+        planet_sheet = getattr(self, planet_name.lower())
         return {
             "title": planet_sheet.acell("G17").value,
             "heat": planet_sheet.acell("G19").value,
