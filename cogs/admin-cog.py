@@ -7,6 +7,9 @@ class Admin(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+        for cmd in self.__cog_app_commands__:
+            cmd.extras["cog"] = self.__cog_name__
+
     @app_commands.command(name = "clear-channel", description="Delete all messages in a channel.")
     @app_commands.default_permissions(administrator=True)
     async def clear_channel(self, interaction: discord.Interaction):
