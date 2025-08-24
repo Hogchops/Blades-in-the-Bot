@@ -102,7 +102,7 @@ class Roll(commands.Cog):
 				result = dice[0]
 			if result == 6:
 				await self.change_gambit(interaction, 1)
-				embed.set_footer("+1 gambit!")
+				embed.set_footer(text="+1 gambit!")
 		await interaction.response.send_message(embed = embed)
 
 	@app_commands.command(name = "gr", description = "Roll hidden dice.")
