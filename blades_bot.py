@@ -22,8 +22,8 @@ async def on_ready():
 	print(f'{bot.user} has connected to Discord!')
 
 async def setup_hook():
-	guild = discord.Object(id = 807855936106135562)
-	bot.tree.clear_commands(guild=guild)
+	#guild = discord.Object(id = 807855936106135562)
+	#bot.tree.clear_commands(guild=guild)
 	await bot.tree.sync()#
 
 @bot.event
