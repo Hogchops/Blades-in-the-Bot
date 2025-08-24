@@ -63,6 +63,7 @@ class Sheets(commands.Cog):
     )
     @app_commands.autocomplete(planet_name = autocomplete_planets)
     async def planet(self, interaction: discord.Interaction, planet_name: str):
+        await interaction.response.defer()
         planet = getattr(self, planet_name.lower().replace(" ", ''))
         if planet:
             planet_dict = self.planet_dict(planet_name)
@@ -96,6 +97,7 @@ class Sheets(commands.Cog):
 
     @app_commands.command(name="heat", description="List the heat and wanted levels of all the systems.")
     async def heat(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         a_heat = self.alderaan.acell("G19").value
         a_wanted = self.alderaan.acell("I19").value
         c_heat = self.coruscant.acell("G19").value
@@ -140,6 +142,8 @@ class Sheets(commands.Cog):
     )
     @app_commands.autocomplete(planet_name = autocomplete_planets)
     async def add_heat(self, interaction: discord.Interaction, planet_name: str, heat: int):
+        await interaction.response.defer()
+        old_planet_name = planet_name
         planet_name = planet_name.lower().replace(' ', '')
         planet_sheet = getattr(self, planet_name)
         current_heat = planet_sheet.acell("G19").value
@@ -164,6 +168,7 @@ class Sheets(commands.Cog):
             else:
                 new_heat = current_heat + heat
                 planet_sheet.update_acell("G19", new_heat)
+        await self.planet(interaction, old_planet_name)
     
 async def setup(bot):
     await bot.add_cog(Sheets(bot))
