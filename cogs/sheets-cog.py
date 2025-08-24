@@ -2,9 +2,9 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from interactions.signup_interaction import SignupButtons
-import gspread
+import gspread # type: ignore
 from typing import List
-from oauth2client.service_account import ServiceAccountCredentials
+from oauth2client.service_account import ServiceAccountCredentials # type: ignore
 
 class Sheets(commands.Cog):
 
