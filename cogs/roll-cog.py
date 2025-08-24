@@ -105,7 +105,7 @@ class Roll(commands.Cog):
 				embed.set_footer(text="+1 gambit!")
 		await interaction.response.send_message(embed = embed)
 	
-	@app_commands.command(name="gambit-roll", description="Roll and spend a gambit, giving you +1d.")
+	@app_commands.command(name="groll", description="Roll and spend a gambit, giving you +1d.")
 	@app_commands.describe(
 		num = "Enter the original number of dice you wish to roll.",
 		position = "Desperate, Risky, or Controlled.",
@@ -126,7 +126,7 @@ class Roll(commands.Cog):
 		num = "Enter the number of dice you want to roll. Entering 0 will roll 2 dice.",
 	)
 	@app_commands.default_permissions(administrator=True)
-	async def groll(self, interaction: discord.Interaction, num: int):
+	async def gr(self, interaction: discord.Interaction, num: int):
 		zero = False
 		if num == 0:
 			num = 2
