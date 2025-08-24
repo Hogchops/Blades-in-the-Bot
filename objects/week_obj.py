@@ -103,10 +103,12 @@ class Week():
             else:
                 return 0 
         else:
-            if self.day_dict[day].__len__() >= self.session_confirmed:
+            if self.day_dict[day].__len__() >= self.session_full:
                 return -1
             else:
                 self.remove_user_from_day(user, day)
+                if self.day_dict[day].__len__() == self.session_confirmed:
+                    return 3
                 return 0
     
     def get_user_day(self, user: discord.User, day: str) -> int:
