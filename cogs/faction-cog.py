@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from faction_obj import Faction
+from objects.faction_obj import Faction
 from typing import List
 import json
 from pathlib import Path

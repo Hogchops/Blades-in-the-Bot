@@ -5,7 +5,7 @@ from asyncio import wait_for
 from asyncio import TimeoutError
 import os
 from faction_clock_objects import Faction
-from button_interaction import ModifyFactionButtons
+from interactions.button_interaction import ModifyFactionButtons
 from discord import app_commands
 from typing import List
 import discord

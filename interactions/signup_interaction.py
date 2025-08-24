@@ -1,5 +1,5 @@
 import discord
-from week import Week
+from objects.week import Week
 import json
 
 class SignupButtons(discord.ui.View):

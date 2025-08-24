@@ -2,7 +2,7 @@ import os
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
-from help_func import MyHelp
+from utils.help_func import MyHelp
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')

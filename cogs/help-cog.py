@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from help_func import MyHelp
+from utils.help_func import MyHelp
 from typing import Optional
 
 class HelpCog(commands.Cog):

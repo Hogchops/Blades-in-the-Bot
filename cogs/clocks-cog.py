@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from gameclock import GameClock
+from objects.gameclock import GameClock
 from typing import List
 
 class GameClocks(commands.Cog):

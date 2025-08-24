@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from signup_interaction import SignupButtons
+from interactions.signup_interaction import SignupButtons
 import gspread
 from typing import List
 from oauth2client.service_account import ServiceAccountCredentials
