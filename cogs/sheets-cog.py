@@ -87,7 +87,7 @@ class Sheets(commands.Cog):
             fn = planet_dict["fn"]
             file = discord.File(fp, fn)
             embed.set_image(url = f"attachment://{fn}")
-            await interaction.followup.send(embed=embed, file=file, ephemeral=True)
+            await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
 
     @app_commands.command(name="planet", description="List the information for a planet.")
     @app_commands.describe(
@@ -134,7 +134,7 @@ class Sheets(commands.Cog):
         fn = "empire.jpg"
         file = discord.File(fp, fn)
         embed.set_thumbnail(url = f"attachment://{fn}")
-        await interaction.followup.send(embed=embed, file=file, ephemeral=True)
+        await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
 
     @app_commands.command(name="heat", description="List the heat and wanted levels of all the systems.")
     async def heat(self, interaction: discord.Interaction):
