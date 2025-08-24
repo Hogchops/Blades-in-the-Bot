@@ -9,10 +9,7 @@ class HelpCog(commands.Cog):
         self.bot = bot
     
     @app_commands.command(name = "help", description = "Show help for commands or a specific cog/command.")
-    @app_commands.describe(
-        query = "Optional: command or cog name to get detailed help."
-    )
-    async def help_slash(self, interaction: discord.Interaction, query: Optional[str] = None):
+    async def help_slash(self, interaction: discord.Interaction):
         if interaction.guild and isinstance(interaction.user, discord.Member):
             is_admin = interaction.user.guild_permissions.administrator
         else:
@@ -25,26 +22,6 @@ class HelpCog(commands.Cog):
                 return is_admin or is_owner
             return True
         
-        if query:
-            command = discord.utils.find(lambda c: c.name == query, self.bot.tree.get_commands())
-            if command and is_command_visible(command):
-                embed = discord.Embed(
-                    title = f"/{command.name} {command.signature}" if hasattr(command, "signature") else f"/{command.name}",
-                    description = command.description or "No description provided.",
-                    color = discord.Color.magenta()
-                )
-                embed.set_author(
-                    name = interaction.user.display_name,
-                    icon_url = interaction.user.display_avatar.url
-                )
-                if command.aliases:
-                    embed.add_field(name = "Aliases", value = ", ".join(command.aliases), inline=False)
-                await interaction.response.send_message(embed=embed, ephemeral=True)
-                return
-            else:
-                await interaction.response.send_message("Command not found.", ephemeral=True)
-                return
-
         grouped_commands: Dict[str, List[app_commands.Command]] = {}
         for cmd in self.bot.tree.get_commands():
             if is_command_visible(cmd):
