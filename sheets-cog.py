@@ -110,9 +110,26 @@ class Sheets(commands.Cog):
         f_heat = self.frontier.acell("G19").value
         f_wanted = self.frontier.acell("I19").value
 
-        print(f"A heat: {a_heat}, A wanted: {a_wanted}")
-    
-
+        embed = discord.Embed(
+            title = "Heat and Wanted Levels",
+            color = discord.Color.magenta()
+        )
+        embed.set_author(
+            name = interaction.user.display_name,
+            icon_url = interaction.user.display_avatar.url
+        )
+        embed.add_field(name = "Alderaan", value = f"H: {a_heat}, W: {a_wanted}")
+        embed.add_field(name = "Coruscant", value = f"H: {c_heat}, W: {c_wanted}")
+        embed.add_field(name = "Kuat", value = f"H: {k_heat}, W: {k_wanted}")
+        embed.add_field(name = "Mygeeto", value = f"H: {m_heat}, W: {m_wanted}")
+        embed.add_field(name = "Nar Shaddaa", value = f"H: {n_heat}, W: {n_wanted}")
+        embed.add_field(name = "Ord Mantell", value = f"H: {o_heat}, W: {o_wanted}")
+        embed.add_field(name = "Frontier Worlds", value = f"H: {f_heat}, W: {f_wanted}")
+        fp = "FactionImages/empire.jpg"
+        fn = "empire.jpg"
+        file = discord.File(fp, fn)
+        embed.set_thumbnail(url = f"attachment://{fn}")
+        await interaction.response.send_message(embed=embed, file=file)
     
     
 async def setup(bot):
