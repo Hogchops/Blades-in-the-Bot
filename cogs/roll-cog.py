@@ -83,7 +83,7 @@ class Roll(commands.Cog):
 	@app_commands.describe(
 		num = "Enter the number of dice you want to roll. Entering 0 will roll 2 dice.",
 		position = "Desperate, Risky, or Controlled.",
-		effect = "Limited, Standard, or Greater"
+		effect = "Limited, Standard, or Great"
 	)
 	@app_commands.autocomplete(position = position_autocomplete)
 	@app_commands.autocomplete(effect = effect_autocomplete)
@@ -103,6 +103,21 @@ class Roll(commands.Cog):
 			if result == 6:
 				await self.change_gambit(interaction, 1)
 				embed.set_footer(text="+1 gambit!")
+		await interaction.response.send_message(embed = embed)
+	
+	@app_commands.command(name="gambit-roll", description="Roll and spend a gambit, giving you +1d.")
+	@app_commands.describe(
+		num = "Enter the original number of dice you wish to roll."
+		position = "Desperate, Risky, or Controlled.",
+		effect = "Limited, Standard, or Great"
+	)
+	@app_commands.autocomplete(position = position_autocomplete)
+	@app_commands.autocomplete(effect = effect_autocomplete)
+	async def gambit_roll(self, interaction: discord.Interaction, num: int, position: str = "Risky", effect: str = "Standard"):
+		num += 1
+		dice = [random.choice(range(1,7)) for _ in range(num)]
+		embed = generate_embed(interaction, dice, num, False, position, effect)
+		await self.change_gambit(interaction, -1)
 		await interaction.response.send_message(embed = embed)
 
 	@app_commands.command(name = "gr", description = "Roll hidden dice.")
@@ -167,10 +182,12 @@ class Roll(commands.Cog):
 					if old_channel:
 						msg = await old_channel.fetch_message(self.gambit_msg)
 						await msg.delete()
+						await interaction.response.send_message("Gambit message deleted.", ephemeral=True)
 				except Exception as e:
 					print(f"Could not delete the old signup message: {e}")
 			else:
 				await self.change_gambit(interaction, change)
+				await interaction.response.send_message("Gambit pool modified.", ephemeral=True)
 		else:	
 			embed = self.generate_gambit_embed(interaction)
 			await interaction.response.send_message(embed = embed)
@@ -178,7 +195,6 @@ class Roll(commands.Cog):
 			await msg.pin()
 			self.gambit_msg = msg.id
 			self.gambit_channel = interaction.channel.id
-		
 
 async def setup(bot):
 	await bot.add_cog(Roll(bot)) 
