@@ -203,7 +203,7 @@ class Signup(commands.Cog):
                     self.scheduled_tasks[fp] = task
 
                     output = (
-                        f"Reminders scheduled for {remind_time.strftime('%Y-%m-%d %H:%M:%S %Z')} EST.\n"
+                        f"Reminders scheduled for {remind_time.strftime('%Y-%m-%d %H:%M:%S %Z')}.\n"
                         f"The people receiving them are:\n" +
                         "\n".join(m.display_name for m in members)
                     )
