@@ -78,7 +78,6 @@ class Roll(commands.Cog):
 	@app_commands.command(name = "gr", description = "Roll hidden dice.")
 	@app_commands.describe(
 		num = "Enter the number of dice you want to roll. Entering 0 will roll 2 dice.",
-		num_dice_sides = "Enter the number of sides for each die. If you leave this blank or enter 6, we will provide results along with your role."
 	)
 	@app_commands.default_permissions(administrator=True)
 	async def groll(self, interaction: discord.Interaction, num: int):
