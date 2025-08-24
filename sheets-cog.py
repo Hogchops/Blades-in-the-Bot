@@ -43,8 +43,8 @@ class Sheets(commands.Cog):
             "modifier": planet_sheet.acell("G30").value,
             "progress": planet_sheet.acell("J34").value,
             "total": planet_sheet.acell("L34").value,
-            "fp": f"Systems/{planet_name.lower()}.jpg",
-            "fn": f"{planet_name.lower()}.jpg"
+            "fp": f"Systems/{planet_name.lower().replace(' ', '')}.jpg",
+            "fn": f"{planet_name.lower().replace(' ', '')}.jpg"
         }
 
     def is_owner():
