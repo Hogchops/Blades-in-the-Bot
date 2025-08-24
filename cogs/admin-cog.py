@@ -20,3 +20,6 @@ class Admin(commands.Cog):
             await interaction.followup.send("I don't have permission to delete messages.", ephemeral=True)
         except Exception as e:
             await interaction.followup.send(f"Failed to delete messages: {e}")
+
+async def setup(bot):
+    await bot.add_cog(Admin(bot))
