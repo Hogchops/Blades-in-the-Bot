@@ -63,7 +63,4 @@ class Faction():
         )
     
     def modify(self, field, value):
-        cls_dict = self.to_dict()
-        cls_dict[field] = value
-
-        
+        setattr(self, field, value)
