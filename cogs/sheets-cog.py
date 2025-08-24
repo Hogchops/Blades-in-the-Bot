@@ -98,9 +98,7 @@ class Sheets(commands.Cog):
         await interaction.response.defer()
         await self.send_planet_embed(interaction, planet_name)
 
-    @app_commands.command(name="heat", description="List the heat and wanted levels of all the systems.")
-    async def heat(self, interaction: discord.Interaction):
-        await interaction.response.defer()
+    async def send_heat_embed(self, interaction: discord.Interaction):
         a_heat = self.alderaan.acell("G19").value
         a_wanted = self.alderaan.acell("I19").value
         c_heat = self.coruscant.acell("G19").value
@@ -136,7 +134,12 @@ class Sheets(commands.Cog):
         fn = "empire.jpg"
         file = discord.File(fp, fn)
         embed.set_thumbnail(url = f"attachment://{fn}")
-        await interaction.response.send_message(embed=embed, file=file)
+        await interaction.followup.send(embed=embed, file=file, ephemeral=True)
+
+    @app_commands.command(name="heat", description="List the heat and wanted levels of all the systems.")
+    async def heat(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        await self.send_heat_embed(interaction)
 
     @app_commands.command(name="add-heat", description="Add heat to a system.")
     @app_commands.describe(
@@ -172,7 +175,7 @@ class Sheets(commands.Cog):
             else:
                 new_heat = current_heat + heat
                 planet_sheet.update_acell("G19", new_heat)
-        await self.send_planet_embed(interaction, old_planet_name)
+        await self.send_heat_embed(interaction)
     
 async def setup(bot):
     await bot.add_cog(Sheets(bot))
