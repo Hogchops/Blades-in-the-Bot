@@ -24,6 +24,7 @@ class Signup(commands.Cog):
         self.saved_view_id = None
 
         self.reminders: List[Reminder] = []
+        self.scheduled_tasks: dict[str, asyncio.Task] = {}
 
     async def cog_load(self):
         guild = await self.bot.fetch_guild(807855936106135562)
@@ -63,7 +64,10 @@ class Signup(commands.Cog):
 
                 now = datetime.now(EST)
                 delay = (reminder.time - now).total_seconds()
-                asyncio.create_task(self.send_reminders(reminder.members, reminder.day, max(delay, 0), fp))
+                delay = max(delay, 0)
+
+                task = asyncio.create_task(self.send_reminders(reminder.members, reminder.day, delay, fp))
+                self.scheduled_tasks[fp] = task
 
                 restored_count += 1
             except Exception as e:
@@ -181,6 +185,13 @@ class Signup(commands.Cog):
                 fn = f"reminder_{remind_time.strftime('%Y-%m-%d')}.json"
                 fp = os.path.join("reminders", fn)
 
+                if fp in self.scheduled_tasks:
+                    self.scheduled_tasks[fp].cancel()
+                    try:
+                        os.remove(fp)
+                    except FileNotFoundError:
+                        pass
+
                 if delay > 0:
                     reminder = Reminder(remind_time, day)
                     reminder.members.extend(members)
@@ -188,7 +199,9 @@ class Signup(commands.Cog):
                     with open(fp, "w") as f:
                         json.dump(reminder.to_dict(), f, indent=2)
                     
-                    asyncio.create_task(self.send_reminders(members, day, delay, fp))
+                    task = asyncio.create_task(self.send_reminders(members, day, delay, fp))
+                    self.scheduled_tasks[fp] = task
+
                     output = (
                         f"Reminders scheduled for {remind_time.strftime('%Y-%m-%d %H:%M:%S %Z')} EST.\n"
                         f"The people receiving them are:\n" +
@@ -196,7 +209,9 @@ class Signup(commands.Cog):
                     )
                     messages.append(output)
                 else:
-                    asyncio.create_task(self.send_reminders(members, day, 0, fp))
+                    task = asyncio.create_task(self.send_reminders(members, day, 0, fp))
+                    self.scheduled_tasks[fp] = task
+                    
                     output = (
                         f"Reminders sent immediately for {remind_time.strftime('%A, %Y-%m-%d')}.\n"
                         f"The people receiving them are:\n" +
@@ -215,13 +230,16 @@ class Signup(commands.Cog):
                 await member.send(f"Reminder: you are signed up for a session tomorrow, {day} at 7pm EST.")
             except Exception as e:
                 print(f"Could not DM {member}: {e}")
-        
+
         if fp:
             try:
                 os.remove(fp)
                 print(f"Deleted reminder file: {fp}")
             except FileNotFoundError:
                 pass
+        
+        if fp and fp in self.scheduled_tasks:
+            self.scheduled_tasks.pop(fp)
         
 async def setup(bot):
     await bot.add_cog(Signup(bot))
