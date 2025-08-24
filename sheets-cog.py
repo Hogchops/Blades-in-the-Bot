@@ -119,13 +119,13 @@ class Sheets(commands.Cog):
             name = interaction.user.display_name,
             icon_url = interaction.user.display_avatar.url
         )
-        embed.add_field(name = "Alderaan", value = f"H: {a_heat}, W: {a_wanted}")
-        embed.add_field(name = "Coruscant", value = f"H: {c_heat}, W: {c_wanted}")
-        embed.add_field(name = "Kuat", value = f"H: {k_heat}, W: {k_wanted}")
-        embed.add_field(name = "Mygeeto", value = f"H: {m_heat}, W: {m_wanted}")
-        embed.add_field(name = "Nar Shaddaa", value = f"H: {n_heat}, W: {n_wanted}")
-        embed.add_field(name = "Ord Mantell", value = f"H: {o_heat}, W: {o_wanted}")
-        embed.add_field(name = "Frontier Worlds", value = f"H: {f_heat}, W: {f_wanted}")
+        embed.add_field(name = "Alderaan", value = f"H: {a_heat}\nW: {a_wanted}")
+        embed.add_field(name = "Coruscant", value = f"H: {c_heat}\nW: {c_wanted}")
+        embed.add_field(name = "Kuat", value = f"H: {k_heat}\nW: {k_wanted}")
+        embed.add_field(name = "Mygeeto", value = f"H: {m_heat}\nW: {m_wanted}")
+        embed.add_field(name = "Nar Shaddaa", value = f"H: {n_heat}\nW: {n_wanted}")
+        embed.add_field(name = "Ord Mantell", value = f"H: {o_heat}\nW: {o_wanted}")
+        embed.add_field(name = "Frontier Worlds", value = f"H: {f_heat}\nW: {f_wanted}")
         fp = "FactionImages/empire.jpg"
         fn = "empire.jpg"
         file = discord.File(fp, fn)
