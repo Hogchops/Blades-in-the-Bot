@@ -79,7 +79,7 @@ class Roll(commands.Cog):
 		embed = generate_embed(interaction, dice, num, zero, None, None)
 		await interaction.response.send_message(embed = embed)
 	
-	@app_commands.command("roll", description = "Roll some dice with position, effect, and modify the gambit pool.")
+	@app_commands.command(name = "roll", description = "Roll some dice with position, effect, and modify the gambit pool.")
 	@app_commands.describe(
 		num = "Enter the number of dice you want to roll. Entering 0 will roll 2 dice.",
 		position = "Desperate, Risky, or Controlled.",
