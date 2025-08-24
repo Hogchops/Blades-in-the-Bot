@@ -36,25 +36,20 @@ class Sheets(commands.Cog):
 
     def planet_dict(self, planet_name: str):
         planet_sheet = getattr(self, planet_name.lower().replace(" ", ''))
-        try:
-            return {
-                "title": planet_sheet.acell("G17").value,
-                "heat": planet_sheet.acell("G19").value,
-                "wanted": planet_sheet.acell("I19").value,
-                "agency": planet_sheet.acell("K19").value,
-                "description": planet_sheet.acell("G24").value,
-                "modifier": planet_sheet.acell("G30").value,
-                "progress": planet_sheet.acell("J34").value,
-                "total": planet_sheet.acell("L34").value,
-                "fp": f"Systems/{planet_name.lower().replace(' ', '_')}.jpg",
-                "fn": f"{planet_name.lower().replace(' ', '_')}.jpg"
-            }
-        except gspread.exceptions.APIError as e:
-            print(f"Google Sheets API error: {e}")
-            return None
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            return None
+        
+        return {
+            "title": planet_sheet.acell("G17").value,
+            "heat": planet_sheet.acell("G19").value,
+            "wanted": planet_sheet.acell("I19").value,
+            "agency": planet_sheet.acell("K19").value,
+            "description": planet_sheet.acell("G24").value,
+            "modifier": planet_sheet.acell("G30").value,
+            "progress": planet_sheet.acell("J34").value,
+            "total": planet_sheet.acell("L34").value,
+            "fp": f"Systems/{planet_name.lower().replace(' ', '_')}.jpg",
+            "fn": f"{planet_name.lower().replace(' ', '_')}.jpg"
+        }
+
 
     def is_owner():
         return commands.check(lambda ctx: ctx.author.id == 280116409852362754)
@@ -75,7 +70,19 @@ class Sheets(commands.Cog):
         await interaction.response.defer()
         planet = getattr(self, planet_name.lower().replace(" ", ''))
         if planet:
-            planet_dict = self.planet_dict(planet_name)
+            try:
+                planet_dict = self.planet_dict(planet_name)
+            except gspread.exceptions.APIError as e:
+                if "429" in str(e):
+                    await interaction.followup.send("⚠️ Rate limit hit. Try again in a moment.", ephemeral=True)
+                    return
+                else:
+                    await interaction.followup.send(f"❌ API Error: {e}", ephemeral=True)
+                    return
+            except Exception as e:
+                await interaction.followup.send(f"❌ Unexpected error: {e}", ephemeral=True)
+                return
+            
             if planet_dict["agency"] == "ISB":
                 color = discord.Color.light_grey()
             elif planet_dict["agency"] == "The Eye":
@@ -106,20 +113,30 @@ class Sheets(commands.Cog):
 
     async def send_heat_embed(self, interaction: discord.Interaction):
         try:
-        a_heat = self.alderaan.acell("G19").value
-        a_wanted = self.alderaan.acell("I19").value
-        c_heat = self.coruscant.acell("G19").value
-        c_wanted = self.coruscant.acell("I19").value
-        k_heat = self.kuat.acell("G19").value
-        k_wanted = self.kuat.acell("I19").value
-        m_heat = self.mygeeto.acell("G19").value
-        m_wanted = self.mygeeto.acell("I19").value
-        n_heat = self.narshaddaa.acell("G19").value
-        n_wanted = self.narshaddaa.acell("I19").value
-        o_heat = self.ordmantell.acell("G19").value
-        o_wanted = self.ordmantell.acell("I19").value
-        f_heat = self.frontier.acell("G19").value
-        f_wanted = self.frontier.acell("I19").value
+            a_heat = self.alderaan.acell("G19").value
+            a_wanted = self.alderaan.acell("I19").value
+            c_heat = self.coruscant.acell("G19").value
+            c_wanted = self.coruscant.acell("I19").value
+            k_heat = self.kuat.acell("G19").value
+            k_wanted = self.kuat.acell("I19").value
+            m_heat = self.mygeeto.acell("G19").value
+            m_wanted = self.mygeeto.acell("I19").value
+            n_heat = self.narshaddaa.acell("G19").value
+            n_wanted = self.narshaddaa.acell("I19").value
+            o_heat = self.ordmantell.acell("G19").value
+            o_wanted = self.ordmantell.acell("I19").value
+            f_heat = self.frontier.acell("G19").value
+            f_wanted = self.frontier.acell("I19").value
+        except gspread.exceptions.APIError as e:
+            if "429" in str(e):
+                await interaction.followup.send("Rate limit hit. Try again in a moment.", ephemeral=True)
+                return
+            else:
+                await interaction.followup.send(f"API Error: {e}", ephemeral=True)
+                return
+        except Exception as e:
+            await interaction.followup.send(f"Unexpected error: {e}", ephemeral=True)
+            return
 
         embed = discord.Embed(
             title = "Heat and Wanted Levels",
