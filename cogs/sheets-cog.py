@@ -57,7 +57,13 @@ class Sheets(commands.Cog):
             for choice in choices if current.lower() in choice.lower()
         ]
     
-    async def send_planet_embed(self, interaction: discord.Interaction, planet_name: str):
+    @app_commands.command(name="planet", description="List the information for a planet.")
+    @app_commands.describe(
+        planet_name = "Enter a planet name."
+    )
+    @app_commands.autocomplete(planet_name = autocomplete_planets)
+    async def planet(self, interaction: discord.Interaction, planet_name: str):
+        await interaction.response.defer()
         planet = getattr(self, planet_name.lower().replace(" ", ''))
         if planet:
             planet_dict = self.planet_dict(planet_name)
@@ -88,15 +94,6 @@ class Sheets(commands.Cog):
             file = discord.File(fp, fn)
             embed.set_image(url = f"attachment://{fn}")
             await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
-
-    @app_commands.command(name="planet", description="List the information for a planet.")
-    @app_commands.describe(
-        planet_name = "Enter a planet name."
-    )
-    @app_commands.autocomplete(planet_name = autocomplete_planets)
-    async def planet(self, interaction: discord.Interaction, planet_name: str):
-        await interaction.response.defer()
-        await self.send_planet_embed(interaction, planet_name)
 
     async def send_heat_embed(self, interaction: discord.Interaction):
         a_heat = self.alderaan.acell("G19").value
@@ -149,8 +146,6 @@ class Sheets(commands.Cog):
     @app_commands.autocomplete(planet_name = autocomplete_planets)
     @is_owner()
     async def add_heat(self, interaction: discord.Interaction, planet_name: str, heat: int):
-        await interaction.response.defer()
-        old_planet_name = planet_name
         planet_name = planet_name.lower().replace(' ', '')
         planet_sheet = getattr(self, planet_name)
         current_heat = int(planet_sheet.acell("G19").value)
