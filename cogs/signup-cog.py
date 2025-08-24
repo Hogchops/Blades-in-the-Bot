@@ -79,7 +79,7 @@ class Signup(commands.Cog):
 
     @app_commands.command(name="signup", description="Create the signup embed for the week.")
     @app_commands.default_permissions(administrator=True)
-    async def get_signups(self, ctx: commands.Context):
+    async def get_signups(self, interaction: discord.Interaction):
         if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
             try:
                 old_channel = await self.bot.fetch_channel(self.saved_channel_id)
@@ -93,17 +93,17 @@ class Signup(commands.Cog):
 
         self.week = Week()
 
-        msg = await ctx.send(embed=self.week.generate_embed())
+        await interaction.response.send_message(embed=self.week.generate_embed())
+        msg = await interaction.original_response()
         self.saved_channel_id = msg.channel.id
         self.saved_embed_id = msg.id
 
-        view_msg = await ctx.send("@everyone Signups are active for the next calendar week. Press a button to signup for the corresponding day. The times for all days are set at **7:00 pm EST**. Sign up for each day that you would be willing to make. When a day fills up to 4, you will be locked in for that day.\n\nTo remove your name from a day, press the button again.",
+        view_msg = await interaction.followup.send("@everyone Signups are active for the next calendar week. Press a button to signup for the corresponding day. The times for all days are set at **7:00 pm EST**. Sign up for each day that you would be willing to make. When a day fills up to 4, you will be locked in for that day.\n\nTo remove your name from a day, press the button again.",
                        allowed_mentions=discord.AllowedMentions(everyone=True))
         self.saved_view_id = view_msg.id
                        
         view = SignupButtons(self.bot, self.week, self.saved_channel_id, self.saved_embed_id, self.saved_view_id)     
         await view_msg.edit(view=view)
-
 
         state = {
             "channel_id": msg.channel.id,
