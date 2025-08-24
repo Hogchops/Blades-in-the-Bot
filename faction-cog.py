@@ -155,6 +155,18 @@ class Factions(commands.Cog):
             try:
                 with open (filepath, "w", encoding = "utf-8") as f:
                     json.dump(faction.to_dict(), f, indent=4)
+
+                    embed = faction.generate_embed()
+                    image = faction.get_image()
+                    embed.set_author(
+                        name = interaction.user.display_name,
+                        icon_url = interaction.user.display_avatar.url
+                    )
+                    if image:
+                        embed.set_thumbnail(url = f"attachment://{image.filename}")
+                        await interaction.response.send_message(embed=embed, file=image, ephemeral=True)
+                    else:
+                        await interaction.response.send_message(embed=embed, ephemeral=True)        
             except Exception as e:
                 print("Failed to modify file.")
         
