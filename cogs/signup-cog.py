@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from interactions.signup_interaction import SignupButtons
-from objects.week import Week
+from objects.week_obj import Week
 from objects.reminder_obj import Reminder
 from typing import List
 from datetime import datetime, timedelta, time
