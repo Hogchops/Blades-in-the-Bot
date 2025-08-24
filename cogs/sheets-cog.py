@@ -87,7 +87,7 @@ class Sheets(commands.Cog):
             fn = planet_dict["fn"]
             file = discord.File(fp, fn)
             embed.set_image(url = f"attachment://{fn}")
-            await interaction.followup.send_message(embed=embed, file=file, ephemeral=True)
+            await interaction.followup.send(embed=embed, file=file, ephemeral=True)
 
     @app_commands.command(name="planet", description="List the information for a planet.")
     @app_commands.describe(
