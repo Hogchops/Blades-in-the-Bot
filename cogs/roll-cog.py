@@ -117,6 +117,7 @@ class Roll(commands.Cog):
 		num += 1
 		dice = [random.choice(range(1,7)) for _ in range(num)]
 		embed = generate_embed(interaction, dice, num, False, position, effect)
+		embed.set_footer(text = "-1 gambit!")
 		await self.change_gambit(interaction, -1)
 		await interaction.response.send_message(embed = embed)
 
