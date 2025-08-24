@@ -146,7 +146,7 @@ class Sheets(commands.Cog):
         old_planet_name = planet_name
         planet_name = planet_name.lower().replace(' ', '')
         planet_sheet = getattr(self, planet_name)
-        current_heat = planet_sheet.acell("G19").value
+        current_heat = int(planet_sheet.acell("G19").value)
 
         if heat >= 0:
             if current_heat + heat >= 7:
