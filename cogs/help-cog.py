@@ -8,7 +8,7 @@ class HelpCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
     
-    @app_commands.command(name = "help", description = "Show help for commands or a specific cog/command.")
+    @app_commands.command(name = "help", description = "Show help for commands.") 
     async def help_slash(self, interaction: discord.Interaction):
         if interaction.guild and isinstance(interaction.user, discord.Member):
             is_admin = interaction.user.guild_permissions.administrator
