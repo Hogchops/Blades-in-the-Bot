@@ -93,7 +93,7 @@ class Sheets(commands.Cog):
             fn = planet_dict["fn"]
             file = discord.File(fp, fn)
             embed.set_image(url = f"attachment://{fn}")
-            await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
+            await interaction.followup.send(embed=embed, file=file, ephemeral=True)
 
     async def send_heat_embed(self, interaction: discord.Interaction):
         a_heat = self.alderaan.acell("G19").value
@@ -146,6 +146,7 @@ class Sheets(commands.Cog):
     @app_commands.autocomplete(planet_name = autocomplete_planets)
     @is_owner()
     async def add_heat(self, interaction: discord.Interaction, planet_name: str, heat: int):
+        await interaction.response.defer()
         planet_name = planet_name.lower().replace(' ', '')
         planet_sheet = getattr(self, planet_name)
         current_heat = int(planet_sheet.acell("G19").value)
