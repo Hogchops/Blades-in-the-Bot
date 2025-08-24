@@ -25,7 +25,7 @@ class Sheets(commands.Cog):
 
     
     @app_commands.command(name="heat", description="List the heat and wanted levels of all the systems.")
-    async def heat(self):
+    async def heat(self, interaction: discord.Interaction):
         a_heat = self.alderaan.acell("G19").value
         a_wanted = self.alderaan.acell("I19").value
         c_heat = self.coruscant.acell("G19").value
