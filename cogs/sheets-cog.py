@@ -106,26 +106,20 @@ class Sheets(commands.Cog):
 
     async def send_heat_embed(self, interaction: discord.Interaction):
         try:
-            a_heat = self.alderaan.acell("G19").value
-            a_wanted = self.alderaan.acell("I19").value
-            c_heat = self.coruscant.acell("G19").value
-            c_wanted = self.coruscant.acell("I19").value
-            k_heat = self.kuat.acell("G19").value
-            k_wanted = self.kuat.acell("I19").value
-            m_heat = self.mygeeto.acell("G19").value
-            m_wanted = self.mygeeto.acell("I19").value
-            n_heat = self.narshaddaa.acell("G19").value
-            n_wanted = self.narshaddaa.acell("I19").value
-            o_heat = self.ordmantell.acell("G19").value
-            o_wanted = self.ordmantell.acell("I19").value
-            f_heat = self.frontier.acell("G19").value
-            f_wanted = self.frontier.acell("I19").value
-        except gspread.exceptions.APIError as e:
-            await interaction.followup.send(f"Rate limit hit. Try again in a moment.", ephemeral=True)
-            return
-        except Exception as e:
-            await interaction.followup.send(f"Unexpected error: {e}", ephemeral=True)
-            return
+        a_heat = self.alderaan.acell("G19").value
+        a_wanted = self.alderaan.acell("I19").value
+        c_heat = self.coruscant.acell("G19").value
+        c_wanted = self.coruscant.acell("I19").value
+        k_heat = self.kuat.acell("G19").value
+        k_wanted = self.kuat.acell("I19").value
+        m_heat = self.mygeeto.acell("G19").value
+        m_wanted = self.mygeeto.acell("I19").value
+        n_heat = self.narshaddaa.acell("G19").value
+        n_wanted = self.narshaddaa.acell("I19").value
+        o_heat = self.ordmantell.acell("G19").value
+        o_wanted = self.ordmantell.acell("I19").value
+        f_heat = self.frontier.acell("G19").value
+        f_wanted = self.frontier.acell("I19").value
 
         embed = discord.Embed(
             title = "Heat and Wanted Levels",
@@ -148,6 +142,11 @@ class Sheets(commands.Cog):
         file = discord.File(fp, fn)
         embed.set_thumbnail(url = f"attachment://{fn}")
         await interaction.followup.send(embed=embed, file=file, ephemeral=True)
+
+    @app_commands.command(name="heat", description="List the heat and wanted levels of all the systems.")
+    async def heat(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        await self.send_heat_embed(interaction)
 
 async def setup(bot):
     await bot.add_cog(Sheets(bot))
