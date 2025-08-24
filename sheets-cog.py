@@ -113,7 +113,7 @@ class Sheets(commands.Cog):
 
         embed = discord.Embed(
             title = "Heat and Wanted Levels",
-            color = discord.Color.magenta()
+            color = discord.Color.light_grey()
         )
         embed.set_author(
             name = interaction.user.display_name,
