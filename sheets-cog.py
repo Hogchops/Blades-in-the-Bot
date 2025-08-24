@@ -132,6 +132,38 @@ class Sheets(commands.Cog):
         file = discord.File(fp, fn)
         embed.set_thumbnail(url = f"attachment://{fn}")
         await interaction.response.send_message(embed=embed, file=file)
+
+    @app_commands.command(name="add-heat", description="Add heat to a system.")
+    @app_commands.describe(
+        planet_name = "Enter a planet name.",
+        heat = "Enter an amount of heat you wish to add."
+    )
+    @app_commands.autocomplete(planet_name = autocomplete_planets)
+    async def add_heat(self, interaction: discord.Interaction, planet_name: str, heat: int):
+        planet_name = planet_name.lower().replace(' ', '')
+        planet_sheet = getattr(self, planet_name)
+        current_heat = planet_sheet.acell("G19").value
+
+        if heat >= 0:
+            if current_heat + heat >= 7:
+                new_heat = current_heat + heat - 7
+                old_wanted_level = planet_sheet.acell("I19").value
+                planet_sheet.update_acell("G19",  new_heat)
+                if old_wanted_level < 3:
+                    planet_sheet.update_acell("I19", old_wanted_level + 1)
+            else:
+                new_heat = current_heat + heat
+                planet_sheet.update_acell("G19", new_heat)
+        else:
+            if current_heat + heat < 0:
+                new_heat = 7 - current_heat + heat
+                old_wanted_level = planet_sheet.acell("I19").value
+                planet_sheet.update_acell("G19", new_heat)
+                if old_wanted_level > 0:
+                    planet_sheet.update_acell("I19", old_wanted_level - 1)
+            else:
+                new_heat = current_heat + heat
+                planet_sheet.update_acell("G19", new_heat)
     
 async def setup(bot):
     await bot.add_cog(Sheets(bot))
