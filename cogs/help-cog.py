@@ -43,7 +43,7 @@ class HelpCog(commands.Cog):
                 return
 
         grouped_commands: Dict[str, List[app_commands.Command]] = {}
-        for cmd in self.bot.tree.get_command():
+        for cmd in self.bot.tree.get_commands():
             if is_command_visible(cmd):
                 cog_name = cmd.extras.get("cog", "Uncategorized")
                 grouped_commands.setdefault(cog_name, []).append(cmd)
