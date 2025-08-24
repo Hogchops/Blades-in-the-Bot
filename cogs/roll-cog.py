@@ -94,7 +94,7 @@ class Roll(commands.Cog):
 			zero = True
 		dice = [random.choice(range(1,7)) for _ in range(num)]
 		embed = generate_embed(interaction, dice, num, zero, position, effect)
-		if position == "Risky" and self.gambits and self.gambit_channel == interaction.channel_id:
+		if position == "Risky" and self.gambit_msg and self.gambit_channel == interaction.channel_id:
 			dice.sort()
 			if not zero:
 				result = dice[-1]
