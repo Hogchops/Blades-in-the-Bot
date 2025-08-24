@@ -144,6 +144,7 @@ class Sheets(commands.Cog):
         heat = "Enter an amount of heat you wish to add."
     )
     @app_commands.autocomplete(planet_name = autocomplete_planets)
+    @is_owner()
     async def add_heat(self, interaction: discord.Interaction, planet_name: str, heat: int):
         await interaction.response.defer()
         old_planet_name = planet_name
