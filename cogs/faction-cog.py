@@ -83,13 +83,17 @@ class Factions(commands.Cog):
             await interaction.response.send_message(f"Failed to save faction: {e}")
     
     async def autocomplete(self, interaction: discord.Interaction, current: str) -> List[app_commands.Choice[str]]:
-        choices = []
-        for faction in self.factions:
-            choices.append(faction.title)
-        return [
-            app_commands.Choice(name = choice, value = choice)
-            for choice in choices if current.lower() in choice.lower()
-        ]
+        try:
+            filtered = [
+                app_commands.Choice(name = faction, value = faction)
+                for faction in self.factions
+                if current.lower() in faction.title.lower()
+            ]
+            return filtered[:25]
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return []
 
     @app_commands.command(name = "faction", description = "View a faction.")
     @app_commands.autocomplete(title = autocomplete)
