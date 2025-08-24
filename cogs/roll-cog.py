@@ -34,7 +34,7 @@ def generate_embed(interaction: discord.Interaction, dice, num, zero, position: 
 		value += ":x:"
 	embed.add_field(name = "Result", value = value, inline = True)
 	if position and effect:
-		embed.description = f"{position} {effect}"
+		embed.description = f"{position}, {effect}"
 	return embed
 
 class Roll(commands.Cog):
