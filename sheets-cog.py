@@ -23,7 +23,15 @@ class Sheets(commands.Cog):
         self.narshaddaa = client.open("Planets and Sectors").worksheet("Nar Shaddaa")
         self.ordmantell = client.open("Planets and Sectors").worksheet("Ord Mantell")
         self.frontier = client.open("Planets and Sectors").worksheet("Frontier Worlds")
-    
+
+        self.alderaan_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1024827348#gid=1024827348"
+        self.coruscant_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1910238740#gid=1910238740"
+        self.kuat_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1464517251#gid=1464517251"
+        self.mygeeto_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=285102036#gid=285102036"
+        self.narshaddaa_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=310258739#gid=310258739"
+        self.ordmantell_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1650912478#gid=1650912478"
+        self.fronter_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1591646957#gid=1591646957"
+
     def planet_dict(self, planet_name: str):
         planet_sheet = getattr(self, planet_name.lower())
         return {
@@ -77,6 +85,7 @@ class Sheets(commands.Cog):
             embed.add_field(name="Heat:", value=planet_dict["heat"], inline=True)
             embed.add_field(name="Wanted:", value=planet_dict["wanted"], inline=True)
             embed.add_field(name="Agency:", value=planet_dict["agency"], inline=True)
+            embed.add_field(name="Sheet: ", value=f"[link]({getattr(self, f'planet_name.lower()_link')})")
             embed.add_field(name="Wanted Clock:", value=f"{planet_dict['progress']}/{planet_dict['total']}", inline=True)
             fp = planet_dict["fp"]
             fn = planet_dict["fn"]
