@@ -93,10 +93,10 @@ class Signup(commands.Cog):
             for choice in choices if current.lower() in choice.lower()
         ]
 
-    @commands.hybrid_command(name="sr", description="Remove someone from a confirmed list.")
+    @app_commands.command(name="sr", description="Remove someone from a confirmed list.")
     @app_commands.autocomplete(day = autocomplete_dotw)
     @is_owner()
-    async def remove(self, ctx: commands.Context, name: discord.User, day: str):
+    async def remove(self, interaction: discord.Interaction, name: discord.User, day: str):
         day_dict = {
             "sunday": self.week.sunday,
             "monday": self.week.monday,
@@ -110,6 +110,7 @@ class Signup(commands.Cog):
         if name in day_list:
             day_list.remove(name)
             await self.embed_msg.edit(embed=self.week.generate_embed())
+            await interaction.response.send_message(f"{name.display_name} removed from {day}.", ephemeral=True)
 
     @commands.hybrid_command(name="sessions", description="List sessions.")
     @is_owner()
