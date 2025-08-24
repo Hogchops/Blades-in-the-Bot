@@ -87,14 +87,14 @@ class Roll(commands.Cog):
 	)
 	@app_commands.autocomplete(position = position_autocomplete)
 	@app_commands.autocomplete(effect = effect_autocomplete)
-	async def roll_expanded(self, interaction: discord.Interaction, num: int, position: str = None, effect: str = None, gambit: bool = False):
+	async def roll_expanded(self, interaction: discord.Interaction, num: int, position: str = None, effect: str = None):
 		zero = False
 		if num == 0:
 			num = 2
 			zero = True
 		dice = [random.choice(range(1,7)) for _ in range(num)]
 		embed = generate_embed(interaction, dice, num, zero, position, effect)
-		if position == "Risky" and not gambit and self.gambits and self.gambit_channel == interaction.channel_id:
+		if position == "Risky" and self.gambits and self.gambit_channel == interaction.channel_id:
 			dice.sort()
 			if not zero:
 				result = dice[-1]
