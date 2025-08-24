@@ -154,7 +154,7 @@ class Sheets(commands.Cog):
         if heat >= 0:
             if current_heat + heat >= 7:
                 new_heat = current_heat + heat - 7
-                old_wanted_level = planet_sheet.acell("I19").value
+                old_wanted_level = int(planet_sheet.acell("I19").value)
                 planet_sheet.update_acell("G19",  new_heat)
                 if old_wanted_level < 3:
                     planet_sheet.update_acell("I19", old_wanted_level + 1)
@@ -164,7 +164,7 @@ class Sheets(commands.Cog):
         else:
             if current_heat + heat < 0:
                 new_heat = 7 - current_heat + heat
-                old_wanted_level = planet_sheet.acell("I19").value
+                old_wanted_level = int(planet_sheet.acell("I19").value)
                 planet_sheet.update_acell("G19", new_heat)
                 if old_wanted_level > 0:
                     planet_sheet.update_acell("I19", old_wanted_level - 1)
