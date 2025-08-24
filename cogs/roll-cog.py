@@ -81,17 +81,13 @@ class Roll(commands.Cog):
 		num_dice_sides = "Enter the number of sides for each die. If you leave this blank or enter 6, we will provide results along with your role."
 	)
 	@app_commands.default_permissions(administrator=True)
-	async def groll(self, interaction: discord.Interaction, num: int, num_dice_sides: int = 6):
+	async def groll(self, interaction: discord.Interaction, num: int):
 		zero = False
 		if num == 0:
 			num = 2
 			zero = True
-		dice = [random.choice(range(1,num_dice_sides + 1)) for _ in range(num)]
-		if num_dice_sides == 6:
-			checking_result = True
-		else:
-			checking_result = False
-		embed = generate_embed(interaction, dice, num, zero, checking_result, num_dice_sides)
+		dice = [random.choice(range(1,7)) for _ in range(num)]
+		embed = generate_embed(interaction, dice, num, zero, None, None)
 		await interaction.response.send_message(embed = embed, ephemeral = True)
 	
 async def setup(bot):
