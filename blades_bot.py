@@ -31,12 +31,12 @@ async def on_command_error(ctx, error):
 	await ctx.send(f"An error has occurred: {str(error)}")
 
 async def load_cogs():
-	await bot.load_extension("roll-cog")
-	await bot.load_extension("signup-cog")
-	await bot.load_extension("clocks-cog")
-	await bot.load_extension("help-cog")
-	await bot.load_extension("faction-cog")
-	await bot.load_extension("sheets-cog")
+	await bot.load_extension("cogs.roll-cog")
+	await bot.load_extension("cogs.signup-cog")
+	await bot.load_extension("cogs.clocks-cog")
+	await bot.load_extension("cogs.help-cog")
+	await bot.load_extension("cogs.faction-cog")
+	await bot.load_extension("cogs.sheets-cog")
 	
 bot.help_command = MyHelp()
 bot.run(TOKEN)
