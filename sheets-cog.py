@@ -33,7 +33,7 @@ class Sheets(commands.Cog):
         self.frontier_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1591646957#gid=1591646957"
 
     def planet_dict(self, planet_name: str):
-        planet_sheet = getattr(self, planet_name.lower())
+        planet_sheet = getattr(self, planet_name.lower().replace(" ", ''))
         return {
             "title": planet_sheet.acell("G17").value,
             "heat": planet_sheet.acell("G19").value,
@@ -63,7 +63,7 @@ class Sheets(commands.Cog):
     )
     @app_commands.autocomplete(planet_name = autocomplete_planets)
     async def planet(self, interaction: discord.Interaction, planet_name: str):
-        planet = getattr(self, planet_name.lower())
+        planet = getattr(self, planet_name.lower().replace(" ", ''))
         if planet:
             planet_dict = self.planet_dict(planet_name)
             if planet_dict["agency"] == "ISB":
