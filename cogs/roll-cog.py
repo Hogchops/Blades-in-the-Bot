@@ -18,21 +18,26 @@ def generate_embed(interaction: discord.Interaction, dice, num, zero, position: 
 		num_dice = 0    
 	embed.add_field(name = f'{num_dice}d6', value = rolls, inline = True)
 	dice.sort()
+	result_text = ""
 	if not zero:
 		result = dice[-1]
 	else:
 		result = dice[0]
 	value = f'**{result}** '
 	if result == 6:
+		result_text = "Success"
 		if num >= 2 and not zero:
 			if dice[-2] == 6:
 				value += ":white_check_mark:"
+				result_text = "Critical"
 		value += ":white_check_mark:"
 	elif result == 4 or result == 5:
 		value += ":warning:"
+		result_text = "Partial"
 	else:
 		value += ":x:"
-	embed.add_field(name = "Result", value = value, inline = True)
+		result_text = "Fail"
+	embed.add_field(name = f"{result_text}", value = value, inline = True)
 	if position and effect:
 		embed.description = f"{position}, {effect}"
 	return embed
