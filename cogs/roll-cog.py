@@ -217,13 +217,11 @@ class Roll(commands.Cog):
 	async def roll_help(self, interaction: discord.Interaction):
 		embed = discord.Embed(
 			title = "How to Roll",
-			description = "`/r [n]` for a basic nd6 roll.\n`/roll [n] <position> <effect>` for an advanced roll that will modify the gambit pool.\n"
+			description = "`/r [n]` for a basic nd6 roll.\n\n`/roll [n] <position> <effect>` for an advanced roll that will modify the gambit pool.\n\n"
 			"`/groll [n] <position> <effect>` for a (n+1)d6 roll, since you're spending a gambit!",
 			color = discord.Color.magenta()
 		)
-		embed.add_field(name = "`/r [n]`",value="A basic nd6 roll.")
-		embed.add_field(name = "`/roll [n] <position> <effect>`", value="An advanced nd6 roll that can modify the gambit pool and record position and effect.")
-		embed.add_field(name = "`/groll [n] <position> <effect>`", value="An advanced (n+1)d6 roll, since you spent a gambit!")
+		embed.add_field(name="Modifying the Gambit Pool Directly", value="You can modify the pool directly by using `/add` to add a gambit and `/spend` to spend a gambit.")
 		embed.set_author(
 			name = interaction.user.display_name,
 			url = interaction.user.display_avatar.url
