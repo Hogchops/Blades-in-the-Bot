@@ -167,6 +167,7 @@ class Signup(commands.Cog):
         if not self.week:
             await interaction.response.send_message("No data found", ephemeral=True)
             return
+        await interaction.response.defer(ephemeral=True)
         
         dotw = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
         now = datetime.now(EST)
@@ -219,9 +220,9 @@ class Signup(commands.Cog):
                     )
                     messages.append(output)
         if messages:
-            await interaction.response.send_message("\n\n".join(messages), ephemeral=True)
+            await interaction.followup.send("\n\n".join(messages), ephemeral=True)
         else:
-            await interaction.response.send_message("No sessions qualified for reminders.", ephemeral=True)
+            await interaction.followup.send("No sessions qualified for reminders.", ephemeral=True)
     
     async def send_reminders(self, members, day, delay, fp: str | None):
         await asyncio.sleep(delay)
