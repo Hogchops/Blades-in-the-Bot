@@ -143,7 +143,7 @@ class Factions(commands.Cog):
         field = "Enter the field you are editing.",
         value = "Enter the value you wish to replace the old one with."
     )
-    async def modify_faction(self, interaction: discord.Interaction, title: str, field: str, value):
+    async def modify_faction(self, interaction: discord.Interaction, title: str, field: str, value: str):
         faction = self.find_faction(title)
         if faction:
             faction.modify(field, value)
