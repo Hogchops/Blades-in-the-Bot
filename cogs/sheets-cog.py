@@ -74,13 +74,13 @@ class Sheets(commands.Cog):
                 planet_dict = self.planet_dict(planet_name)
             except gspread.exceptions.APIError as e:
                 if "429" in str(e):
-                    await interaction.followup.send("⚠️ Rate limit hit. Try again in a moment.", ephemeral=True)
+                    await interaction.followup.send("️Rate limit hit. Try again in a moment.", ephemeral=True)
                     return
                 else:
-                    await interaction.followup.send(f"❌ API Error: {e}", ephemeral=True)
+                    await interaction.followup.send(f"API Error: {e}", ephemeral=True)
                     return
             except Exception as e:
-                await interaction.followup.send(f"❌ Unexpected error: {e}", ephemeral=True)
+                await interaction.followup.send(f"Unexpected error: {e}", ephemeral=True)
                 return
             
             if planet_dict["agency"] == "ISB":
