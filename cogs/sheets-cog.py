@@ -32,8 +32,6 @@ class Sheets(commands.Cog):
         self.ordmantell_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1650912478#gid=1650912478"
         self.frontier_link = "https://docs.google.com/spreadsheets/d/1L4QFtJcSucSgeBAxdpLM4tIAwiZDyeSsmTXeub7iJEQ/edit?gid=1591646957#gid=1591646957"
     
-    
-
     def planet_dict(self, planet_name: str):
         planet_sheet = getattr(self, planet_name.lower().replace(" ", ''))
         
@@ -49,7 +47,6 @@ class Sheets(commands.Cog):
             "fp": f"Systems/{planet_name.lower().replace(' ', '_')}.jpg",
             "fn": f"{planet_name.lower().replace(' ', '_')}.jpg"
         }
-
 
     def is_owner():
         return commands.check(lambda ctx: ctx.author.id == 280116409852362754)
@@ -162,7 +159,7 @@ class Sheets(commands.Cog):
 
     @app_commands.command(name="heat", description="List the heat and wanted levels of all the systems.")
     async def heat(self, interaction: discord.Interaction):
-        await interaction.response.defer()
+        await interaction.response.defer(ephemeral=True)
         await self.send_heat_embed(interaction)
 
 async def setup(bot):
