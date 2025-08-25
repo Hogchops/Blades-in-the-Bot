@@ -229,12 +229,14 @@ class Signup(commands.Cog):
     
     async def send_reminders(self, members, day, delay, fp: str | None):
         await asyncio.sleep(delay)
+        print("Issuing reminders ->")
         for member in members:
             try:
                 await member.send(f"Reminder: you are signed up for a session tomorrow, {day} at 7pm EST.")
+                print(f"I reminded {member.display_name}!")
             except Exception as e:
                 print(f"Could not DM {member}: {e}")
-
+        
         if fp:
             try:
                 os.remove(fp)
