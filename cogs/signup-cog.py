@@ -85,11 +85,9 @@ class Signup(commands.Cog):
                 old_channel = await self.bot.fetch_channel(self.saved_channel_id)
                 if old_channel:
                     old_view = await old_channel.fetch_message(self.saved_view_id)
-                    old_embed = await old_channel.fetch_message(self.saved_embed_id)
                     await old_view.delete()
-                    await old_embed.delete()
             except Exception as e:
-                print(f"Could not delete the old signup message: {e}")
+                print(f"Could not delete the old embed message: {e}")
 
         self.week = Week()
 
@@ -98,8 +96,14 @@ class Signup(commands.Cog):
         self.saved_channel_id = msg.channel.id
         self.saved_embed_id = msg.id
 
-        view_msg = await interaction.followup.send("@everyone Signups are active for the next calendar week. Press a button to signup for the corresponding day. The times for all days are set at **7:00 pm EST**. Sign up for each day that you would be willing to make. When a day fills up to 4, you will be locked in for that day.\n\nTo remove your name from a day, press the button again.",
-                       allowed_mentions=discord.AllowedMentions(everyone=True))
+        view_msg = await interaction.followup.send(
+                    content="@everyone Signups are active for the next calendar week. " \
+                    "Press a button to signup for the corresponding day. " \
+                    "The times for all days are set at **7:00 pm EST**. Sign up for each day that you would be willing to make. " \
+                    "When a day fills up to 4, you will be locked in for that day." \
+                    "\n\nTo remove your name from a day, press the button again.",
+                    wait=True,
+                    allowed_mentions=discord.AllowedMentions(everyone=True))
         self.saved_view_id = view_msg.id
                        
         view = SignupButtons(self.bot, self.week, self.saved_channel_id, self.saved_embed_id, self.saved_view_id)     
