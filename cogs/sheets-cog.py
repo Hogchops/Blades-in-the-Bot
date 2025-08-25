@@ -67,7 +67,7 @@ class Sheets(commands.Cog):
     )
     @app_commands.autocomplete(planet_name = autocomplete_planets)
     async def planet(self, interaction: discord.Interaction, planet_name: str):
-        await interaction.response.defer()
+        await interaction.response.defer(ephemeral=True)
         planet = getattr(self, planet_name.lower().replace(" ", ''))
         if planet:
             try:
