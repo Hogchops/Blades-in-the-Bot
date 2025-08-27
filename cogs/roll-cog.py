@@ -201,7 +201,7 @@ class Roll(commands.Cog):
 	async def gambit_spend(self, interaction: discord.Interaction):
 		if self.gambit_msg and self.gambit_channel:
 			await self.change_gambit(interaction, -1)
-			await interaction.response.send_message(f"You spent a gambit! You're now at {self.gambits}.")
+			await interaction.response.send_message(f"You spent a gambit! You're now at {self.gambits}.", ephemeral=True)
 		else:
 			await interaction.response.send_message("There's no gambit pool to modify!", ephemeral=True)
 	
@@ -209,7 +209,7 @@ class Roll(commands.Cog):
 	async def gambit_add(self, interaction: discord.Interaction):
 		if self.gambit_msg and self.gambit_channel:
 			await self.change_gambit(interaction, 1)
-			await interaction.response.send_message(f"You added a gambit! You're now at {self.gambits}.")
+			await interaction.response.send_message(f"You added a gambit! You're now at {self.gambits}.", ephemeral=True)
 		else:
 			await interaction.response.send_message("There's no gambit pool to modify!", ephemeral=True)
 
