@@ -41,7 +41,6 @@ class Clocks(commands.Cog):
         clock.channel_id = msg.channel.id
         self.clocks.append(clock)
 
-
     @app_commands.command(name = "tick", description = "Tick a clock by an amount.")
     @app_commands.autocomplete(description = autocomplete)
     @app_commands.describe(
@@ -80,6 +79,7 @@ class Clocks(commands.Cog):
         if clock:
             clock_channel = await self.bot.fetch_channel(clock.channel_id)
             embed_msg = await clock_channel.fetch_message(clock.embed_id)
+            self.clocks.remove(clock) 
 
             if embed_msg:
                 await embed_msg.delete()
@@ -88,6 +88,12 @@ class Clocks(commands.Cog):
                 await ctx.response.send_message("Could not find the message.", ephemeral=True)
         else:
             await ctx.response.send_message("Clock not found.", ephemeral=True)
+
+    
+    @app_commands.command(name = "clear-clocks", description="Clear all clocks in the channel.")
+    async def clear_clocks(self, ctx: discord.Interaction):
+        self.clocks = []
+        await ctx.response.send_message("Reset all clock objects. Use /clear-channel to delete all the messages.", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Clocks(bot))
