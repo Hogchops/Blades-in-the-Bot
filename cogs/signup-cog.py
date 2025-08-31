@@ -15,7 +15,7 @@ EST = ZoneInfo("US/Eastern")
 
 class Signup(commands.Cog):
 
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.week = None
         self.session_confirmed = 4
@@ -141,8 +141,18 @@ class Signup(commands.Cog):
         day_list = day_dict[day.lower()]
         if name in day_list:
             day_list.remove(name)
-            await self.embed_msg.edit(embed=self.week.generate_embed())
-            await interaction.response.send_message(f"{name.display_name} removed from {day}.", ephemeral=True)
+            embed_channel = await self.bot.fetch_channel(self.saved_channel_id)
+            if embed_channel:
+                msg = await embed_channel.fetch_message(self.saved_embed_id)
+                if msg:
+                    await msg.edit(embed = self.week.generate_embed())
+                    await interaction.response.send_message(f"{name.display_name} removed from {day}.", ephemeral=True)
+                else:
+                    await interaction.response.send_message("Embed message not found.", ephemeral=True)
+            else:
+                await interaction.response.send_message("Channel not found.", ephemeral=True)
+        else:
+            await interaction.response.send_message("User not found.", ephemeral=True)
 
     @app_commands.command(name="sessions", description="List sessions.")
     @app_commands.default_permissions(administrator=True)
