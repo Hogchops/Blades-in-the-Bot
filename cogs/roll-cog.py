@@ -175,7 +175,7 @@ class Roll(commands.Cog):
 	)
 	@app_commands.default_permissions(administrator=True)
 	async def gambit_pool(self, interaction: discord.Interaction, initial_value: int = 0):
-		if self.gambit_msg > 0 and self.gambit_channel > 0:
+		if self.gambit_msg and self.gambit_channel:
 			try:
 				old_channel = await self.bot.fetch_channel(self.gambit_channel)
 				if old_channel:
