@@ -169,34 +169,28 @@ class Roll(commands.Cog):
 			except Exception as e:
 				print(f"Could not edit old gambit message: {e}")
 	
-	@app_commands.command(name = "gambit", description = "Display the number of gambits for everyone.")
+	@app_commands.command(name = "gambit-pool", description = "Create the gambit pool.")
 	@app_commands.describe(
-		change = "Number of gambits to add or remove.",
-		clear = "Remove the gambit messages from the channel."
+		initial_value = "Number of gambits for the pool to start with.",
 	)
 	@app_commands.default_permissions(administrator=True)
-	async def gambit(self, interaction: discord.Interaction, change: int = 0, clear: bool = False):
-		if self.gambit_msg and self.gambit_channel:
-			if clear:
-				try:
-					old_channel = await self.bot.fetch_channel(self.gambit_channel)
-					if old_channel:
-						msg = await old_channel.fetch_message(self.gambit_msg)
-						await msg.delete()
-						await interaction.response.send_message("Gambit message deleted.", ephemeral=True)
-				except Exception as e:
-					print(f"Could not delete the old signup message: {e}")
-			else:
-				await self.change_gambit(interaction, change)
-				await interaction.response.send_message("Gambit pool modified.", ephemeral=True)
-		else:	
-			embed = self.generate_gambit_embed(interaction)
-			await interaction.response.send_message(embed = embed)
-			msg = await interaction.original_response()
-			await msg.pin()
-			self.gambit_msg = msg.id
-			self.gambit_channel = interaction.channel.id
-	
+	async def gambit_pool(self, interaction: discord.Interaction, initial_value: int = 0):
+		if self.gambit_msg > 0 and self.gambit_channel > 0:
+			try:
+				old_channel = await self.bot.fetch_channel(self.gambit_channel)
+				if old_channel:
+					msg = await old_channel.fetch_message(self.gambit_msg)
+					await msg.delete()
+			except Exception as e:
+				pass
+		self.gambits = initial_value
+		embed = self.generate_gambit_embed(interaction)
+		await interaction.response.send_message(embed = embed)
+		msg = await interaction.original_response()
+		await msg.pin()
+		self.gambit_msg = msg.id
+		self.gambit_channel = interaction.channel.id
+		
 	@app_commands.command(name = "spend", description = "Spend a gambit")
 	async def gambit_spend(self, interaction: discord.Interaction):
 		if self.gambit_msg and self.gambit_channel:
