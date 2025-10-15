@@ -230,10 +230,10 @@ class Roll(commands.Cog):
 			description = "Start with 1d for sheer luck!",
 			color = discord.Color.magenta()
 		)
-		embed.add_field(value="Is this operation particularly bold or daring? Take +1d. Is this operation overly complex or contingent on many factors? Take -1d.")
-		embed.add_field(value="Does the plan's detail expose a vulnerability of the target or hit them where they're weakest? Take +1d. Is the target strongest against this approach, or do they have particular defenses or special preparations? Take -1d.")
-		embed.add_field(value="Can any of your friends or contacts provide aid or insight for this operation? Take +1d. Are any enemies or rivals interfering in the operation? Take -1d.")
-		embed.add_field(value="Are there any other elements that you want to consider? Maybe a lower-Tier target will give you +1d. Maybe a higher-Tier target will give you -1d. Maybe there's a situation in the system that makes the operation more or less tricky.")
+		embed.add_field(name="Is this operation particularly bold or daring? Take +1d. Is this operation overly complex or contingent on many factors? Take -1d.")
+		embed.add_field(name="Does the plan's detail expose a vulnerability of the target or hit them where they're weakest? Take +1d. Is the target strongest against this approach, or do they have particular defenses or special preparations? Take -1d.")
+		embed.add_field(name="Can any of your friends or contacts provide aid or insight for this operation? Take +1d. Are any enemies or rivals interfering in the operation? Take -1d.")
+		embed.add_field(name="Are there any other elements that you want to consider? Maybe a lower-Tier target will give you +1d. Maybe a higher-Tier target will give you -1d. Maybe there's a situation in the system that makes the operation more or less tricky.")
 		embed.set_author(
 			name = interaction.user.display_name,
 			icon_url = interaction.user.display_avatar.url
