@@ -78,6 +78,10 @@ class Signup(commands.Cog):
         print(f"Restored {restored_count} reminders.")
 
     @app_commands.command(name="signup", description="Create the signup embed for the week.")
+    @app_commands.describe(
+        min_players = "Enter the minimum player count for the game.",
+        max_players = "Enter the maximum player count."
+    )
     @app_commands.default_permissions(administrator=True)
     async def get_signups(self, interaction: discord.Interaction, min_players: int, max_players: int):
         if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
