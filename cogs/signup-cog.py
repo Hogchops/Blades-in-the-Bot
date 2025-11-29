@@ -83,7 +83,7 @@ class Signup(commands.Cog):
         max_players = "Enter the maximum player count."
     )
     @app_commands.default_permissions(administrator=True)
-    async def get_signups(self, interaction: discord.Interaction, min_players: int, max_players: int):
+    async def get_signups(self, interaction: discord.Interaction, game_name: str, min_players: int, max_players: int):
         if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
             try:
                 old_channel = await self.bot.fetch_channel(self.saved_channel_id)
@@ -104,11 +104,11 @@ class Signup(commands.Cog):
         board_game_role = await guild.fetch_role(1444163673613664306)
 
         view_msg = await interaction.followup.send(
-                    content=f"{board_game_role.mention} Signups are active for the next calendar week. " \
+                    content=f"{board_game_role.mention} Signups are active for the next calendar week for **__{game_name}__**. " \
                     "Press a button to signup for the corresponding day. " \
                     "The times for all days are set at **7:00 pm EST**. Sign up for each day that you would be willing to make.\n" \
-                    f"Minimum Player Count: {min_players}\n" \
-                    f"Maximum Player Count: {max_players}" \
+                    f"Minimum Player Count: **{min_players}**\n" \
+                    f"Maximum Player Count: **{max_players}**" \
                     "\n\nTo remove your name from a day, press the button again.",
                     wait=True,
                     allowed_mentions=discord.AllowedMentions(everyone=True))
@@ -194,8 +194,6 @@ class Signup(commands.Cog):
     async def pick_games(self, interaction: discord.Interaction, games: str, bgg_links: str):
         game_list = games.split(',')
         bgg_links_list = bgg_links.split(',')
-        print(game_list.__str__())
-        print(f"\n{bgg_links_list.__str__()}")
         embed = discord.Embed(
             title = "Board Game Choices",
             description="Take a look at the following games, paying attention to game duration, mechanical weight, mechanics, and whether it's competitive or not.",
