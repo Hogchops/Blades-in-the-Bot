@@ -151,14 +151,14 @@ class BoardgameCog(commands.Cog):
         """
         game_id = extract_bgg_id_from_url(url)
         if game_id is None:
-            await inter.response.send_message("❌ I couldn't find a valid BoardGameGeek game ID in that link.", ephemeral=True)
+            await inter.response.send_message("I couldn't find a valid BoardGameGeek game ID in that link.", ephemeral=True)
             return
 
-        await ctx.send("⏳ Fetching game info from BoardGameGeek...")
+        await inter.response.defer(ephemeral=True)
 
         game = fetch_bgg_game_data(game_id)
         if game is None:
-            await inter.response.send_message("❌ Failed to fetch data from BoardGameGeek.", ephemeral=True)
+            await inter.followup.send("Failed to fetch data from BoardGameGeek.", ephemeral=True)
             return
 
         title = game.get("name", f"BGG Game {game_id}")
@@ -248,7 +248,7 @@ class BoardgameCog(commands.Cog):
                 inline=False,
             )
 
-        await inter.response.send_message(embed=embed)
+        await inter.followup.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):
