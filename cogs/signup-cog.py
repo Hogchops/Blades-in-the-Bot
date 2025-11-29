@@ -100,8 +100,11 @@ class Signup(commands.Cog):
         self.saved_channel_id = msg.channel.id
         self.saved_embed_id = msg.id
 
+        guild = await self.bot.fetch_guild(interaction.channel.guild.id)
+        board_game_role = await guild.fetch_role(1444163673613664306)
+
         view_msg = await interaction.followup.send(
-                    content="@everyone Signups are active for the next calendar week. " \
+                    content=f"{board_game_role.mention} Signups are active for the next calendar week. " \
                     "Press a button to signup for the corresponding day. " \
                     "The times for all days are set at **7:00 pm EST**. Sign up for each day that you would be willing to make. " \
                     "When a day fills up to 4, you will be locked in for that day." \
