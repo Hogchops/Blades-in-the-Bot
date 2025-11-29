@@ -194,7 +194,8 @@ class Signup(commands.Cog):
     async def pick_games(self, interaction: discord.Interaction, games: str, bgg_links: str):
         game_list = games.split(',')
         bgg_links_list = bgg_links.split(',')
-
+        print(game_list.__str__())
+        print(f"\n{bgg_links_list.__str__()}")
         embed = discord.Embed(
             title = "Board Game Choices",
             description="Take a look at the following games, paying attention to game duration, mechanical weight, mechanics, and whether it's competitive or not.",
