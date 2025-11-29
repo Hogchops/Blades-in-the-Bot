@@ -62,18 +62,47 @@ def parse_best_player_counts(item: ET.Element) -> list[tuple[str, int]]:
 def fetch_bgg_game_data(game_id: int) -> dict | None:
     """
     Fetch game data from BGG XML API2 and return a simplified dict.
-    Includes best player counts from the suggested player poll.
+    Handles 202 responses by retrying a few times.
     """
     params = {
         "id": game_id,
-        "stats": 1,   # include stats (ratings, weight, etc.)
+        "stats": 1,
+    }
+    headers = {
+        "User-Agent": "DiscordBoardGameBot/1.0 (contact: you@example.com)"
     }
 
-    resp = requests.get(BGG_THING_URL, params=params, timeout=15)
-    if resp.status_code != 200:
+    max_attempts = 5
+    last_resp_text = None
+
+    for _ in range(max_attempts):
+        resp = requests.get(
+            BGG_THING_URL,
+            params=params,
+            headers=headers,
+            timeout=20,
+        )
+        last_resp_text = resp.text
+
+        if resp.status_code == 202:
+            # BGG is “preparing” the response
+            time.sleep(2)
+            continue
+
+        if resp.status_code != 200:
+            return None
+
+        # 200 OK
+        break
+    else:
+        # never escaped loop (always 202)
         return None
 
-    root = ET.fromstring(resp.text)
+    try:
+        root = ET.fromstring(last_resp_text)
+    except ET.ParseError:
+        return None
+
     item = root.find("item")
     if item is None:
         return None
@@ -129,8 +158,7 @@ def fetch_bgg_game_data(game_id: int) -> dict | None:
             desc = desc[:397] + "..."
         game["description"] = desc
 
-    best_players = parse_best_player_counts(item)
-    game["best_player_counts"] = best_players
+    game["best_player_counts"] = parse_best_player_counts(item)
 
     return game
 
