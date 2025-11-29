@@ -79,6 +79,8 @@ class Signup(commands.Cog):
 
     @app_commands.command(name="signup", description="Create the signup embed for the week.")
     @app_commands.describe(
+        game_name = "Enter the name of the game.",
+        bgg_link = "Enter the link for the BGG page for the corresponding game.",
         min_players = "Enter the minimum player count for the game.",
         max_players = "Enter the maximum player count."
     )
