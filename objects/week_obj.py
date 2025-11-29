@@ -3,7 +3,7 @@ from datetime import date, timedelta
 
 class Week():
     
-    def __init__(self):
+    def __init__(self, min_players = -1, max_players = -1):
         self.sunday = []
         self.monday = []
         self.tuesday = []
@@ -12,10 +12,12 @@ class Week():
         self.friday = []
         self.saturday = []
 
-        self.session_full = 5
-        self.session_confirmed = 4
+        self.max_players = max_players
+        self.min_players = min_players
 
         self.day_dict = {
+            "min_players": self.min_players,
+            "max_players": self.max_players,
             "sunday": self.sunday,
             "monday": self.monday,
             "tuesday": self.tuesday,
@@ -27,6 +29,8 @@ class Week():
 
     def to_dict(self):
         return {
+            "min_players": self.min_players,
+            "max_players": self.max_players,
             "sunday": [member.id for member in self.sunday],
             "monday": [member.id for member in self.monday],
             "tuesday": [member.id for member in self.tuesday],
@@ -37,7 +41,7 @@ class Week():
         }
 
     @classmethod
-    async def from_dict(cls, data, guild: discord.Guild):
+    async def from_dict(cls, data: dict, guild: discord.Guild):
         week = cls()
         dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         for day in dotw:
@@ -49,6 +53,8 @@ class Week():
                 except discord.NotFound:
                     continue
             setattr(week, day, week_list)
+        week.min_players = data.get("min_players")
+        week.max_players = data.get("max_players")
         week.day_dict = {day: getattr(week, day) for day in dotw}
         return week
 
@@ -90,26 +96,21 @@ class Week():
                 self.remove_user_from_day(user, d)
 
     def button(self, user: discord.User, day: str) -> int:
-        if self.day_dict[day].__len__() >= self.session_full:
+        if self.day_dict[day].__len__() >= self.max_players:
             return -1
         if not (user in self.day_dict[day]): 
             self.add_user_to_day(user, day)
-            if self.day_dict[day].__len__() >= self.session_confirmed:
-                for player in self.day_dict[day]:
-                    self.purge_user_from_other_days(player, day)
-                if self.day_dict[day].__len__() == self.session_confirmed:
+            if self.day_dict[day].__len__() >= self.min_players:
+                if self.day_dict[day].__len__() == self.max_players:
                     return 2
                 return 1
             else:
                 return 0 
         else:
-            if self.day_dict[day].__len__() >= self.session_full:
-                return -1
-            else:
-                self.remove_user_from_day(user, day)
-                if self.day_dict[day].__len__() == self.session_confirmed:
-                    return 3
-                return 0
+            self.remove_user_from_day(user, day)
+            if self.day_dict[day].__len__() >= self.min_players:
+                return 3
+            return 0
     
     def get_user_day(self, user: discord.User, day: str) -> int:
         day_list = self.day_dict[day.lower()]
