@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 
 from discord.ext import commands
 import discord
+from discord import app_commands
 
 BGG_THING_URL = "https://www.boardgamegeek.com/xmlapi2/thing"
 
@@ -140,7 +141,7 @@ class BoardgameCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(name="bgg")
+    @app_commands.command(name="bgg")
     async def bgg_command(self, ctx: commands.Context, url: str):
         """
         Usage: !bgg <bgg-url>
