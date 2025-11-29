@@ -198,7 +198,7 @@ class Signup(commands.Cog):
         embed = discord.Embed(
             title = "Board Game Choices",
             description="Take a look at the following games, paying attention to game duration, mechanical weight, mechanics, and whether it's competitive or not.",
-            color = discord.Color.blurple
+            color = discord.Color.blurple()
         )
         for i in range(game_list):
             embed.add_field(name = f"{game_list[i]}", value=f"{bgg_links_list[i]}")
