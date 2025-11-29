@@ -107,7 +107,8 @@ class Signup(commands.Cog):
                     content=f"{board_game_role.mention} Signups are active for the next calendar week. " \
                     "Press a button to signup for the corresponding day. " \
                     "The times for all days are set at **7:00 pm EST**. Sign up for each day that you would be willing to make. " \
-                    "When a day fills up to 4, you will be locked in for that day." \
+                    f"Minimum Player Count: {min_players}" \
+                    f"Maximum Player Count: {max_players}" \
                     "\n\nTo remove your name from a day, press the button again.",
                     wait=True,
                     allowed_mentions=discord.AllowedMentions(everyone=True))
