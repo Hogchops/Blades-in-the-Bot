@@ -20,11 +20,11 @@ class SignupButtons(discord.ui.View):
         i = self.week.button(user, day)
         if i != -1:
             if i == 2:
-                await channel.send("A session is confirmed on **" + day.title() + "** at **7:00 pm EST** with the people listed above. This session can still accept more players.")
+                await channel.send("A game is confirmed on **" + day.title() + "** at **7:00 pm EST** with the people listed above. The game can still accept more players.")
             if i == 1:
-                await channel.send(f"The session on {day.title()} has reached capacity.")
+                await channel.send(f"The game on {day.title()} has reached capacity.")
             if i == 3:
-                await channel.send(f"The session on {day.title()} is open for signups again.")
+                await channel.send(f"The game on {day.title()} is open for signups again.")
             await embed_msg.edit(embed=self.week.generate_embed())
             state = {
                 "channel_id": channel.id,
