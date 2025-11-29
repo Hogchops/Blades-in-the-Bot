@@ -142,7 +142,7 @@ class BoardgameCog(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="bgg")
-    async def bgg_command(self, ctx: commands.Context, url: str):
+    async def bgg_command(self, inter: discord.Interaction, url: str):
         """
         Usage: !bgg <bgg-url>
 
@@ -151,14 +151,14 @@ class BoardgameCog(commands.Cog):
         """
         game_id = extract_bgg_id_from_url(url)
         if game_id is None:
-            await ctx.send("❌ I couldn't find a valid BoardGameGeek game ID in that link.")
+            await inter.response.send_message("❌ I couldn't find a valid BoardGameGeek game ID in that link.", ephemeral=True)
             return
 
         await ctx.send("⏳ Fetching game info from BoardGameGeek...")
 
         game = fetch_bgg_game_data(game_id)
         if game is None:
-            await ctx.send("❌ Failed to fetch data from BoardGameGeek.")
+            await inter.response.send_message("❌ Failed to fetch data from BoardGameGeek.", ephemeral=True)
             return
 
         title = game.get("name", f"BGG Game {game_id}")
@@ -248,7 +248,7 @@ class BoardgameCog(commands.Cog):
                 inline=False,
             )
 
-        await ctx.send(embed=embed)
+        await inter.response.send_message(embed=embed)
 
 
 async def setup(bot: commands.Bot):
