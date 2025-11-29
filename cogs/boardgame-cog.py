@@ -67,7 +67,9 @@ def fetch_bgg_game_data(game_id: int) -> dict | None:
         "stats": 1,
     }
     headers = {
-        "User-Agent": "DiscordBoardGameBot/1.0 (contact: you@example.com)"
+        # Try a very generic UA first; some filters dislike email addresses
+        "User-Agent": "Mozilla/5.0 (compatible; DiscordBoardGameBot/1.0)",
+        "Accept": "application/xml,text/xml;q=0.9,*/*;q=0.8",
     }
 
     max_attempts = 5
@@ -83,7 +85,6 @@ def fetch_bgg_game_data(game_id: int) -> dict | None:
                 timeout=20,
             )
         except Exception as e:
-            # Log the error so you can see it in your console
             print(f"[BGG] Request error for id={game_id}: {e}")
             return None
 
@@ -92,12 +93,21 @@ def fetch_bgg_game_data(game_id: int) -> dict | None:
 
         print(f"[BGG] Attempt {attempt+1}/{max_attempts}, status={resp.status_code}")
 
+        # Explicit debug for 401
+        if resp.status_code == 401:
+            print("[BGG] Got 401 Unauthorized. Response headers:")
+            print(dict(resp.headers))
+            print("Body (first 500 chars):")
+            print(last_resp_text[:500])
+            # Don't keep retrying on 401; it's a config/auth problem
+            return None
+
         # 202 = “request accepted, try again later”
         if resp.status_code == 202:
             time.sleep(2)
             continue
 
-        # If not 200 and not 202, try again a couple more times before giving up
+        # For other non-200s, retry a couple times then give up
         if resp.status_code != 200:
             time.sleep(2)
             continue
@@ -105,12 +115,10 @@ def fetch_bgg_game_data(game_id: int) -> dict | None:
         # 200 OK
         break
     else:
-        # never escaped loop (always non-200)
         print(f"[BGG] Failed after {max_attempts} attempts, last status={last_status}")
         print(f"[BGG] Last response (first 500 chars): {last_resp_text[:500]}")
         return None
 
-    # Now parse XML
     try:
         root = ET.fromstring(last_resp_text)
     except ET.ParseError as e:
@@ -178,6 +186,7 @@ def fetch_bgg_game_data(game_id: int) -> dict | None:
     game["best_player_counts"] = parse_best_player_counts(item)
 
     return game
+
 
 
 class BoardgameCog(commands.Cog):
