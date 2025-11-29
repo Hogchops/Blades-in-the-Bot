@@ -202,7 +202,7 @@ class Signup(commands.Cog):
             color = discord.Color.blurple()
         )
         for i in range(game_list.__len__()):
-            embed.add_field(name = f"{game_list[i]}", value=f"{bgg_links_list[i]}")
+            embed.add_field(name = f"{i+1}: [{game_list[i]}]({bgg_links_list[i]})", value=f"{bgg_links_list[i]}")
 
         await interaction.response.send_message(embed=embed)
 
