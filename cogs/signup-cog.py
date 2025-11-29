@@ -186,6 +186,25 @@ class Signup(commands.Cog):
                 await ctx.channel.send(msg)
             date_index += 1
 
+    @app_commands.command(name="pick-games", description="Gather interest for the board games.")
+    @app_commands.describe(
+        games = "List game names separated by a comma",
+        bgg_links = "List the urls, separated by a comma, for the respective game."
+    )
+    async def pick_games(self, interaction: discord.Interaction, games: str, bgg_links: str):
+        game_list = games.split(',')
+        bgg_links_list = bgg_links.split(',')
+
+        embed = discord.Embed(
+            title = "Board Game Choices",
+            description="Take a look at the following games, paying attention to game duration, mechanical weight, mechanics, and whether it's competitive or not.",
+            color = discord.Color.blurple
+        )
+        for i in range(game_list):
+            embed.add_field(name = f"{game_list[i]}", value=f"{bgg_links_list[i]}")
+
+        await interaction.response.send_message(embed=embed)
+
     @app_commands.command(name="notify", description="Send a reminder to people locked in for sessions")
     @app_commands.default_permissions(administrator=True)
     async def remind_sessions(self, interaction: discord.Interaction):
@@ -254,7 +273,7 @@ class Signup(commands.Cog):
         print("Issuing reminders ->")
         for member in members:
             try:
-                await member.send(f"Reminder: you are signed up for a session tomorrow, {day} at 7pm EST.")
+                await member.send(f"Reminder: you are signed up for a board game tomorrow, {day} at 7pm EST.")
                 print(f"I reminded {member.display_name}!")
             except Exception as e:
                 print(f"Could not DM {member}: {e}")
