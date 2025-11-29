@@ -96,8 +96,6 @@ class Week():
                 self.remove_user_from_day(user, d)
 
     def button(self, user: discord.User, day: str) -> int:
-        if self.day_dict[day].__len__() >= self.max_players:
-            return -1
         if not (user in self.day_dict[day]): 
             self.add_user_to_day(user, day)
             if self.day_dict[day].__len__() >= self.min_players:
@@ -107,9 +105,13 @@ class Week():
             else:
                 return 0 
         else:
+            old_player_count = self.day_dict[day].__len__()
             self.remove_user_from_day(user, day)
             if self.day_dict[day].__len__() >= self.min_players:
                 return 3
+            else:
+                if old_player_count == self.min_players:
+                    return 4
             return 0
     
     def get_user_day(self, user: discord.User, day: str) -> int:
