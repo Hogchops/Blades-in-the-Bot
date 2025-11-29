@@ -1,4 +1,5 @@
 import re
+import time   # ✅ IMPORTANT: you were using time.sleep but didn't import time
 import requests
 import xml.etree.ElementTree as ET
 
@@ -29,9 +30,6 @@ def parse_best_player_counts(item: ET.Element) -> list[tuple[str, int]]:
     """
     Parse the 'suggested_numplayers' poll and return a list of (num_players, best_votes),
     sorted by best_votes descending.
-
-    Example return:
-      [("3", 120), ("4", 95), ("2", 30)]
     """
     poll = item.find("poll[@name='suggested_numplayers']")
     if poll is None:
@@ -62,7 +60,7 @@ def parse_best_player_counts(item: ET.Element) -> list[tuple[str, int]]:
 def fetch_bgg_game_data(game_id: int) -> dict | None:
     """
     Fetch game data from BGG XML API2 and return a simplified dict.
-    Handles 202 responses by retrying a few times.
+    Handles 202 responses by retrying a few times, logs status for debugging.
     """
     params = {
         "id": game_id,
@@ -74,37 +72,56 @@ def fetch_bgg_game_data(game_id: int) -> dict | None:
 
     max_attempts = 5
     last_resp_text = None
+    last_status = None
 
-    for _ in range(max_attempts):
-        resp = requests.get(
-            BGG_THING_URL,
-            params=params,
-            headers=headers,
-            timeout=20,
-        )
+    for attempt in range(max_attempts):
+        try:
+            resp = requests.get(
+                BGG_THING_URL,
+                params=params,
+                headers=headers,
+                timeout=20,
+            )
+        except Exception as e:
+            # Log the error so you can see it in your console
+            print(f"[BGG] Request error for id={game_id}: {e}")
+            return None
+
+        last_status = resp.status_code
         last_resp_text = resp.text
 
+        print(f"[BGG] Attempt {attempt+1}/{max_attempts}, status={resp.status_code}")
+
+        # 202 = “request accepted, try again later”
         if resp.status_code == 202:
-            # BGG is “preparing” the response
             time.sleep(2)
             continue
 
+        # If not 200 and not 202, try again a couple more times before giving up
         if resp.status_code != 200:
-            return None
+            time.sleep(2)
+            continue
 
         # 200 OK
         break
     else:
-        # never escaped loop (always 202)
+        # never escaped loop (always non-200)
+        print(f"[BGG] Failed after {max_attempts} attempts, last status={last_status}")
+        print(f"[BGG] Last response (first 500 chars): {last_resp_text[:500]}")
         return None
 
+    # Now parse XML
     try:
         root = ET.fromstring(last_resp_text)
-    except ET.ParseError:
+    except ET.ParseError as e:
+        print(f"[BGG] XML parse error for id={game_id}: {e}")
+        print(f"[BGG] Broken response (first 500 chars): {last_resp_text[:500]}")
         return None
 
     item = root.find("item")
     if item is None:
+        print(f"[BGG] No <item> element found for id={game_id}. Raw XML snippet:")
+        print(last_resp_text[:500])
         return None
 
     def find_child_text(tag, **attrib_filter):
@@ -113,7 +130,7 @@ def fetch_bgg_game_data(game_id: int) -> dict | None:
                 return child.get("value") or child.text
         return None
 
-    game = {}
+    game: dict[str, str | list | None] = {}
     game["id"] = item.get("id")
     game["name"] = find_child_text("name", type="primary") or find_child_text("name")
     game["year_published"] = find_child_text("yearpublished")
@@ -169,24 +186,30 @@ class BoardgameCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="bgg")
+    @app_commands.command(name="bgg", description="Look up a board game on BoardGameGeek")
     async def bgg_command(self, inter: discord.Interaction, url: str):
         """
-        Usage: !bgg <bgg-url>
-
         Example:
-          !bgg https://boardgamegeek.com/boardgame/174430/gloomhaven
+          /bgg url:https://boardgamegeek.com/boardgame/174430/gloomhaven
         """
         game_id = extract_bgg_id_from_url(url)
         if game_id is None:
-            await inter.response.send_message("I couldn't find a valid BoardGameGeek game ID in that link.", ephemeral=True)
+            await inter.response.send_message(
+                "I couldn't find a valid BoardGameGeek game ID in that link.\n"
+                "Make sure it's a `/boardgame/<id>/...` URL.",
+                ephemeral=True,
+            )
             return
 
         await inter.response.defer(ephemeral=True)
 
         game = fetch_bgg_game_data(game_id)
         if game is None:
-            await inter.followup.send("Failed to fetch data from BoardGameGeek.", ephemeral=True)
+            await inter.followup.send(
+                "Failed to fetch data from BoardGameGeek. "
+                "Check the link or try again in a few seconds.",
+                ephemeral=True,
+            )
             return
 
         title = game.get("name", f"BGG Game {game_id}")
@@ -234,9 +257,7 @@ class BoardgameCog(commands.Cog):
 
         best_players = game.get("best_player_counts") or []
         if best_players:
-            # top 3 player counts by "Best" votes
             top_counts = [bp[0] for bp in best_players[:3]]
-            # handle "4+", "5+" nicely, but that's already how BGG returns it
             if len(top_counts) == 1:
                 best_players_str = f"Best at {top_counts[0]} players"
             else:
