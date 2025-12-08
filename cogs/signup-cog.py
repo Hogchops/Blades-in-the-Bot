@@ -139,12 +139,17 @@ class Signup(commands.Cog):
             try:
                 old_channel = await self.bot.fetch_channel(self.saved_channel_id)
                 if old_channel:
+                    embed_msg = await old_channel.fetch_message(self.saved_embed_id)
+                    await embed_msg.delete()
+
                     old_view = await old_channel.fetch_message(self.saved_view_id)
                     await old_view.delete()
             except Exception as e:
                 print(f"Could not delete the old embed message: {e}")
+        
+        await interaction.response.send_message(f"Signups are closed and a board game has been confirmed on {day.title()} at 7:00 pm est with the following people:\n{self.week.day_string(day)}")
 
-        await interaction.response.send_message(f"Signups are closed and a board game has been confirmed on {day.title()} at 7:00 pm est.")
+        
 
 
     async def autocomplete_dotw(self, inter: discord.integrations.Integration, current: str) -> List[app_commands.Choice[str]]:
