@@ -128,6 +128,24 @@ class Signup(commands.Cog):
         }
         with open("signup_state.json", "w") as f:
             json.dump(state, f)
+    
+    @app_commands.command(name="close-signup", description="Close the active sign up.")
+    @app_commands.describe(
+        day = "Enter the day of the week."
+    )
+    @app_commands.default_permissions(administrator=True)
+    async def close_signups(self, interaction: discord.Interaction, day: str):
+        if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
+            try:
+                old_channel = await self.bot.fetch_channel(self.saved_channel_id)
+                if old_channel:
+                    old_view = await old_channel.fetch_message(self.saved_view_id)
+                    await old_view.delete()
+            except Exception as e:
+                print(f"Could not delete the old embed message: {e}")
+
+        await interaction.response.send_message(f"Signups are closed and a board game has been confirmed on {day.title()} at 7:00 pm est.")
+
 
     async def autocomplete_dotw(self, inter: discord.integrations.Integration, current: str) -> List[app_commands.Choice[str]]:
         choices = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
