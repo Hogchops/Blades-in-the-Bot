@@ -3,7 +3,7 @@ from datetime import date, timedelta
 
 class Week():
     
-    def __init__(self):
+    def __init__(self, session_full: int = 5, session_confirmed: int = 4):
         self.sunday = []
         self.monday = []
         self.tuesday = []
@@ -12,8 +12,8 @@ class Week():
         self.friday = []
         self.saturday = []
 
-        self.session_full = 5
-        self.session_confirmed = 4
+        self.session_full = session_full
+        self.session_confirmed = session_confirmed
 
         self.day_dict = {
             "sunday": self.sunday,
@@ -33,12 +33,17 @@ class Week():
             "wednesday": [member.id for member in self.wednesday],
             "thursday": [member.id for member in self.thursday],
             "friday": [member.id for member in self.friday],
-            "saturday": [member.id for member in self.saturday]
+            "saturday": [member.id for member in self.saturday],
+            "session_full": self.session_full,
+            "session_confirmed": self.session_confirmed
         }
 
     @classmethod
     async def from_dict(cls, data, guild: discord.Guild):
-        week = cls()
+        week = cls(
+            session_full=data.get("session_full", 5),
+            session_confirmed=data.get("session_confirmed", 4)
+        )
         dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         for day in dotw:
             week_list = []
@@ -51,7 +56,7 @@ class Week():
             setattr(week, day, week_list)
         week.day_dict = {day: getattr(week, day) for day in dotw}
         return week
-
+    
     def generate_embed(self) -> discord.Embed:
         embed = discord.Embed(title = "Session Signups", description = "If you see your name listed under a day, you are signed up for that day. All times are 7:00 pm EST.", color = discord.Color.blurple())
         days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]

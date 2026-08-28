@@ -77,9 +77,24 @@ class Signup(commands.Cog):
                 print(f"Could not restore reminder from {file_name}: {e}")
         print(f"Restored {restored_count} reminders.")
 
-    @app_commands.command(name="signup", description="Create the signup embed for the week.")
+        @app_commands.command(name="signup", description="Create the signup embed for the week.")
+    @app_commands.describe(
+        session_max="Max people allowed per day before it's full (default 5)",
+        session_confirmed="Number of people needed to lock a day in (default 4)"
+    )
     @app_commands.default_permissions(administrator=True)
-    async def get_signups(self, interaction: discord.Interaction):
+    async def get_signups(
+        self,
+        interaction: discord.Interaction,
+        session_max: app_commands.Range[int, 1, 25] = 5,
+        session_confirmed: app_commands.Range[int, 1, 25] = 4
+    ):
+        if session_confirmed > session_max:
+            await interaction.response.send_message(
+                "session_confirmed can't be greater than session_max.", ephemeral=True
+            )
+            return
+
         if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
             try:
                 old_channel = await self.bot.fetch_channel(self.saved_channel_id)
@@ -89,7 +104,8 @@ class Signup(commands.Cog):
             except Exception as e:
                 print(f"Could not delete the old embed message: {e}")
 
-        self.week = Week()
+        self.week = Week(session_full=session_max, session_confirmed=session_confirmed)
+        self.session_confirmed = session_confirmed
 
         await interaction.response.send_message(embed=self.week.generate_embed())
         msg = await interaction.original_response()
@@ -100,7 +116,7 @@ class Signup(commands.Cog):
                     content="@everyone Signups are active for the next calendar week. " \
                     "Press a button to signup for the corresponding day. " \
                     "The times for all days are set at **7:00 pm EST**. Sign up for each day that you would be willing to make. " \
-                    "When a day fills up to 4, you will be locked in for that day." \
+                    f"When a day fills up to {session_confirmed}, you will be locked in for that day." \
                     "\n\nTo remove your name from a day, press the button again.",
                     wait=True,
                     allowed_mentions=discord.AllowedMentions(everyone=True))
