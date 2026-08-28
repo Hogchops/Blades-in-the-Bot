@@ -205,30 +205,29 @@ class Signup(commands.Cog):
             await interaction.followup.send("Session announcements posted.", ephemeral=True)
         else:
             await interaction.followup.send("No sessions currently have enough confirmed signups.", ephemeral=True)
-            
-            
+
+
     @app_commands.command(name="notify", description="Send a reminder to people locked in for sessions")
-    @app_commands.default_permissions(administrator=True)
+    @app_commands.default_permissions(administrator=True)     
     async def remind_sessions(self, interaction: discord.Interaction):
         if not self.week:
             await interaction.response.send_message("No data found", ephemeral=True)
             return
         await interaction.response.defer(ephemeral=True)
-        
-        dotw = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+
+        dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        week_dates = self.week.get_next_week_dates()
         now = datetime.now(EST)
         messages = []
 
         for i, day in enumerate(dotw):
             members = getattr(self.week, day, [])
             if len(members) >= self.session_confirmed:
-                today = now.date()
-                target_date = today + timedelta(days = (i - today.weekday()) % 7)
-                session_time = datetime.combine(target_date, time(19,0), tzinfo=EST)
-
-                remind_time = session_time - timedelta(days = 1)
+                target_date = week_dates[i]
+                session_time = datetime.combine(target_date, time(19, 0), tzinfo=EST)
+                remind_time = session_time - timedelta(days=1)
                 delay = (remind_time - now).total_seconds()
-                
+
                 fn = f"reminder_{remind_time.strftime('%Y-%m-%d')}.json"
                 fp = os.path.join("reminders", fn)
 
@@ -245,7 +244,7 @@ class Signup(commands.Cog):
 
                     with open(fp, "w") as f:
                         json.dump(reminder.to_dict(), f, indent=2)
-                    
+
                     task = asyncio.create_task(self.send_reminders(members, day, delay, fp))
                     self.scheduled_tasks[fp] = task
 
@@ -258,17 +257,19 @@ class Signup(commands.Cog):
                 else:
                     task = asyncio.create_task(self.send_reminders(members, day, 0, fp))
                     self.scheduled_tasks[fp] = task
-                    
+
                     output = (
-                        f"Reminders sent immediately for {remind_time.strftime('%A, %Y-%m-%d')}.\n"
+                        f"Reminders sent immediately for {day.title()} {target_date.strftime('%m/%d')}.\n"
                         f"The people receiving them are:\n" +
                         "\n".join(m.display_name for m in members)
                     )
                     messages.append(output)
+
         if messages:
             await interaction.followup.send("\n\n".join(messages), ephemeral=True)
         else:
             await interaction.followup.send("No sessions qualified for reminders.", ephemeral=True)
+    
     
     async def send_reminders(self, members, day, delay, fp: str | None):
         await asyncio.sleep(delay)
@@ -289,6 +290,6 @@ class Signup(commands.Cog):
         
         if fp and fp in self.scheduled_tasks:
             self.scheduled_tasks.pop(fp)
-        
+
 async def setup(bot):
     await bot.add_cog(Signup(bot))
