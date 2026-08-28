@@ -3,7 +3,7 @@ from datetime import date, timedelta
 
 class Week():
     
-    def __init__(self, session_full: int = 5, session_confirmed: int = 4):
+    def __init__(self, session_full: int = 5, session_confirmed: int = 4, start_date: date | None = None):
         self.sunday = []
         self.monday = []
         self.tuesday = []
@@ -14,6 +14,7 @@ class Week():
 
         self.session_full = session_full
         self.session_confirmed = session_confirmed
+        self.start_date = start_date or self._compute_next_sunday()
 
         self.day_dict = {
             "sunday": self.sunday,
@@ -35,14 +36,17 @@ class Week():
             "friday": [member.id for member in self.friday],
             "saturday": [member.id for member in self.saturday],
             "session_full": self.session_full,
-            "session_confirmed": self.session_confirmed
+            "session_confirmed": self.session_confirmed,
+            "start_date": self.start_date.isoformat()
         }
 
     @classmethod
     async def from_dict(cls, data, guild: discord.Guild):
+        start_date_str = data.get("start_date")
         week = cls(
             session_full=data.get("session_full", 5),
-            session_confirmed=data.get("session_confirmed", 4)
+            session_confirmed=data.get("session_confirmed", 4),
+            start_date = date.fromisoformat(start_date_str) if start_date_str else None
         )
         dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         for day in dotw:
@@ -56,6 +60,14 @@ class Week():
             setattr(week, day, week_list)
         week.day_dict = {day: getattr(week, day) for day in dotw}
         return week
+    
+    def _compute_next_sunday(self) -> date:
+        today = date.today()
+        days_ahead = (6 - today.weekday()) % 7
+        return today + timedelta(days=days_ahead)
+    
+    def get_next_week_dates(self):
+        return [(self.start_date + timedelta(days=i)) for i in range(7)]
     
     def generate_embed(self) -> discord.Embed:
         embed = discord.Embed(title = "Session Signups", description = "If you see your name listed under a day, you are signed up for that day. All times are 7:00 pm EST.", color = discord.Color.blurple())
@@ -122,15 +134,6 @@ class Week():
             if day_list[i].id == user.id:
                 return i
         return -1
-
-    def get_next_week_dates(self):
-        today = date.today()
-
-        days_ahead = (6 - today.weekday()) % 7
-        next_sunday = today + timedelta(days=days_ahead)
-
-        week_dates = [(next_sunday + timedelta(days=i)) for i in range(7)]
-        return week_dates
     
     def to_string(self):
         output = ""
