@@ -2,7 +2,7 @@ import discord
 from datetime import date, timedelta
 
 class Week():
-    
+
     def __init__(self, session_full: int = 5, session_confirmed: int = 4, start_date: date | None = None):
         self.sunday = []
         self.monday = []
@@ -46,7 +46,7 @@ class Week():
         week = cls(
             session_full=data.get("session_full", 5),
             session_confirmed=data.get("session_confirmed", 4),
-            start_date = date.fromisoformat(start_date_str) if start_date_str else None
+            start_date=date.fromisoformat(start_date_str) if start_date_str else None
         )
         dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         for day in dotw:
@@ -60,15 +60,15 @@ class Week():
             setattr(week, day, week_list)
         week.day_dict = {day: getattr(week, day) for day in dotw}
         return week
-    
+
     def _compute_next_sunday(self) -> date:
         today = date.today()
         days_ahead = (6 - today.weekday()) % 7
         return today + timedelta(days=days_ahead)
-    
+
     def get_next_week_dates(self):
         return [(self.start_date + timedelta(days=i)) for i in range(7)]
-    
+
     def generate_embed(self) -> discord.Embed:
         embed = discord.Embed(title = "Session Signups", description = "If you see your name listed under a day, you are signed up for that day. All times are 7:00 pm EST.", color = discord.Color.blurple())
         days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -98,7 +98,7 @@ class Week():
             day_list.remove(user)
             return 0
         return -1
-    
+
     def purge_user_from_other_days(self, user: discord.User, day: str):
         day_list = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         day_list.remove(day)
@@ -109,7 +109,7 @@ class Week():
     def button(self, user: discord.User, day: str) -> int:
         if self.day_dict[day].__len__() >= self.session_full:
             return -1
-        if not (user in self.day_dict[day]): 
+        if not (user in self.day_dict[day]):
             self.add_user_to_day(user, day)
             if self.day_dict[day].__len__() >= self.session_confirmed:
                 for player in self.day_dict[day]:
@@ -118,7 +118,7 @@ class Week():
                     return 2
                 return 1
             else:
-                return 0 
+                return 0
         else:
             if self.day_dict[day].__len__() >= self.session_full:
                 return -1
@@ -127,14 +127,14 @@ class Week():
                 if self.day_dict[day].__len__() == self.session_confirmed:
                     return 3
                 return 0
-    
+
     def get_user_day(self, user: discord.User, day: str) -> int:
         day_list = self.day_dict[day.lower()]
         for i in range(day_list.__len__()):
             if day_list[i].id == user.id:
                 return i
         return -1
-    
+
     def to_string(self):
         output = ""
         dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
