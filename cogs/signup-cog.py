@@ -171,9 +171,12 @@ class Signup(commands.Cog):
         else:
             await interaction.response.send_message("User not found.", ephemeral=True)
 
+
     @app_commands.command(name="sessions", description="List sessions.")
     @app_commands.default_permissions(administrator=True)
-    async def sessions(self, ctx: commands.Context):
+    async def sessions(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+
         day_dict = {
                 "sunday": self.week.sunday,
                 "monday": self.week.monday,
@@ -186,15 +189,24 @@ class Signup(commands.Cog):
         dotw = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
         week_dates = self.week.get_next_week_dates()
         date_index = 0
+        posted_any = False
+
         for d in dotw:
             day_list = day_dict[d]
             if day_list.__len__() >= self.session_confirmed:
                 msg = f"## Session Announcement: {d.title()} {week_dates[date_index].strftime('%m/%d')}\n"
                 for user in day_list:
                     msg += user.mention + "\n"
-                await ctx.channel.send(msg)
+                await interaction.channel.send(msg)
+                posted_any = True
             date_index += 1
 
+        if posted_any:
+            await interaction.followup.send("Session announcements posted.", ephemeral=True)
+        else:
+            await interaction.followup.send("No sessions currently have enough confirmed signups.", ephemeral=True)
+            
+            
     @app_commands.command(name="notify", description="Send a reminder to people locked in for sessions")
     @app_commands.default_permissions(administrator=True)
     async def remind_sessions(self, interaction: discord.Interaction):
