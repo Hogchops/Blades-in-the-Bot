@@ -38,6 +38,7 @@ class Signup(commands.Cog):
                 self.saved_embed_id = data["embed_id"]
                 self.saved_view_id = data["view_id"]
                 self.week = await Week.from_dict(data["week"], guild) 
+                self.session_confirmed = self.week.session_confirmed
             if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
                 try:
                     channel = await self.bot.fetch_channel(self.saved_channel_id)
@@ -77,7 +78,7 @@ class Signup(commands.Cog):
                 print(f"Could not restore reminder from {file_name}: {e}")
         print(f"Restored {restored_count} reminders.")
 
-        @app_commands.command(name="signup", description="Create the signup embed for the week.")
+    @app_commands.command(name="signup", description="Create the signup embed for the week.")
     @app_commands.describe(
         session_max="Max people allowed per day before it's full (default 5)",
         session_confirmed="Number of people needed to lock a day in (default 4)"
