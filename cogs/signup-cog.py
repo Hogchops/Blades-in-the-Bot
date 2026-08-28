@@ -11,14 +11,14 @@ import json
 import asyncio
 import os
 
-EST = ZoneInfo("US/Eastern")
+EST = ZoneInfo("America/New_York")
 
 class Signup(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.week = None
-        self.session_confirmed = 4
+        self.session_confirmed = 2
         self.saved_channel_id = None
         self.saved_embed_id = None
         self.saved_view_id = None
