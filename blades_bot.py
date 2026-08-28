@@ -37,6 +37,5 @@ async def load_cogs():
 	await bot.load_extension("cogs.faction-cog")
 	await bot.load_extension("cogs.sheets-cog")
 	await bot.load_extension("cogs.admin-cog")
-	await bot.load_extension("cogs.boardgame-cog")
 	
 bot.run(TOKEN)

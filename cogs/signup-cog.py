@@ -78,14 +78,8 @@ class Signup(commands.Cog):
         print(f"Restored {restored_count} reminders.")
 
     @app_commands.command(name="signup", description="Create the signup embed for the week.")
-    @app_commands.describe(
-        game_name = "Enter the name of the game.",
-        bgg_link = "Enter the link for the BGG page for the corresponding game.",
-        min_players = "Enter the minimum player count for the game.",
-        max_players = "Enter the maximum player count."
-    )
     @app_commands.default_permissions(administrator=True)
-    async def get_signups(self, interaction: discord.Interaction, game_name: str, bgg_link: str, min_players: int, max_players: int):
+    async def get_signups(self, interaction: discord.Interaction):
         if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
             try:
                 old_channel = await self.bot.fetch_channel(self.saved_channel_id)
@@ -95,23 +89,18 @@ class Signup(commands.Cog):
             except Exception as e:
                 print(f"Could not delete the old embed message: {e}")
 
-        self.week = Week(min_players, max_players)
+        self.week = Week()
 
         await interaction.response.send_message(embed=self.week.generate_embed())
         msg = await interaction.original_response()
         self.saved_channel_id = msg.channel.id
         self.saved_embed_id = msg.id
 
-        guild = await self.bot.fetch_guild(interaction.channel.guild.id)
-        board_game_role = await guild.fetch_role(1444163673613664306)
-
         view_msg = await interaction.followup.send(
-                    content=f"{board_game_role.mention} Signups are active for the next calendar week for **__{game_name}__**. " \
+                    content="@everyone Signups are active for the next calendar week. " \
                     "Press a button to signup for the corresponding day. " \
-                    "The times for all days are set at **7:00 pm EST**. Sign up for each day that you would be willing to make.\n" \
-                    f"BGG Link: {bgg_link}\n"
-                    f"Minimum Player Count: **{min_players}**\n" \
-                    f"Maximum Player Count: **{max_players}**" \
+                    "The times for all days are set at **7:00 pm EST**. Sign up for each day that you would be willing to make. " \
+                    "When a day fills up to 4, you will be locked in for that day." \
                     "\n\nTo remove your name from a day, press the button again.",
                     wait=True,
                     allowed_mentions=discord.AllowedMentions(everyone=True))
@@ -128,29 +117,6 @@ class Signup(commands.Cog):
         }
         with open("signup_state.json", "w") as f:
             json.dump(state, f)
-    
-    @app_commands.command(name="close-signup", description="Close the active sign up.")
-    @app_commands.describe(
-        day = "Enter the day of the week."
-    )
-    @app_commands.default_permissions(administrator=True)
-    async def close_signups(self, interaction: discord.Interaction, day: str):
-        if self.saved_channel_id and self.saved_view_id and self.saved_embed_id:
-            try:
-                old_channel = await self.bot.fetch_channel(self.saved_channel_id)
-                if old_channel:
-                    embed_msg = await old_channel.fetch_message(self.saved_embed_id)
-                    await embed_msg.delete()
-
-                    old_view = await old_channel.fetch_message(self.saved_view_id)
-                    await old_view.delete()
-            except Exception as e:
-                print(f"Could not delete the old embed message: {e}")
-        
-        await interaction.response.send_message(f"Signups are closed and a board game has been confirmed on {day.title()} at 7:00 pm est with the following people:\n{self.week.day_string(day)}")
-
-        
-
 
     async def autocomplete_dotw(self, inter: discord.integrations.Integration, current: str) -> List[app_commands.Choice[str]]:
         choices = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
@@ -211,24 +177,6 @@ class Signup(commands.Cog):
                     msg += user.mention + "\n"
                 await ctx.channel.send(msg)
             date_index += 1
-
-    @app_commands.command(name="pick-games", description="Gather interest for the board games.")
-    @app_commands.describe(
-        games = "List game names separated by a comma",
-        bgg_links = "List the urls, separated by a comma, for the respective game."
-    )
-    async def pick_games(self, interaction: discord.Interaction, games: str, bgg_links: str):
-        game_list = games.split(',')
-        bgg_links_list = bgg_links.split(',')
-        embed = discord.Embed(
-            title = "Board Game Choices",
-            description="Take a look at the following games, paying attention to game duration, mechanical weight, mechanics, and whether it's competitive or not.",
-            color = discord.Color.blurple()
-        )
-        for i in range(game_list.__len__()):
-            embed.add_field(name = f"{i+1}: {game_list[i]}", value=f"{bgg_links_list[i]}")
-
-        await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="notify", description="Send a reminder to people locked in for sessions")
     @app_commands.default_permissions(administrator=True)
@@ -298,7 +246,7 @@ class Signup(commands.Cog):
         print("Issuing reminders ->")
         for member in members:
             try:
-                await member.send(f"Reminder: you are signed up for a board game tomorrow, {day} at 7pm EST.")
+                await member.send(f"Reminder: you are signed up for a session tomorrow, {day} at 7pm EST.")
                 print(f"I reminded {member.display_name}!")
             except Exception as e:
                 print(f"Could not DM {member}: {e}")
