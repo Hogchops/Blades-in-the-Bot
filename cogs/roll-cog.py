@@ -45,9 +45,6 @@ def generate_embed(interaction: discord.Interaction, dice, num, zero, position: 
 class Roll(commands.Cog):
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
-		self.gambits = 0
-		self.gambit_msg = None
-		self.gambit_channel = None
 
 		for cmd in self.__cog_app_commands__:
 			cmd.extras["cog"] = self.__cog_name__
@@ -100,27 +97,8 @@ class Roll(commands.Cog):
 				result = dice[-1]
 			else:
 				result = dice[0]
-			if result == 6:
-				await self.change_gambit(interaction, 1)
-				embed.set_footer(text="+1 gambit!")
 		await interaction.response.send_message(embed = embed)
 	
-	@app_commands.command(name="groll", description="Roll and spend a gambit, giving you +1d.")
-	@app_commands.describe(
-		num = "Enter the original number of dice you wish to roll.",
-		position = "Desperate, Risky, or Controlled.",
-		effect = "Limited, Standard, or Great"
-	)
-	@app_commands.autocomplete(position = position_autocomplete)
-	@app_commands.autocomplete(effect = effect_autocomplete)
-	async def gambit_roll(self, interaction: discord.Interaction, num: int, position: str = "Risky", effect: str = "Standard"):
-		num += 1
-		dice = [random.choice(range(1,7)) for _ in range(num)]
-		embed = generate_embed(interaction, dice, num, False, position, effect)
-		embed.set_footer(text = "-1 gambit!")
-		await self.change_gambit(interaction, -1)
-		await interaction.response.send_message(embed = embed)
-
 	@app_commands.command(name = "gr", description = "Roll hidden dice.")
 	@app_commands.describe(
 		num = "Enter the number of dice you want to roll. Entering 0 will roll 2 dice.",
@@ -135,87 +113,13 @@ class Roll(commands.Cog):
 		embed = generate_embed(interaction, dice, num, zero, None, None)
 		await interaction.response.send_message(embed = embed, ephemeral = True)
 
-	def generate_gambit_embed(self, interaction: discord.Interaction):
-		embed = discord.Embed(
-			title = "Gambit Pool",
-			color = discord.Color.magenta()
-		)
-		embed.add_field(name=' '.join('🎲' for _ in range(self.gambits)), value="")
-		embed.set_author(
-			name = interaction.user.display_name,
-			icon_url = interaction.user.display_avatar.url
-		)
-		return embed
-	
-	async def change_gambit(self, interaction: discord.Interaction, change: int):
-		self.gambits += change
-		if self.gambits < 0:
-			self.gambits = 0
-		elif self.gambits > 8:
-			self.gambits = 8
-		await self.modify_gambit_message(interaction)
-
-	async def modify_gambit_message(self, interaction: discord.Interaction):
-		if self.gambit_msg and self.gambit_channel:
-			try:
-				old_channel = await self.bot.fetch_channel(self.gambit_channel)
-				msg = await old_channel.fetch_message(self.gambit_msg)
-				embed = self.generate_gambit_embed(interaction)
-				embed.set_author(
-					name = interaction.user.display_name,
-					icon_url = interaction.user.display_avatar.url
-				)
-				await msg.edit(embed = embed)
-			except Exception as e:
-				print(f"Could not edit old gambit message: {e}")
-	
-	@app_commands.command(name = "gambit-pool", description = "Create the gambit pool.")
-	@app_commands.describe(
-		initial_value = "Number of gambits for the pool to start with.",
-	)
-	@app_commands.default_permissions(administrator=True)
-	async def gambit_pool(self, interaction: discord.Interaction, initial_value: int = 0):
-		if self.gambit_msg and self.gambit_channel:
-			try:
-				old_channel = await self.bot.fetch_channel(self.gambit_channel)
-				if old_channel:
-					msg = await old_channel.fetch_message(self.gambit_msg)
-					await msg.delete()
-			except Exception as e:
-				pass
-		self.gambits = initial_value
-		embed = self.generate_gambit_embed(interaction)
-		await interaction.response.send_message(embed = embed)
-		msg = await interaction.original_response()
-		await msg.pin()
-		self.gambit_msg = msg.id
-		self.gambit_channel = interaction.channel.id
-		
-	@app_commands.command(name = "spend", description = "Spend a gambit")
-	async def gambit_spend(self, interaction: discord.Interaction):
-		if self.gambit_msg and self.gambit_channel:
-			await self.change_gambit(interaction, -1)
-			await interaction.response.send_message(f"You spent a gambit! You're now at {self.gambits}.", ephemeral=True)
-		else:
-			await interaction.response.send_message("There's no gambit pool to modify!", ephemeral=True)
-	
-	@app_commands.command(name = "add", description = "Add a gambit.")
-	async def gambit_add(self, interaction: discord.Interaction):
-		if self.gambit_msg and self.gambit_channel:
-			await self.change_gambit(interaction, 1)
-			await interaction.response.send_message(f"You added a gambit! You're now at {self.gambits}.", ephemeral=True)
-		else:
-			await interaction.response.send_message("There's no gambit pool to modify!", ephemeral=True)
-
 	@app_commands.command(name = "how-to-roll", description="How to roll.")
 	async def roll_help(self, interaction: discord.Interaction):
 		embed = discord.Embed(
 			title = "How to Roll",
-			description = "`/r [n]` for a basic nd6 roll.\n\n`/roll [n] <position> <effect>` for an advanced roll that will modify the gambit pool.\n\n"
-			"`/groll [n] <position> <effect>` for a (n+1)d6 roll, since you're spending a gambit!",
+			description = "`/r [n]` for a basic nd6 roll.\n\n`/roll [n] <position> <effect>` for an advanced roll.\n",
 			color = discord.Color.magenta()
 		)
-		embed.add_field(name="Modifying the Gambit Pool Directly", value="You can modify the pool directly by using:\n`/add` to add a gambit\n`/spend` to spend a gambit.")
 		embed.add_field(name="Position and Effect",value="The `/roll` and `/groll` commands will assume risky/standard.\nMake sure to choose different values if you need to roll otherwise!")
 		embed.set_author(
 			name = interaction.user.display_name,
